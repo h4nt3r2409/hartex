@@ -1,0 +1,52 @@
+# Example pre-commit configuration (official docs: https://pre-commit.com)
+#
+# Pass the repository CI's deterministic merge gates locally at the commit stage
+# first, so broken changes are caught before push. If any hook's assertion fails, it
+# exits with a non-zero code and the commit stops.
+#
+# 1) detections — only on commits that change detection rules (detections/) or the
+#    upstream sources pinned by those rules, plus the inline Sigma templates in the
+#    defense guides (docs/defense-{ko,en}.md), runs the runner that executes the eight
+#    detection tests and three gates at once (detections/tests/run-all.sh). By passing
+#    the same rule/source scope as CI (.github/workflows/detections.yml) first, it
+#    catches changes that modify rules without updating tests or layers, or changes
+#    that fix a defense template without updating the claims that guide makes. The
+#    requirement is Docker (each test runs isolated in a container, and nothing is
+#    installed on the runner).
+# 2) docs — checks whether repository-internal link, image, and anchor (#heading)
+#    references in tracked Markdown documents point to existing targets
+#    (scripts/check-doc-links.py). It is the same check as CI
+#    (.github/workflows/docs.yml), and to match the fact that CI runs on every change
+#    without a paths filter, it does not narrow the target files here either
+#    (always_run). Links break not only when .md is edited but also when a file a link
+#    points to (an image, LICENSE, etc.) is deleted or moved. It uses only the Python
+#    standard library and makes no network connections, so it finishes within tens of
+#    milliseconds without Docker.
+#
+# Install:      pip install pre-commit && pre-commit install
+# Manual run:   pre-commit run detections --all-files
+#               pre-commit run docs --all-files
+#
+# This is a minimal example with three hooks. If you want to add Go and web lint as
+# well, add your own hooks below.
+repos:
+  - repo: local
+    hooks:
+      - id: detections
+        name: 8 detection rule tests (Sigma, Suricata, ATT&CK, indicators, MISP)
+        entry: detections/tests/run-all.sh
+        language: script
+        pass_filenames: false
+        files: '^(detections/|enrich/enrich\.go|selfupdate/(github|stage)\.go|guard/guard\.go|db/db\.go|db/schema\.sql|cmd/artex/main\.go|traffic/traffic\.go|docs/defense-(ko|en)\.md)'
+      - id: docs
+        name: Document internal link, image, and anchor (#heading) integrity check
+        entry: python3 -I scripts/check-doc-links.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: source-language
+        name: English-first source language check (no untranslated CJK)
+        entry: python3 -I scripts/check-source-language.py
+        language: system
+        pass_filenames: false
+        always_run: true

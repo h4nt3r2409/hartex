@@ -1,0 +1,37 @@
+name: docs
+# On every push/PR, checks that repository-internal links and image references in
+# tracked Markdown documents point to existing files, and that document anchor links
+# (#heading) point to headings that actually exist in the target document, preventing
+# broken links, images, and anchors from being merged. Linked files can live anywhere
+# in the repository (e.g. ../LICENSE, screenshots/en/*.png), so it runs on every change
+# without a paths filter. External URLs (http/https/mailto) depend on the network and
+# are flaky, so they are not checked — scripts/check-doc-links.py only looks at
+# internal references. It uses only the Python standard library and makes no network
+# connections, so it finishes deterministically and does not flicker due to external
+# factors such as Docker Hub rate limits. Go build/static analysis/tests are handled by
+# ci.yml, detection rule reproduction by detections.yml, and the Korean UI build by
+# web.yml.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+# Cancel earlier runs when a new push arrives on the same branch so unnecessary runs
+# do not pile up.
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # python3 is preinstalled on the ubuntu-latest runner, and the script uses only
+      # the standard library, so no separate install step is needed. Run with -I to
+      # isolate the user site and environment.
+      - name: Document internal link, image, and anchor integrity check
+        run: python3 -I scripts/check-doc-links.py

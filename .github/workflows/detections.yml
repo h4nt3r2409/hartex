@@ -1,0 +1,102 @@
+name: detections
+# On every push/PR that changes detection rules (Sigma, Suricata, ATT&CK layers),
+# verifies with reproduction tests that the rules actually fire, convert to multiple
+# SIEM backends, have coverage layers matching the rules, still match upstream
+# sources, and pass the full SigmaHQ convention validation. Changes that modify rules
+# without updating tests or layers show up red here. This workflow is what actually
+# backs the merge-gate promise in CONTRIBUTING.md and detections/tests/README.md that
+# "eight tests mechanically enforce the contribution contract". Go build, static
+# analysis, and tests are handled by ci.yml.
+# In addition to the eight tests, three non-rule gates run under the same merge gate:
+# the harness registry sync check, the self-test of the host triage tool
+# (detections/triage/artex_host_triage.py), and the consistency check of the inline
+# Sigma correlation templates embedded as prose in the defense guides
+# (docs/defense-{ko,en}.md). All three are separate from the eight rule tests, and
+# run-all.sh runs them the same way. The third gate reproduces the facts the templates
+# assert in the defense guide (`sigma check` passes, splunk/eql/loki conversion,
+# lucene/kusto correlation unsupported, identically-bodied ko/en rules), catching at
+# the merge gate cases where upstream sigma-cli or a backend moves and the prose
+# silently goes stale.
+#
+# The eight tests only need Docker (the ubuntu-latest runner includes Docker). The
+# runner pulls sigma-cli, scapy, suricata, and python images and runs them isolated in
+# containers, installing nothing on the runner itself, and mounts the rule tree and the
+# source files referenced by the indicators read-only, never writing to the repository.
+# In addition to changes under detections/, they also run when source files pinned by
+# the indicator tests change. This includes the User-Agent, marker, and destructive
+# command tokens in enrich, selfupdate, guard, and db; the default listen and proxy
+# ports in cmd/artex/main.go; the MITM CA certificate filename in traffic/traffic.go;
+# and the discovery graph schema fingerprint in db/schema.sql. This catches at the
+# merge gate cases where a source change alters an indicator and the rule or indicator
+# lists silently go stale. Public Docker images are pulled without authentication, so
+# Docker Hub pull rate limits can occasionally apply; re-running the job resolves it.
+on:
+  push:
+    paths:
+      - "detections/**"
+      - "enrich/enrich.go"
+      - "selfupdate/github.go"
+      - "selfupdate/stage.go"
+      - "guard/guard.go"
+      - "db/db.go"
+      - "db/schema.sql"
+      - "cmd/artex/main.go"
+      - "traffic/traffic.go"
+      # The two files read by the third gate (defense template consistency check).
+      # Include them in the trigger because changes to these templates require
+      # revalidation.
+      - "docs/defense-ko.md"
+      - "docs/defense-en.md"
+      - ".github/workflows/detections.yml"
+  pull_request:
+    paths:
+      - "detections/**"
+      - "enrich/enrich.go"
+      - "selfupdate/github.go"
+      - "selfupdate/stage.go"
+      - "guard/guard.go"
+      - "db/db.go"
+      - "db/schema.sql"
+      - "cmd/artex/main.go"
+      - "traffic/traffic.go"
+      - "docs/defense-ko.md"
+      - "docs/defense-en.md"
+      - ".github/workflows/detections.yml"
+
+permissions:
+  contents: read
+
+# Cancel earlier runs when a new push arrives on the same branch so unnecessary runs
+# do not pile up during frequent pushes.
+concurrency:
+  group: detections-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detections:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test harness registry sync check (run-all.sh ↔ CI ↔ directories)
+        run: detections/tests/check-harness-sync.sh
+      - name: Host triage tool self-test (artex_host_triage.py --self-test · non-rule gate)
+        run: detections/tests/triage-selftest.sh
+      - name: Defense guide inline Sigma template consistency check (sigma check · conversion matrix · identical ko/en body · non-rule gate)
+        run: detections/tests/check-defense-template.sh
+      - name: Sigma rule reproduction test (sigma check + backend conversion + indicator preservation)
+        run: detections/tests/sigma/run.sh
+      - name: Sigma real-event matching test (atomic/correlation rules fire on malicious samples/timelines and stay silent on benign)
+        run: detections/tests/sigma_match/run.sh
+      - name: Sigma SigmaHQ convention lint (full validator set + documented criteria)
+        run: detections/tests/sigma_lint/run.sh
+      - name: Sigma backend portability test (verifies correlation rules convert across multiple backends)
+        run: detections/tests/sigma_backends/run.sh
+      - name: Suricata rule reproduction test (synthesize pcap → suricata -r → assert alert count)
+        run: detections/tests/suricata/run.sh
+      - name: ATT&CK layer ↔ rule consistency test
+        run: detections/tests/attack/run.sh
+      - name: Detection indicator ↔ upstream source match test (upstream resync drift guard)
+        run: detections/tests/indicators/run.sh
+      - name: Indicator MISP export ↔ CSV sync test (validate MISP format with pymisp)
+        run: detections/tests/misp/run.sh

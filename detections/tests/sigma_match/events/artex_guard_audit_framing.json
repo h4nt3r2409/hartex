@@ -1,0 +1,16 @@
+{
+  "note": "application log lines. The rule is an unbound keyword matching the guard's audit-control framing marker (guard/guard.go). It matches both the current English marker and the legacy Chinese marker, and stays quiet on an ordinary log line.",
+  "positive": [
+    {
+      "message": "2026-10-07T03:11:09Z guard [ARTEX platform control · non-target defense]This operation is forbidden: rm -rf /"
+    },
+    {
+      "message": "2026-10-07T03:11:09Z guard 【ARTEX 平台管控·非目标防御】This operation is forbidden: rm -rf /"
+    }
+  ],
+  "negative": [
+    {
+      "message": "2026-10-07T03:11:09Z auth: user login ok uid=42 ip=203.0.113.8"
+    }
+  ]
+}

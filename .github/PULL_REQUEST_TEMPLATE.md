@@ -1,0 +1,48 @@
+<!--
+  This PR template is specific to hartex (the ARTEX global edition).
+  Read CONTRIBUTING.md first for the contribution and localization policy.
+-->
+
+## Summary
+
+<!-- What changed, and why, in one or two sentences. -->
+
+## Change type
+
+<!-- Put an x in the matching box. -->
+
+- [ ] Bug fix (`fix`)
+- [ ] New feature (`feat`)
+- [ ] Documentation (`docs`)
+- [ ] Localization / translation (`i18n`)
+- [ ] Refactor / cleanup (`refactor` / `chore`)
+- [ ] Other:
+
+## Related issues
+
+<!-- For example: Closes #123 -->
+
+## How it was verified
+
+<!-- Which commands did you run, and what did you observe? Logs are welcome. -->
+
+- [ ] Go changes: `go build ./...` · `go vet ./...` · `go test ./...`
+- [ ] Web changes: `cd web && npm run check && npm test -- --run && npm run build:static`
+- [ ] UI changes: screenshots attached
+
+## Language / localization checklist
+
+<!-- Leave this section empty if the PR is unrelated to language or localization. -->
+
+- [ ] The agent prompts and code comments remain in English (no new untranslated Chinese or Korean).
+- [ ] Commands, payloads, code, URLs, identifiers, wire/DB enum values, and log text are unchanged.
+- [ ] User-facing strings were added as keys to all five files under `web/messages/`, not hard-coded.
+- [ ] Localized product assets (`README.{ko,zh,es,ja}.md`, `*-ko.md` / `*-zh.md`, non-English catalog
+      values) were kept in their own languages.
+
+## Authorized-use confirmation
+
+- [ ] This change does not encourage use outside the [authorized scope](../README.md#️-read-first--authorized-use-and-legal-notice)
+      or applicable law. Verification was performed only against owned/authorized targets or in a
+      locally isolated environment.
+- [ ] Test or scan artifacts are not included in the commit.

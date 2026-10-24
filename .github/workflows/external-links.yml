@@ -1,0 +1,41 @@
+name: external-links
+# Checks whether external links referenced by tracked Markdown (the incident reporting
+# channels boho.or.kr, privacy.go.kr, pipc.go.kr, and fsec.or.kr in the defense guide,
+# CISA KEV, OWASP, SigmaHQ, Suricata, MITRE, MISP, the original demo, GitHub badges,
+# etc.) are still alive. External URL liveness depends on the network and remote server
+# policies and is flaky, so it is not checked in the internal link merge gate (docs.yml).
+# Therefore this workflow runs only on a weekly schedule and manual dispatch
+# (workflow_dispatch), not on push/PR, and **does not block merges**; when an external
+# link breaks or closes, the periodic run shows it in red. Internal links and anchors
+# are handled by docs.yml, Go build/analysis/tests by ci.yml, detection rules by
+# detections.yml, and the Korean UI build by web.yml.
+#
+# --strict fails only when there is at least one DOWN (404, 410, 5xx, DNS/connection
+# error) not in the allowlist (scripts/external-links-allowlist.txt). RESTRICTED (the
+# host is alive but blocks bots or rate-limits, etc.) and ALLOWED (dead upstream-
+# inherited links we cannot fix) are not counted as failures, so a red light is a
+# signal that "an external link curated by our docs has newly broken — go look". The
+# scheduled workflow runs only on the default branch (main).
+on:
+  schedule:
+    - cron: "17 0 * * 1" # every Monday at 00:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: external-links-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # python3 is preinstalled on the ubuntu-latest runner, and the script uses only
+      # the standard library, so no separate install is needed. Run with -I to isolate
+      # the user site and environment.
+      - name: External link liveness check (browser UA · GET · follow redirects · exclude allowlist · non-blocking for merge)
+        run: python3 -I scripts/check-external-links.py --strict

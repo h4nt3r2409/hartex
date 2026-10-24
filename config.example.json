@@ -1,0 +1,22 @@
+{
+  "_comment": "Copy this file to config.json (or point ARTEX_CONFIG at another path). It contains only the database and skill_dir settings. LLM and other configuration live in environment variables or in-app settings, not here.",
+  "_comment_database": "PostgreSQL connection. Precedence: environment variable ARTEX_PG_DSN > this file's database block. Choose one of two forms: (A) fill in the individual fields below, or (B) put a complete connection string in database.dsn only.",
+  "database": {
+    "host": "127.0.0.1",
+    "port": 5433,
+    "user": "artex",
+    "password": "",
+    "dbname": "artex",
+    "sslmode": "disable"
+  },
+  "_comment_database_dsn": "Form (B): delete the database block above and use a complete DSN instead. When dsn is non-empty, the individual fields are ignored.",
+  "_example_database_dsn": {
+    "database": {
+      "dsn": "postgres://user:pass@db.example.com:5432/artex?sslmode=require"
+    }
+  },
+  "_comment_skill_dir": "Skills root directory (each subdirectory is one skill and contains SKILL.md). Precedence: environment variable ARTEX_SKILL_DIR > this field > default (skills/ next to the executable). Leave it empty or remove the field to use the default. Relative paths resolve against the current working directory.",
+  "skill_dir": "/opt/artex/skills",
+  "_comment_language": "Default user-facing output language (one of en, ko, zh, es, ja). Agent-generated reports, summaries, chat replies, and backend messages follow this language. Precedence: environment variable ARTEX_LANG > this field > default (en). At runtime the display language chosen in Settings overrides this default. Leave it empty or remove the field to use the default (en).",
+  "language": "en"
+}

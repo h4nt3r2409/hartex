@@ -1,0 +1,84 @@
+name: ci
+# Runs build, static analysis, and tests on every push and PR to catch regressions
+# introduced during Korean localization before merge. The release workflow (release.yml)
+# only runs on tags (v*) and only builds and deploys, so this workflow is responsible
+# for validating everyday changes.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Runs build, static analysis, and tests without a database. Reproduces the
+  # environment contributors get after cloning the repository and running
+  # `go test ./...` without PostgreSQL. Integration tests that require a database are
+  # skipped via t.Skipf in this environment (skips count as passes), so the build,
+  # go vet, and all DB-free unit tests must be green. Even this combination catches
+  # cross-package regressions before merge (for example, changing a message in one
+  # package while breaking a test assertion in another package).
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          cache: true
+      - name: go build
+        run: go build ./...
+      - name: go vet
+        run: go vet ./...
+      - name: go test (no DB — integration tests skipped)
+        run: go test ./... -count=1
+      - name: source language check (English-first)
+        run: python3 -I scripts/check-source-language.py
+
+  # Handles DB integration tests that need a real PostgreSQL (notifications, evidence,
+  # usage metering, etc.). Forces the paths the go job skips (notification channel
+  # validation, evidence storage, llm_usage metering, etc.) through a real database, so
+  # even Korean-localization regressions that only surface in the DB integration path
+  # are caught before merge.
+  #
+  # The upstream test harness is designed so all packages share one database, create
+  # tables once and reuse them, and implicitly depend on package execution order and
+  # accumulated data. Running everything against a single database therefore breaks in
+  # different ways (accumulated data contamination, connection teardown races,
+  # cross-package schema dependencies on reset). So here each package gets its own
+  # PostgreSQL service and runs isolated as "empty database + single package". Each
+  # package runs as an independent job (matrix) and does not touch the others' data,
+  # connections, or schema, so those three conflicts structurally disappear. db.Open
+  # automatically migrates the schema, and tables that db.Open does not create (such as
+  # llm_usage) are ensured by each test itself via EnsureLLMUsageTable.
+  go-db:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg: [agent, config, db, evidence, llmrec, server]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: artex
+          POSTGRES_PASSWORD: artex
+          POSTGRES_DB: artex
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U artex -d artex"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          cache: true
+      - name: go test (DB integration · isolated ${{ matrix.pkg }} package)
+        env:
+          ARTEX_PG_DSN: postgres://artex:artex@localhost:5432/artex?sslmode=disable
+        run: go test ./${{ matrix.pkg }}/ -count=1

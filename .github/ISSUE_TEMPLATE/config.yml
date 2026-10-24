@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/h4nt3r2409/hartex/security/policy
+    about: Do not file security vulnerabilities as public issues. Follow the private reporting process in the security policy (SECURITY.md).
+  - name: 📜 Authorized use and legal notice
+    url: https://github.com/h4nt3r2409/hartex#️-read-first--authorized-use-and-legal-notice
+    about: ARTEX may be used only against targets you own or are authorized to test, or in a locally isolated environment. Read the scope and legal notice in README.md before use.
