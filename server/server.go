@@ -77,7 +77,7 @@ const (
 
 // Response strings exposed to the user but not routed through writeErr. They appear verbatim on screen via writeJSON's error
 // field or a method return, so they share the nature of the block above but take a different path.
-// The nav path uses the same wording as the web i18n labels (nav.system="시스템", llmConfig="LLM 설정"). (F34)
+// The nav path uses the same wording as the web i18n labels for the system/LLM settings navigation. (F34)
 const (
 	// Reasons for a missing chat LLM (chatUnavailableReason → writeErr 503 / reason the conversation ended)
 	errChatNoLLMProfile       = "No LLM configuration exists yet: add one under System → LLM settings"
