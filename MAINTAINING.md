@@ -460,3 +460,24 @@ docker run --rm -v "$PWD":/app -w /app \
 with code 0. This is the behavior the binaries job's smoke test confirms. Build outputs
 (`dist/`, `server/webui/dist/`) are not committed to the repository (they are excluded by
 `.gitignore`).
+
+### 9.6 Building release archives
+
+`build.sh --release` builds and embeds the frontend, strips debug information with the Go linker,
+and packages the release files into zips. Release mode produces Linux amd64/arm64, macOS
+amd64/arm64, and Windows amd64 by default:
+
+```bash
+./build.sh --release
+# output: dist/artex-0.3.3-*.zip
+```
+
+UPX self-extracting binaries may be incompatible with some Linux kernels, virtualization
+environments, or security policies, so UPX is not enabled by default. Override the targets with
+`ARTEX_TARGETS`; once you have confirmed the target runtime is compatible, pass `--upx` explicitly
+to shrink the binary further:
+
+```bash
+ARTEX_TARGETS=linux/amd64,windows/amd64 ./build.sh --release
+./build.sh --target linux/amd64 --upx
+```

@@ -107,15 +107,17 @@ The image bundles common tools (ripgrep, curl, vim, npm, nmap, and more), and wh
 
 ### Other installation methods
 
-This repository also ships an install script, precompiled binaries, and a single-binary build from source.
+This repository also ships an install script, precompiled binaries, a single-binary build from source, and a release-archive build.
 
-- **Install script:** running `./install.sh` detects/installs Docker and then lets you choose "① all-in-Docker" or "② local compile and run." "① all-in-Docker" pulls and starts the same image as the quick start above (`ghcr.io/h4nt3r2409/hartex`), while "② local compile and run" builds it yourself the same way as the **single-binary build from source** below.
+- **Install script:** running `./install.sh` detects/installs Docker and then lets you choose "① all-in-Docker" or "② local compile and run." "① all-in-Docker" asks for a Postgres password (press Enter to generate one), writes `.env` automatically, and runs `docker compose up -d`; it pulls and starts the same image as the quick start above (`ghcr.io/h4nt3r2409/hartex`). "② local compile and run" lets you connect an existing database or start one with Docker, generates `config.json`, and compiles the single binary with the frontend embedded using `go`, in the same way as the **single-binary build from source** below.
 - **Precompiled binaries (Releases):** download the zip for your platform from [Releases](https://github.com/h4nt3r2409/hartex/releases), unpack it (`artex`, `start.sh` / `start.bat`, `skills/`, `config.example.json`), then:
 
   ```bash
   cp config.example.json config.json   # fill in the database connection
   ./start.sh                           # → http://localhost:8787
   ```
+
+  To keep it running in the background: `nohup ./start.sh >artex.log 2>&1 &`.
 
 - **Single-binary build from source** (requires Go 1.26.3+ and Node.js/npm):
 
@@ -128,7 +130,72 @@ This repository also ships an install script, precompiled binaries, and a single
 
 > The `npm ci` in step 1) installs the devDependencies the build needs (e.g. `@tailwindcss/postcss`). If your shell has `NODE_ENV=production` set, `npm ci` skips devDependencies and the build fails with `Error: Cannot find module '@tailwindcss/postcss'`; in that case install with `npm ci --include=dev`.
 
-> Launch with `start.sh` (`start.bat` on Windows) rather than running `./artex` directly. That script is a supervisor that restarts the program based on its exit code, and it also handles the UI's "one-click update."
+> Launch with `start.sh` (`start.bat` on Windows) rather than running `./artex` directly. That script is a supervisor that restarts the program based on its exit code, and it also handles the UI's "one-click update." If you run `./artex` directly, the program is not restarted after an update.
+
+- **Building release archives:** `./build.sh --release` builds and embeds the frontend and packages zips for the supported platforms; see [Building release archives](MAINTAINING.md#96-building-release-archives).
+
+---
+
+## Updating
+
+> Upgrading replaces only the program, not the data: the Postgres data volume `pgdata`, `./data` (jwt.key, SQLite, and so on), and `./skills` are all preserved. **Database migrations do not need to be run manually** — on every startup `artex` idempotently re-runs `schema.sql` (including `ADD COLUMN` / `CREATE INDEX IF NOT EXISTS`), so a restart is the migration. Before upgrading, backing up `./data` and the database is still recommended.
+
+### One-click update in the UI (recommended)
+
+In the **System settings** page (sidebar **System settings** → `/system/settings`), the **Version and Updates** card lets you check for and install a new version directly, without logging in to the server.
+
+After you click **Update now**: the release package for the current platform is downloaded → compared against the Release's `SHA256SUMS` → smoke-tested with `-h` → staged as `artex.new` → the program exits, and `start.sh` / `start.bat` restarts it and completes the swap. The page automatically waits for the new version to come up and then refreshes.
+
+- **A failure does not leave a broken program.** If the checksum or smoke test fails, the staged file is discarded and the current version keeps running; if the new version fails to start three times in a row after the swap, it automatically rolls back to `artex.old` (the failed one is kept as `artex.failed` for investigation).
+- **You can roll back at any time.** The previous version is kept as `artex.old`, and the card has **Roll back to the previous version**. Note that the database schema is not rolled back.
+- **An update interrupts running tasks** — an update is a restart, so do it while idle.
+- **Development builds are not offered updates.** Updates are disabled when the version is `dev` or `git describe` carries a suffix, so a release does not overwrite a locally debugged binary.
+- **Under Docker, only the program is swapped, not the image.** Toolchains such as playwright and nmap in the image do not upgrade with it, and `docker compose up -d` recreates the container with the image's own version. To upgrade the image as well, use `docker compose pull artex && docker compose up -d artex`.
+- If reaching GitHub requires a proxy, configure the **global proxy** on the same page and the update path will use it. Updates are downloaded only from GitHub domains, and HTTPS is enforced.
+
+### One-click update script
+
+From the repository root:
+
+```bash
+./update.sh
+```
+
+The script first optionally runs `git pull` to fetch the latest code, then lets you choose **① Docker update** or **② local compile update** (corresponding to `install.sh`):
+
+- **① Docker:** optionally specify a target image tag (press Enter to use `ARTEX_TAG` from `.env`; the default is `latest`) → `docker compose pull` → `docker compose up -d` (restarting on the new image migrates automatically).
+- **② Local:** rebuild the frontend static output → recompile `./artex` (restart the process afterward to apply).
+
+### Docker Compose (manual)
+
+From the repository root:
+
+```bash
+git pull                       # update compose / scripts (optional)
+# To pin a version: set ARTEX_TAG=v0.2.0 in .env; otherwise latest is used
+docker compose pull artex
+docker compose up -d artex     # restart on the new image → automatic schema migration
+docker image prune -f          # clean old images (optional)
+```
+
+### Precompiled binaries (Releases)
+
+Download the new-version zip from [Releases](https://github.com/h4nt3r2409/hartex/releases), stop the old process, overwrite `artex` and `skills/` (keeping your `config.json` and `data/`), and restart:
+
+```bash
+cp -r <extracted>/skills ./ && cp <extracted>/artex ./
+./start.sh
+```
+
+### Build from source
+
+```bash
+git pull
+cd web && npm ci && npm run build:static && cd ..
+rm -rf server/webui/dist && mkdir -p server/webui/dist && cp -a web/out/. server/webui/dist/
+CGO_ENABLED=0 go build -tags embedui -o artex ./cmd/artex
+# restart ./start.sh
+```
 
 ---
 
@@ -148,9 +215,17 @@ This repository also ships an install script, precompiled binaries, and a single
 
 **LLM:** `export ANTHROPIC_API_KEY=sk-...` (or `OPENAI_API_KEY`), or enter it on the UI's "LLM settings" page. Optional environment variables: `ARTEX_LLM_PROVIDER` / `ARTEX_LLM_MODEL` / `ARTEX_LLM_BASE_URL` / `ARTEX_LLM_PROXY`. To use a domestic or open model, point `ARTEX_LLM_BASE_URL` at an OpenAI-compatible endpoint.
 
+**Remote MCP:** in system settings, choose `http` (Streamable HTTP) or `sse` (legacy SSE). A legacy SSE server usually opens the event stream with `GET /sse` and then receives JSON-RPC requests through the `/message?sessionId=...` returned by the server; when configuring it, enter `/sse` as the URL and fill in the header as `Authorization=Bearer <token>`.
+
 **Output language:** this edition forces user-facing output into the selected language (English by default) via a small, code-fixed directive appended to each role's system prompt. The reasoning body is English; the directive only selects the language of the surface the user reads. Switch languages in Settings, or adapt that directive in `agent/prompt.go` (`langDirective`).
 
 **Concurrency:** the number of worker agents spawned per task is adjustable under "System settings" (default 3).
+
+**Asset sync (ScopeSentry):** ARTEX can sync asset data directly from [ScopeSentry](https://github.com/Autumn-27/ScopeSentry), so you do not have to collect it twice:
+
+- On the **Asset sync** page, enter ScopeSentry's address and API key to connect the data source.
+- Choose the targets and asset types to sync by **project** or **task** (domain / subdomain / IP / port / site / endpoint …).
+- Import them in one click; they are merged into the company's asset scope and go straight into ARTEX's asset graph for agents to explore.
 
 **Common flags:** `./start.sh -addr :8787 -proxy :8788` — `-addr` is the frontend and API, `-proxy` is the traffic-recording proxy port. `-addr` defaults to `127.0.0.1:8787` (local connections only); pass an explicit bind address such as `:8787` to serve other machines (see "First-run protection" below).
 
@@ -177,7 +252,30 @@ There is a single admin account (`ARTEX`) whose password is created on the first
 
 The frontend and the API/SSE are both served by the same backend port (default `:8787`), and the live activity stream connects **same-origin** by default. So there is no need to set `NEXT_PUBLIC_SSE_BASE` separately: expose only 443 to the public network and keep 8787 internal.
 
-SSE holds a long-lived connection and keeps pushing events, so you **must disable buffering** in the reverse proxy. If you don't, the browser connects but receives no events (the activity stream appears stuck loading). An Nginx configuration example is in [`README.zh.md`](README.zh.md#反向代理部署https--只开放-443).
+SSE holds a long-lived connection and keeps pushing events, so you **must disable buffering** in the reverse proxy. If you don't, the browser connects but receives no events (the activity stream appears stuck loading). An Nginx example:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name your.domain.com;
+    # ssl_certificate / ssl_certificate_key ...
+
+    location / {
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # SSE essentials: disable buffering, long timeout, HTTP/1.1
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 3600s;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+    }
+}
+```
+
+> Set `NEXT_PUBLIC_SSE_BASE` at **build time** only when SSE must come from a different origin than the page (for example a separate subdomain); the variable is baked into the static bundle by `next build`, so setting it at container runtime has no effect.
 
 ---
 
@@ -382,7 +480,15 @@ Local development and testing:
 - Tests: `go test ./...`
 - Mock preview (no backend): `cd web && NEXT_PUBLIC_MOCK=1 npm run dev`
 
-For other development topics (such as manual vulnerability re-verification), see the Development section of [`README.zh.md`](README.zh.md#开发).
+### Manual vulnerability re-verification
+
+The **Retests** tab on a task's detail page can page through that task's vulnerabilities, show each past conclusion and its evidence, and start a retest manually. After it starts, the current tab is kept and a spinner with **Retesting** is shown; when a fix is confirmed, the vulnerability status is updated in sync.
+
+Click **Retest** in the action area of each row in the vulnerability list, or **Start retest** in the **Vulnerability Retest** area of the vulnerability detail, and fill in the optional fixed version, test conditions, or constraints. The system creates an independent retest Agent session and keeps the current page after it starts. The flat, grouped-by-task, and asset views of the list all support this entry point; while a retest is running, a spinner and **Retesting** are shown, and clicking it opens the corresponding session; when it finishes it returns to **Retest**. A retest does not require restarting the original scan task, and the conclusions are **Reproduced**, **Fixed**, and **Inconclusive**; each conclusion, its evidence, and the session link are saved in the vulnerability detail.
+
+On first startup, the new backend seeds an editable **Vulnerability Retest** (`retester`) Agent, whose prompt, LLM, run budget, and tools can be configured in Agent Management. It uses its bound LLM by default and the globally active configuration when unbound. When a retest session completes successfully with the conclusion **Fixed**, the system automatically changes the vulnerability's handling status to **Fixed**; running, failed, stopped, or any other conclusion keeps the original status. The original evidence and report are always kept. You can also select **Fixed** manually in the status drop-down. While the same vulnerability is being retested, the existing session is reused; after a stop, failure, or service restart it can be started again.
+
+This version's history is viewed through the vulnerability detail and the session; it is not yet included in vulnerability report exports or task archives, and it is not automatically linked to traffic captures. Demo mode only generates explicitly labeled simulated records and does not request real targets.
 
 The changes this global edition adds on top of upstream ARTEX are tracked in the [changelog (CHANGELOG.md)](CHANGELOG.md).
 
