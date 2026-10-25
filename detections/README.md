@@ -166,9 +166,8 @@ directories name the same suites in the same order); the [host-triage tool](tria
 triage check fires on it while a clean host produces zero findings; and a defense-template consistency
 check ([`tests/check-defense-template.sh`](tests/check-defense-template.sh)) that re-runs the facts the
 defense guide states about its inline Sigma correlation template — `sigma check` passes, it converts on
-splunk/eql/loki, lucene and kusto reject the correlation, and the Korean and English copies carry a
-byte-identical rule body — since that template lives as prose outside this rule tree and no suite would
-otherwise catch it going stale against an upstream sigma-cli.
+splunk/eql/loki, and lucene and kusto reject the correlation — since that template lives as prose outside
+this rule tree and no suite would otherwise catch it going stale against an upstream sigma-cli.
 
 Each script exits non-zero on any failed assertion. See [`tests/README.md`](tests/README.md).
 

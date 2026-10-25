@@ -2,9 +2,7 @@
 
 Date: 2026-09-10. Branch: `codex/btw-side-question`. Baseline commit: `8dae851b9b622f2ff2631f332fde9719d0b16fba`.
 
-An independent PostgreSQL test DB and data directory were used. Real model credentials were injected only into the isolated test environment and were not written into code or this record, and the product's default model was not changed either. Go 1.26.3, norma v0.3.6, Next.js 16.2.9.
-
-The real model conversations, returned objects, engineering assertions, and Qwen original review text were stored in `validation-2026-09-10.json` (removed in the English-only migration), which contained no API credentials.
+An independent PostgreSQL test DB and data directory were used. Real model credentials were injected only into the isolated test environment and were not written into code or this record, and the product's default model was not changed either. Go 1.26.3, norma v0.3.6, Next.js 16.2.9. No API credentials were recorded.
 
 ## Engineering checks
 
@@ -78,7 +76,7 @@ First `grok-4.6` was detected. The OpenAI-compatible interface is `http://127.0.
 - Actually stopping and restarting the Go service and then asking a follow-up: preserved 3 previous side-question records, answered assets, markers, and title directly from the persisted snapshot, and did not re-run the main agent.
 - Used the Grok non-streaming configuration in a new session: answered the asset and `ATOMIC-0910` accurately, and returned and stored usage (input 11734, output 138, cache_read 11520).
 
-For the asset case, the main session read the public first page with WebFetch and Bash/curl; the landing page was `https://id.redhaze.top/home`, and the title returned by the page was "红幕科技 RedHaze Group · 全球综合集团门户" (quoted verbatim because that is the original text the model returned). Bash only saved the response temporarily to a local test file and performed no remote write. This fact was confirmed separately from the point that "the side question did not execute tools."
+For the asset case, the main session read the public first page with WebFetch and Bash/curl; the landing page was `https://id.redhaze.top/home`, and the model returned the page's portal title verbatim. Bash only saved the response temporarily to a local test file and performed no remote write. This fact was confirmed separately from the point that "the side question did not execute tools."
 
 Main transcript verification value: `e7e61f135a4a120954b539f357e8c4205d7d5cd7460dcaf3dc0fd066463e1d00`.
 

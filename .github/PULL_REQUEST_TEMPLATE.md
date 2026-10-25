@@ -1,6 +1,6 @@
 <!--
   This PR template is specific to hartex (the ARTEX global edition).
-  Read CONTRIBUTING.md first for the contribution and localization policy.
+  Read CONTRIBUTING.md first for the contribution policy.
 -->
 
 ## Summary
@@ -14,7 +14,6 @@
 - [ ] Bug fix (`fix`)
 - [ ] New feature (`feat`)
 - [ ] Documentation (`docs`)
-- [ ] Localization / translation (`i18n`)
 - [ ] Refactor / cleanup (`refactor` / `chore`)
 - [ ] Other:
 
@@ -29,16 +28,7 @@
 - [ ] Go changes: `go build ./...` · `go vet ./...` · `go test ./...`
 - [ ] Web changes: `cd web && npm run check && npm test -- --run && npm run build:static`
 - [ ] UI changes: screenshots attached
-
-## Language / localization checklist
-
-<!-- Leave this section empty if the PR is unrelated to language or localization. -->
-
-- [ ] The agent prompts and code comments remain in English (no new untranslated Chinese or Korean).
-- [ ] Commands, payloads, code, URLs, identifiers, wire/DB enum values, and log text are unchanged.
-- [ ] User-facing strings were added as keys to all five files under `web/messages/`, not hard-coded.
-- [ ] Localized product assets (`README.{ko,zh,es,ja}.md`, `*-ko.md` / `*-zh.md`, non-English catalog
-      values) were kept in their own languages.
+- [ ] English-only invariant: `python3 -I scripts/check-source-language.py` passes
 
 ## Authorized-use confirmation
 

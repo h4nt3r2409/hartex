@@ -26,9 +26,9 @@ Two more gates run the same way — before the suite loop, out of the summary, a
 the [host-triage tool](../triage/)'s `--self-test` ([`triage-selftest.sh`](triage-selftest.sh)) and the
 defense-template consistency check ([`check-defense-template.sh`](check-defense-template.sh)). The latter
 re-runs the facts the defense guide states about its inline Sigma correlation template (`sigma check`
-passes, it converts on splunk/eql/loki, lucene and kusto reject the correlation, and the Korean and English
-copies carry a byte-identical rule body); that template is prose outside the [`../sigma/`](../sigma/) rule
-tree, so no suite would otherwise catch it going stale against an upstream sigma-cli.
+passes, it converts on splunk/eql/loki, and lucene and kusto reject the correlation); that template is prose
+outside the [`../sigma/`](../sigma/) rule tree, so no suite would otherwise catch it going stale against an
+upstream sigma-cli.
 
 ```sh
 detections/tests/run-all.sh
