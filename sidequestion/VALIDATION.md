@@ -1,14 +1,10 @@
 # `/btw` validation record
 
-English · [한국어](VALIDATION.ko.md) · [中文](VALIDATION.zh.md)
-
 Date: 2026-09-10. Branch: `codex/btw-side-question`. Baseline commit: `8dae851b9b622f2ff2631f332fde9719d0b16fba`.
-
-> This document is the English translation of the original Chinese document (`VALIDATION.zh.md`). The original is preserved as-is so that upstream changes are easy to compare.
 
 An independent PostgreSQL test DB and data directory were used. Real model credentials were injected only into the isolated test environment and were not written into code or this record, and the product's default model was not changed either. Go 1.26.3, norma v0.3.6, Next.js 16.2.9.
 
-The real model conversations, returned objects, engineering assertions, and Qwen original review text are stored in [validation-2026-09-10.json](validation-2026-09-10.json), which contains no API credentials.
+The real model conversations, returned objects, engineering assertions, and Qwen original review text were stored in `validation-2026-09-10.json` (removed in the English-only migration), which contained no API credentials.
 
 ## Engineering checks
 

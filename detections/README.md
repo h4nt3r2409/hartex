@@ -1,11 +1,7 @@
 # ARTEX detection rules
 
-English · [한국어](README.ko.md)
-
-> Korean translation: see [README.ko.md](README.ko.md).
-
 Deployable [Sigma](https://sigmahq.io) rules that formalize the pseudo-rules in the defense guide
-([Korean](../docs/defense-ko.md) · [English](../docs/defense-en.md), section 4) into a vendor-neutral
+([English](../docs/defense-en.md), section 4) into a vendor-neutral
 format you can convert to your own SIEM or EDR query language. Every indicator here is grounded in a
 string or behaviour verified in this repository's source, not inferred.
 

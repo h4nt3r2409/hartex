@@ -1,11 +1,7 @@
 # Vulnerability multi-traffic evidence
 
-> This document is an English translation of the upstream (original) ARTEX design doc. It records,
-> for contributors and maintainers, the design of the feature that links vulnerabilities to traffic
-> evidence. The original (Chinese) is preserved in
-> [`finding-traffic-evidence-zh.md`](finding-traffic-evidence-zh.md).
->
-> Korean: **[Vulnerability multi-traffic evidence (finding-traffic-evidence-ko.md)](finding-traffic-evidence-ko.md)**.
+> This document records, for contributors and maintainers, the design of the feature that links
+> vulnerabilities to traffic evidence.
 
 The **Linked traffic** panel on the vulnerability detail screen supports multi-select across pages, entering a role and a description, ordering, and unbinding. The traffic page likewise lets you select several records at once and link them to a single existing vulnerability. Vulnerability evidence that a task inherits is read-only; to change it you must enter the source task.
 

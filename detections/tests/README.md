@@ -1,9 +1,5 @@
 # ARTEX detection rule tests
 
-English · [한국어](README.ko.md)
-
-> Korean translation: see [README.ko.md](README.ko.md).
-
 Reproducible regression tests that prove the rules under [`../`](../) actually fire — and, just as
 important, stay silent on benign traffic. A detection rule you cannot run is a claim; these tests turn the
 claims in the rule files and the defense guide into something a reviewer can re-run from source.

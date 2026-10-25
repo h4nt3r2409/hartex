@@ -1,10 +1,8 @@
 # Changelog
 
-[한국어](CHANGELOG.ko.md) · English · [中文 (upstream original)](CHANGELOG.zh.md)
-
 This document records the changes that the ARTEX global edition (this fork) adds on top of the upstream repository. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-The upstream ARTEX project's per-version release history (0.3.x and earlier) and contributor list are preserved verbatim in Chinese in [`CHANGELOG.zh.md`](CHANGELOG.zh.md). As with `README.zh.md`, the original text is kept unchanged so that it stays easy to compare against upstream changes. The detailed content and rationale for each change can be found in the repository's commit history.
+The upstream ARTEX project's per-version release history (0.3.x and earlier) and contributor list were preserved verbatim in Chinese in `CHANGELOG.zh.md`; that translated document was removed in the English-only migration. The detailed content and rationale for each change can be found in the repository's commit history.
 
 ## [0.3.16-global.1] · 2026-10-24
 
@@ -95,7 +93,7 @@ The first release of the Korean edition, based on upstream ARTEX 0.3.15.
 
 ### Defense and detection resources
 
-- **Added a defense and detection guide.** A Korean guide ([`docs/defense-ko.md`](docs/defense-ko.md)) and an English version with the same content ([`docs/defense-en.md`](docs/defense-en.md)) that cover how an autonomous AI attack differs from a traditional scanner, the fingerprints (IoCs) a defender can observe, entry points and hardening, detection rules, and incident response.
+- **Added a defense and detection guide.** A Korean guide (`docs/defense-ko.md`) and an English version with the same content ([`docs/defense-en.md`](docs/defense-en.md)) that cover how an autonomous AI attack differs from a traditional scanner, the fingerprints (IoCs) a defender can observe, entry points and hardening, detection rules, and incident response.
 - **Provides deployable detection rules.** The guide's fingerprints were turned into rules you can use directly. The host and log layer is covered by [Sigma](https://sigmahq.io) atomic and correlation rules ([`detections/sigma/`](detections/sigma/)), and the network layer by [Suricata](https://suricata.io) rules ([`detections/suricata/`](detections/suricata/)) that target the enrich prober and norma SDK WebFetch User-Agents.
 - **Visualized ATT&CK coverage.** The techniques that the rules tag were organized into a MITRE ATT&CK Navigator layer ([`detections/attack/`](detections/attack/)).
 - **Provides machine-readable indicators of compromise (IoCs) in standard formats.** The unique fingerprints that ARTEX emits were collected into a single CSV ([`detections/indicators/artex_indicators.csv`](detections/indicators/artex_indicators.csv)), along with a MISP event ([`detections/indicators/artex_indicators.misp.json`](detections/indicators/artex_indicators.misp.json)) carrying the same indicators that can be imported straight into a threat-intelligence platform. Indicators that a rule backs are marked with `to_ids`, while host-forensic ports are marked separately as triage clues.
@@ -110,7 +108,3 @@ The first release of the Korean edition, based on upstream ARTEX 0.3.15.
 - **Periodically checks external-link liveness.** External links the documents point at — the defense guide's incident-reporting channels and standards references — depend on remote server state and are flaky, so they are kept out of the merge gate; instead a non-blocking workflow ([`external-links`](.github/workflows/external-links.yml)) runs a browser-User-Agent, GET, redirect-following check ([`scripts/check-external-links.py`](scripts/check-external-links.py)) every Monday and on manual dispatch. A host that is alive but blocks the check method (bot protection, rate limiting) and upstream-inherited dead links we cannot fix (an allowlist) are not counted as failures, so it turns red only when an external link our documents curate newly breaks.
 - **Established contribution and governance infrastructure.** Added bug, feature, and translation issue templates ([`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/)) and a pull-request template ([`PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md)), a security-vulnerability reporting policy ([`SECURITY.md`](SECURITY.md)), and a code of conduct ([`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)), so that external contributors submit issues, PRs, and security reports in a consistent format.
 - **Completed an English documentation layer for overseas contributors.** This repository is Korean-first, but English versions of the core documents are provided so that contributors, security researchers, and defenders who do not read Korean can reach the same information. In addition to the English `README.en.md` and the defense guide ([`docs/defense-en.md`](docs/defense-en.md)), there are English versions of the changelog ([`CHANGELOG.md`](CHANGELOG.md)), the security reporting policy ([`SECURITY.md`](SECURITY.md)), the code of conduct ([`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)), the contributing guide ([`CONTRIBUTING.md`](CONTRIBUTING.md)), the maintainer runbook ([`MAINTAINING.md`](MAINTAINING.md)), the traffic-evidence design document ([`docs/finding-traffic-evidence-en.md`](docs/finding-traffic-evidence-en.md)), and the bug, feature, and translation issue templates. The Korean and English versions link to each other in their headers, so you can move to the other language from whichever one you arrive at. (The pull-request template is currently Korean-only.)
-
----
-
-The upstream ARTEX project's per-version release history and contributor list can be viewed verbatim in [`CHANGELOG.zh.md`](CHANGELOG.zh.md).

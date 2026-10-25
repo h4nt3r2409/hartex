@@ -1,13 +1,8 @@
 # ARTEX detection rules (Sigma / host · log · SIEM)
 
-English · [한국어](README.ko.md)
-
-> Korean translation: see [README.ko.md](README.ko.md).
-
 The host, log, and SIEM layer of the ARTEX detection set. These [Sigma](https://sigmahq.io) rules
-formalize the pseudo-rules in the defense guide ([Korean](../../docs/defense-ko.md) ·
-[English](../../docs/defense-en.md), section 4) into a vendor-neutral format you convert to your own
-SIEM or EDR query language. Every indicator is grounded in a string or behaviour verified in this
+formalize the pseudo-rules in the defense guide ([English](../../docs/defense-en.md), section 4)
+into a vendor-neutral format you convert to your own SIEM or EDR query language. Every indicator is grounded in a string or behaviour verified in this
 repository's source, not inferred. The network layer lives under [`../suricata/`](../suricata/); the
 full detection set — the ATT&CK coverage layer, the indicator CSV / MISP export, and the host-triage
 script — is indexed in [`../README.md`](../README.md).

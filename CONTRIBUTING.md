@@ -1,14 +1,11 @@
 # Contributing
 
-[한국어](CONTRIBUTING.ko.md) · English
-
 Thank you for your interest in the global edition of ARTEX (`hartex`). This document
 gathers the scope, policies, and procedures you should know before you start contributing.
 Before you send a contribution, please read [Authorized use and legal responsibility](#authorized-use-and-legal-responsibility)
 and [Localization policy](#localization-policy) first.
 
 - To report a bug or suggest a feature → use the [issue templates](https://github.com/h4nt3r2409/hartex/issues/new/choose).
-- If you find a translation or localization error → use the "translation/localization error" issue template.
 - If you find a security vulnerability → **do not open a public issue**; follow the procedure in [SECURITY.md](SECURITY.md).
 - Everyone who takes part must follow the [Code of Conduct (CODE_OF_CONDUCT.md)](CODE_OF_CONDUCT.md).
 
@@ -82,7 +79,6 @@ The design intent of the main features is documented in the design docs under `d
 work on the feature that links vulnerabilities to traffic evidence (the report agent's automatic
 binding, `report_finding`'s `traffic_refs`, and so on), read the
 [vulnerability multi-traffic-evidence design doc](docs/finding-traffic-evidence-en.md) first.
-The original (Chinese) is preserved as `finding-traffic-evidence-zh.md` in the same folder.
 
 ### Required versions
 

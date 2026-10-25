@@ -6,8 +6,6 @@
 
 The UI and generated output default to English, and **can be switched to Korean, Chinese, Spanish or Japanese in Settings (System → Settings → Display language).** Changing the language also changes the language of agent-generated reports, summaries and chat replies.
 
-English · [한국어](README.ko.md) · [中文](README.zh.md) · [Español](README.es.md) · [日本語](README.ja.md)
-
 [![ci](https://github.com/h4nt3r2409/hartex/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/h4nt3r2409/hartex/actions/workflows/ci.yml) [![detections](https://github.com/h4nt3r2409/hartex/actions/workflows/detections.yml/badge.svg?branch=main)](https://github.com/h4nt3r2409/hartex/actions/workflows/detections.yml) [![web](https://github.com/h4nt3r2409/hartex/actions/workflows/web.yml/badge.svg?branch=main)](https://github.com/h4nt3r2409/hartex/actions/workflows/web.yml) [![license: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 
 </div>
@@ -22,7 +20,7 @@ English · [한국어](README.ko.md) · [中文](README.zh.md) · [Español](REA
 >
 > - **Unauthorized use is a crime in itself.** Do not run any scanning, probing, or exploitation against systems you do not own or for which you lack explicit written authorization. In the Republic of Korea, unauthorized intrusion into an information and communications network violates the Network Act, and the Personal Information Protection Act also applies where personal data is involved.
 > - **Do not target live services or other parties' assets.** Verify only in learning, research, and locally isolated environments you own (deliberately vulnerable targets such as OWASP Juice Shop or DVWA).
-> - **Read it from a defender's point of view.** This repository also compiles defensive and detection material, such as detection signatures and hardening checklists, for autonomous AI attacks. → **[Defense & Detection Guide](docs/defense-en.md)** (also in [Korean](docs/defense-ko.md))
+> - **Read it from a defender's point of view.** This repository also compiles defensive and detection material, such as detection signatures and hardening checklists, for autonomous AI attacks. → **[Defense & Detection Guide](docs/defense-en.md)**
 >
 > If you do not agree to this warning and to the [usage restrictions and disclaimer](#license-and-disclaimer) below, do not download or use this repository.
 
@@ -58,8 +56,6 @@ Upstream ARTEX has its prompts, UI, and documentation entirely in Chinese, which
 - **State the legal boundaries** — the "authorized scope only" warning is stated clearly, together with Korea-specific notices on network and privacy law (the maintainers are based in Korea); the law of wherever you operate applies as well.
 - **Support diverse LLM stacks** — the LLM provider can be swapped from a frontier model to any OpenAI-compatible endpoint (domestic or open models). See [Configuration](#configuration).
 
-> The boundaries and design policy of this multilingual edition are documented in more detail in the repository's working notes. To make it easy to diff against the upstream repository, the original Chinese document is preserved as [`README.zh.md`](README.zh.md).
-
 ---
 
 ## Screenshots
@@ -82,11 +78,7 @@ The three screens below show the default English UI (switchable to Korean, Chine
   <sub><b>Chat</b> — a human steps into the autonomous run to inject hints while the agent summarizes the attack chain in English.</sub>
 </p>
 
-The original (Chinese UI) screens are available in [`README.zh.md`](README.zh.md#截图预览) (Chinese UI).
-
 ---
-
-> **Note on `README.zh.md`:** the Chinese README is the upstream document preserved verbatim for diffing. Its clone, image, and release URLs point at the retired upstream project; use this file for installing this edition.
 
 ## Quick start (Docker Compose)
 
@@ -451,7 +443,7 @@ This lets the attack chain progress reliably even in an "event-driven + stateles
 
 This repository aims to help the **defending side** understand how autonomous AI attacks work and build the capability to detect and block them. It takes the ARTEX behavior seen in the architecture above and turns it around into a **defender's view**, laying out what to observe and where to tighten.
 
-- **[Defense & Detection Guide (docs/defense-en.md)](docs/defense-en.md)** (also in [Korean](docs/defense-ko.md))
+- **[Defense & Detection Guide (docs/defense-en.md)](docs/defense-en.md)**
   - How autonomous AI attacks differ from traditional scanners, why they are hard to detect, and how to detect them anyway
   - The fingerprints a defender can observe (IoCs and behavioral signatures) — separated into the target view and the forensic view
   - The entry points attackers target and the corresponding hardening (auxiliary authentication, IDOR, credential stuffing, sessions and secrets)
@@ -522,6 +514,5 @@ This project is provided "AS IS" without any warranty, express or implied. The o
 ## Upstream project
 
 - Upstream repository: [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX) — removed from GitHub (404); the upstream history is preserved in this repository.
-- Original README (Chinese): [README.zh.md](README.zh.md)
 - Original online demo (Chinese UI): [https://artex-demo.vercel.app/](https://artex-demo.vercel.app/) (currently unreachable, checked 2026-10)
 - Agent SDK: [Autumn-27/norma](https://github.com/Autumn-27/norma) — the source repository is gone, but `v0.4.3` still resolves through the Go module proxy.

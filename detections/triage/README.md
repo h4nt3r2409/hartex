@@ -1,9 +1,5 @@
 # ARTEX host triage
 
-English · [한국어](README.ko.md)
-
-> Korean translation: see [README.ko.md](README.ko.md).
-
 A read-only triage helper you run **on a single suspected host** to answer "did ARTEX run here?" from
 local state. The rest of this directory serves defenders who run a SIEM ([Sigma](../sigma/)), a network
 sensor ([Suricata](../suricata/)), or a threat-intelligence platform (the [indicators](../indicators/)).

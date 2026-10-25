@@ -1,10 +1,6 @@
 # Long side-question conversations and the context budget
 
-English · [한국어](CONTEXT_BUDGET.ko.md) · [中文](CONTEXT_BUDGET.zh.md)
-
 Revised 2026-09-11. The previous implementation treated the character count of the request JSON as the token count and inherited the main task's 32K output reservation as-is, so it rejected legitimate side questions in advance when there was a lot of HTML, JS, or tool output.
-
-> This document is the English translation of the original Chinese document (`CONTEXT_BUDGET.zh.md`). The original is preserved as-is so that upstream changes are easy to compare.
 
 ## Comparison with open-source implementations
 

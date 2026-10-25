@@ -1,14 +1,10 @@
 # ARTEX detection rules (Suricata / network)
 
-English · [한국어](README.ko.md)
-
-> Korean translation: see [README.ko.md](README.ko.md).
-
 The network-layer companion to the [Sigma rules](../sigma/). These [Suricata](https://suricata.io)
 signatures cover the two ARTEX artifacts that are observable on the wire, and every indicator is grounded in a
 string or behaviour verified in this repository's source, not inferred. The host, log, and SIEM layers live
-under [`../sigma/`](../sigma/); the defense guide ([Korean](../../docs/defense-ko.md) ·
-[English](../../docs/defense-en.md)) explains the full picture.
+under [`../sigma/`](../sigma/); the defense guide ([English](../../docs/defense-en.md)) explains the
+full picture.
 
 ## Rules — [`artex.rules`](artex.rules)
 

@@ -1,15 +1,11 @@
 # ARTEX indicators (machine-readable)
 
-English · [한국어](README.ko.md)
-
-> Korean translation: see [README.ko.md](README.ko.md).
-
 A single, machine-readable list of the unique fingerprints ARTEX itself emits, for defenders who want the
 atomic indicators rather than the detection logic: drop [`artex_indicators.csv`](artex_indicators.csv)
 into a threat-intelligence platform, a SIEM lookup table, or a host-triage checklist. Every value is a
 string verified in this repository's source — the same grounding the
 [detection rules](../README.md) and the defense guide
-([Korean](../../docs/defense-ko.md) · [English](../../docs/defense-en.md), section 2) rely on — and each
+([English](../../docs/defense-en.md), section 2) rely on — and each
 row records where it comes from and which rule (if any) is built on it.
 
 ## Columns

@@ -1,7 +1,5 @@
 # Upstream Sync and Preventing Translation Drift (Maintainer Guide)
 
-[한국어](MAINTAINING.ko.md) · English
-
 This document lays out the procedure a **maintainer** follows to keep up with changes in the
 upstream repository [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX) (currently unreachable, checked 2026-10) while maintaining the
 the global (multilingual) edition. Contribution scope, legal responsibility, and the localization policy live in
@@ -329,8 +327,7 @@ gh repo set-default --view   # check that h4nt3r2409/hartex shows up
 
 ### 8.2 Check external links in documents with GET, like a browser
 
-Section 7 of the defense guide ([`docs/defense-en.md`](docs/defense-en.md) ·
-[`defense-ko.md`](docs/defense-ko.md)) carries links to Korean official channels (boho.or.kr,
+Section 7 of the defense guide ([`docs/defense-en.md`](docs/defense-en.md)) carries links to Korean official channels (boho.or.kr,
 fsec.or.kr, pipc.go.kr). When checking whether these links are alive, using only `curl -I` (a HEAD
 request) or the default User-Agent will **mistake a healthy link for a broken one**. Korean public and
 security agency sites refuse a simple check for three reasons.

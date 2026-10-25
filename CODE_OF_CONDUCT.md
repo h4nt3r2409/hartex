@@ -1,7 +1,5 @@
 # Code of Conduct
 
-[한국어](CODE_OF_CONDUCT.ko.md) · English
-
 ## Our Pledge
 
 To make participation in this project a harassment-free experience for everyone, we as maintainers and contributors pledge to respect all people regardless of age, body size, disability, ethnicity, gender, level of experience, nationality, personal appearance, race, religion, or gender identity and orientation.

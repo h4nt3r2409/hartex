@@ -1,12 +1,8 @@
 # ARTEX `/btw` Side Questions
 
-English · [한국어](README.ko.md) · [中文](README.zh.md)
-
 Regular chat, the task's MainAgent, and Workers launched directly by the current task each support side questions separate from the main conversation. Typing `/btw <question>` in the main input submits a side question; typing only `/btw` with no content, or pressing the "Side question" button, opens the previous side-question history. On desktop it is shown as a width-adjustable sidebar, and on mobile as a drawer.
 
 Side-question responses are generated from a snapshot of the agent context at the time the question was submitted, and support streaming display, follow-up questions, stop, and clear. Closing the panel, refreshing the page, or losing the SSE connection does not cancel the model request. Stop affects only the single side question currently in progress, while Clear cancels side questions and deletes the side-question history as well, but leaves the main-context snapshot intact.
-
-> This document is the English translation of the original Chinese document (`README.zh.md`). The original is preserved as-is so that upstream changes are easy to compare.
 
 ## Scope of implementation
 
