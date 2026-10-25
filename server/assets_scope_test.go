@@ -14,6 +14,8 @@ import (
 )
 
 func TestCompanyScopeInputsAcceptStructuredAndLegacyRules(t *testing.T) {
+	// Allowlist §7 item 6: Chinese ICP-filing (备案/ICP) detection is functional input,
+	// not display copy, so the fixture keeps the Chinese certificate form.
 	var inputs companyScopeInputs
 	if err := json.Unmarshal([]byte(`[
 		"example.com",
@@ -137,7 +139,7 @@ func TestCompanyScopeHTTPErrorClassificationAndBounds(t *testing.T) {
 		body, err := json.Marshal(map[string]any{
 			"name": "Oversized Scope",
 			"scope": []map[string]string{{
-				"kind": "keyword", "value": strings.Repeat("界", db.MaxCompanyScopeRawRunes+1),
+				"kind": "keyword", "value": strings.Repeat("π", db.MaxCompanyScopeRawRunes+1),
 			}},
 		})
 		if err != nil {

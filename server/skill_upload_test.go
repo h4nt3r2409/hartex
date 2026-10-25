@@ -17,12 +17,14 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 )
 
+// Non-ASCII skill identifiers must stay accepted; use non-CJK Unicode here so the
+// fixture itself is not Chinese/Japanese content.
 func TestValidSkillName(t *testing.T) {
-	ok := []string{"web-recon", "a", "nuclei2", "中文技能", "端口扫描-x", "日本語スキル"}
+	ok := []string{"web-recon", "a", "nuclei2", "café-skill", "π-scan", "über-skill"}
 	bad := []string{
-		"", "Web-Recon", "-lead", "trail-", "dou--ble", "has space", "中文 技能",
-		"dot.name", "a/b", `a\b`, "..", ".", "中文/技能", "sk\x00ill", "中‮文",
-		strings.Repeat("a", 65), "1abc", "中文技能!",
+		"", "Web-Recon", "-lead", "trail-", "dou--ble", "has space", "café skill",
+		"dot.name", "a/b", `a\b`, "..", ".", "café/skill", "sk\x00ill", "a\u202eb",
+		strings.Repeat("a", 65), "1abc", "café-skill!",
 	}
 	for _, n := range ok {
 		if !validSkillName(n) {
@@ -38,12 +40,12 @@ func TestValidSkillName(t *testing.T) {
 
 func TestSkillRelPath(t *testing.T) {
 	ok := map[string]string{
-		"SKILL.md":           "SKILL.md",
-		"scripts/run.py":     "scripts/run.py",
-		"参考/中文说明.md":         "参考/中文说明.md",
-		"references/a b.txt": "references/a b.txt",
-		"./SKILL.md":         "SKILL.md",
-		"assets/图片-1_v2.png": "assets/图片-1_v2.png",
+		"SKILL.md":                 "SKILL.md",
+		"scripts/run.py":           "scripts/run.py",
+		"references/café notes.md": "references/café notes.md",
+		"references/a b.txt":       "references/a b.txt",
+		"./SKILL.md":               "SKILL.md",
+		"assets/π-1_v2.png":        "assets/π-1_v2.png",
 	}
 	for in, want := range ok {
 		got, msg := skillRelPath(in)
@@ -53,7 +55,7 @@ func TestSkillRelPath(t *testing.T) {
 	}
 	bad := []string{
 		"", "../etc/passwd", "a/../../b", "/abs/path", "a//b", `..\..\x`,
-		"%2e%2e/x", "a\x00b", "中文 名.md", "中‮文.md", "a#b.md", "a?b.md",
+		"%2e%2e/x", "a\x00b", "café\u00a0name.md", "a\u202eb.md", "a#b.md", "a?b.md",
 		"a:b.md", string([]byte{0xd6, 0xd0}) + ".md", // raw GBK bytes: invalid UTF-8
 		strings.Repeat("a", maxSkillPathLen+1),
 	}
@@ -127,33 +129,39 @@ func uploadZip(t *testing.T, skillDir string, filename string, data []byte) (*ht
 	return rr, out
 }
 
-const zhSkillMD = "---\nname: 中文技能\ndescription: 测试\n---\n正文\n"
+// Allowlist §7 item 9: GBK zip-name decoding. Chinese entry names are the data this
+// decoder exists to support (archives written by Chinese Windows 7-Zip/Explorer), so
+// this fixture stays Chinese by design.
+const unicodeSkillMD = "---\nname: café-skill\ndescription: test\n---\nbody\n"
+
+const gbkSkillMD = "---\nname: 中文技能\ndescription: test\n---\nbody\n"
 
 // A zstd-compressed archive (WinZip's optional compression method) used to blow up with
 // "zip: unsupported compression"; it now installs like any Deflate archive.
-func TestUploadSkillZstdAndChineseNames(t *testing.T) {
+func TestUploadSkillZstdAndUnicodeNames(t *testing.T) {
 	dir := t.TempDir()
 	data := buildZip(t,
-		zipFile{name: "中文技能/SKILL.md", body: zhSkillMD, method: zipMethodZstd},
-		zipFile{name: "中文技能/参考/说明 文档.md", body: "参考", method: zipMethodZstd},
-		zipFile{name: "中文技能/scripts/run.py", body: "print(1)", method: zip.Deflate},
+		zipFile{name: "café-skill/SKILL.md", body: unicodeSkillMD, method: zipMethodZstd},
+		zipFile{name: "café-skill/references/notes file.md", body: "notes", method: zipMethodZstd},
+		zipFile{name: "café-skill/scripts/run.py", body: "print(1)", method: zip.Deflate},
 	)
-	rr, out := uploadZip(t, dir, "中文技能.zip", data)
+	rr, out := uploadZip(t, dir, "café-skill.zip", data)
 	if rr.Code != 201 {
 		t.Fatalf("status = %d, body = %s", rr.Code, rr.Body)
 	}
-	if out["name"] != "中文技能" {
-		t.Fatalf("name = %v, want 中文技能", out["name"])
+	if out["name"] != "café-skill" {
+		t.Fatalf("name = %v, want café-skill", out["name"])
 	}
-	for _, rel := range []string{"SKILL.md", "参考/说明 文档.md", "scripts/run.py"} {
-		if _, err := os.Stat(filepath.Join(dir, "中文技能", rel)); err != nil {
+	for _, rel := range []string{"SKILL.md", "references/notes file.md", "scripts/run.py"} {
+		if _, err := os.Stat(filepath.Join(dir, "café-skill", rel)); err != nil {
 			t.Errorf("missing extracted file %q: %v", rel, err)
 		}
 	}
 }
 
 // GBK-named entries (7-Zip / File Explorer on Chinese Windows) must be decoded rather
-// than rejected as invalid UTF-8 paths.
+// than rejected as invalid UTF-8 paths. Allowlist §7 item 9: the Chinese entry names in
+// this case are the functional GBK fixture.
 func TestUploadSkillGBKNames(t *testing.T) {
 	gbk := func(s string) string {
 		b, err := simplifiedchinese.GBK.NewEncoder().String(s)
@@ -164,8 +172,8 @@ func TestUploadSkillGBKNames(t *testing.T) {
 	}
 	dir := t.TempDir()
 	data := buildZip(t,
-		zipFile{name: gbk("中文技能/SKILL.md"), body: zhSkillMD, method: zip.Deflate, nonUTF8: true},
-		zipFile{name: gbk("中文技能/参考资料.md"), body: "内容", method: zip.Deflate, nonUTF8: true},
+		zipFile{name: gbk("中文技能/SKILL.md"), body: gbkSkillMD, method: zip.Deflate, nonUTF8: true},
+		zipFile{name: gbk("中文技能/参考资料.md"), body: "content", method: zip.Deflate, nonUTF8: true},
 	)
 	rr, out := uploadZip(t, dir, "skill.zip", data)
 	if rr.Code != 201 {
@@ -236,8 +244,8 @@ func TestUploadSkillRejectsTraversal(t *testing.T) {
 }
 
 func TestSkillNameFromFrontmatterQuoted(t *testing.T) {
-	got := skillNameFromFrontmatter([]byte("---\nname: \"中文技能\"\ndescription: x\n---\n"))
-	if got != "中文技能" {
-		t.Fatalf("name = %q, want 中文技能", got)
+	got := skillNameFromFrontmatter([]byte("---\nname: \"café-skill\"\ndescription: x\n---\n"))
+	if got != "café-skill" {
+		t.Fatalf("name = %q, want café-skill", got)
 	}
 }

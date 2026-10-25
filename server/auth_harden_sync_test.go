@@ -28,13 +28,13 @@ func TestAuthStatusFailsClosedWhenDataSourceUnavailable(t *testing.T) {
 	s.authStatus(w, httptest.NewRequest("GET", "/api/auth/status", nil))
 
 	if w.Code != 503 {
-		t.Fatalf("status=%d, 503 을 기대했습니다 (읽기 실패를 미초기화로 보면 사용자가 /setup 으로 가서 비밀번호를 덮어씁니다); body=%s", w.Code, w.Body.String())
+		t.Fatalf("status=%d, want 503 (treating a read failure as uninitialized sends the user to /setup and overwrites the password); body=%s", w.Code, w.Body.String())
 	}
 	var payload struct {
 		Initialized *bool `json:"initialized"`
 	}
 	if err := json.Unmarshal(w.Body.Bytes(), &payload); err == nil && payload.Initialized != nil {
-		t.Fatalf("읽기 실패 시 initialized 를 답하면 안 됩니다: %v", *payload.Initialized)
+		t.Fatalf("must not report initialized when the read failed: %v", *payload.Initialized)
 	}
 }
 
@@ -54,10 +54,10 @@ func TestAuthInitFailsClosedWhenDataSourceUnavailable(t *testing.T) {
 	s.authInit(w, httptest.NewRequest("POST", "/api/auth/init", body))
 
 	if w.Code != 503 {
-		t.Fatalf("status=%d, 503 을 기대했습니다 (읽기 실패 시 통과시키면 인증되지 않은 요청이 기존 비밀번호를 덮어씁니다); body=%s", w.Code, w.Body.String())
+		t.Fatalf("status=%d, want 503 (letting a read failure pass would let unauthenticated requests overwrite the existing password); body=%s", w.Code, w.Body.String())
 	}
 	if strings.Contains(w.Body.String(), "token") {
-		t.Fatalf("읽기 실패 시 token 을 발급하면 안 됩니다: %s", w.Body.String())
+		t.Fatalf("must not issue a token when the read failed: %s", w.Body.String())
 	}
 }
 
@@ -93,7 +93,7 @@ func TestVerifyTokenFailsClosedWhenDataSourceUnavailable(t *testing.T) {
 		t.Fatal(err)
 	}
 	if s.verifyToken(tok) {
-		t.Fatal("비밀번호 상태를 읽을 수 없는 동안에는 어떤 토큰도 통과하면 안 됩니다")
+		t.Fatal("no token may pass while the password state cannot be read")
 	}
 }
 
@@ -114,7 +114,7 @@ func TestBootstrapAuthSkipsFirstRunWhenDataSourceUnavailable(t *testing.T) {
 	loaded := s.passHashLoaded
 	s.authMu.Unlock()
 	if loaded {
-		t.Fatal("읽기 실패를 \"비밀번호 없음\"으로 캐시하면 안 됩니다")
+		t.Fatal("a read failure must not be cached as \"no password\"")
 	}
 }
 
@@ -126,7 +126,7 @@ func TestBootstrapAdminPasswordEnvDoesNotOverwriteDB(t *testing.T) {
 	rig.s.bootstrapAuth()
 	first, err := rig.s.reloadPassHash()
 	if err != nil || first == "" {
-		t.Fatalf("첫 인스턴스가 비밀번호를 초기화해야 합니다 (err=%v)", err)
+		t.Fatalf("the first instance must initialize the password (err=%v)", err)
 	}
 
 	// Second instance: the startup read is non-empty, so it should return immediately; but
@@ -136,13 +136,13 @@ func TestBootstrapAdminPasswordEnvDoesNotOverwriteDB(t *testing.T) {
 		t.Fatal(err)
 	}
 	if inserted {
-		t.Fatal("이미 있는 비밀번호 위에 insert 가 성공하면 안 됩니다")
+		t.Fatal("insert must not succeed over an existing password")
 	}
 	t.Setenv(adminPasswordEnv, "second-admin-pass-456")
 	s2 := &Server{m: rig.s.m, jwtKey: rig.s.jwtKey}
 	s2.bootstrapAuth()
 	if got, _ := s2.reloadPassHash(); got != first {
-		t.Fatal("두 번째 인스턴스가 기존 비밀번호를 덮어썼습니다")
+		t.Fatal("the second instance overwrote the existing password")
 	}
 }
 
@@ -151,9 +151,9 @@ func TestBootstrapAdminPasswordEnvRejectsOverBcryptLimitDB(t *testing.T) {
 	t.Setenv(adminPasswordEnv, strings.Repeat("a", 73))
 	rig.s.bootstrapAuth()
 	if h, _ := rig.s.reloadPassHash(); h != "" {
-		t.Fatal("72바이트를 넘는 환경 변수 비밀번호는 무시되어야 합니다")
+		t.Fatal("an environment password longer than 72 bytes must be ignored")
 	}
 	if rig.s.currentSetupToken() == "" {
-		t.Fatal("무시된 뒤에는 설정 토큰이 발급되어야 합니다")
+		t.Fatal("a setup token must be issued after it is ignored")
 	}
 }

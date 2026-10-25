@@ -33,6 +33,7 @@ func TestInterceptFilterHTTP(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Allowlist §7 item 1: [模型] is the persisted model-vs-rule decision sentinel.
 	for _, state := range []string{"pending", "allowed", "denied", "timeout"} {
 		if _, err := d.CreateDecidedIntercept(0, 0, scope, "test", "Bash", []byte(`{}`), state, "[模型] fixture"); err != nil {
 			t.Fatal(err)

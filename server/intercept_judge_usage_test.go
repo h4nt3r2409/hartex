@@ -38,7 +38,7 @@ func judgeUsageRig(t *testing.T) (*Server, *db.DB) {
 	// llm_usage is created by EnsureLLMUsageTable() on the Go side, not by schema.sql.
 	// Match the existing tests in the db package (finding_traffic_archive_test.go, etc.).
 	if err := d.EnsureLLMUsageTable(); err != nil {
-		t.Fatalf("EnsureLLMUsageTable 실패: %v", err)
+		t.Fatalf("EnsureLLMUsageTable failed: %v", err)
 	}
 	cleanup := func() {
 		_, _ = d.Exec(`DELETE FROM llm_usage WHERE model = $1`, judgeFixtureModel)
@@ -57,7 +57,7 @@ func callJudgeUsage(t *testing.T, s *Server, query string) (int, db.JudgeUsage) 
 	var out db.JudgeUsage
 	if rec.Code == http.StatusOK {
 		if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
-			t.Fatalf("응답 JSON 파싱 실패: %v (body=%s)", err, rec.Body.String())
+			t.Fatalf("failed to parse response JSON: %v (body=%s)", err, rec.Body.String())
 		}
 	}
 	return rec.Code, out
@@ -71,7 +71,7 @@ INSERT INTO llm_usage(worker, model, profile_name, input_tokens, output_tokens, 
 VALUES ($1,$2,'fixture',$3,$4,$5,$6,'ok', now() - ($7 * interval '1 day'))`,
 		worker, judgeFixtureModel, in, out, cacheRead, cacheWrite, tsShiftDays)
 	if err != nil {
-		t.Fatalf("fixture insert 실패: %v", err)
+		t.Fatalf("fixture insert failed: %v", err)
 	}
 }
 
@@ -83,7 +83,7 @@ func TestInterceptJudgeUsageAggregates(t *testing.T) {
 
 	base, err := d.JudgeUsageStats(30)
 	if err != nil {
-		t.Fatalf("baseline JudgeUsageStats 실패: %v", err)
+		t.Fatalf("baseline JudgeUsageStats failed: %v", err)
 	}
 
 	insertUsage(t, d, "judge", 100, 20, 7, 3, 0)
@@ -98,7 +98,7 @@ func TestInterceptJudgeUsageAggregates(t *testing.T) {
 		t.Errorf("calls delta=%d want 2", got.Calls-base.Calls)
 	}
 	if got.InputTokens-base.InputTokens != 150 {
-		t.Errorf("input delta=%d want 150 (judge 아닌 행이 섞였을 가능성)", got.InputTokens-base.InputTokens)
+		t.Errorf("input delta=%d want 150 (non-judge rows may have been mixed in)", got.InputTokens-base.InputTokens)
 	}
 	if got.OutputTokens-base.OutputTokens != 30 {
 		t.Errorf("output delta=%d want 30", got.OutputTokens-base.OutputTokens)
@@ -116,15 +116,15 @@ func TestInterceptJudgeUsageAggregates(t *testing.T) {
 		if day.Date == today {
 			found = true
 			if day.Calls < 2 {
-				t.Errorf("오늘 버킷 calls=%d want >=2", day.Calls)
+				t.Errorf("today bucket calls=%d want >=2", day.Calls)
 			}
 			if day.InputTokens < 150 {
-				t.Errorf("오늘 버킷 input=%d want >=150", day.InputTokens)
+				t.Errorf("today bucket input=%d want >=150", day.InputTokens)
 			}
 		}
 	}
 	if !found {
-		t.Errorf("일자 계열에 오늘(%s) 버킷이 없음: %+v", today, got.Daily)
+		t.Errorf("daily series has no bucket for today (%s): %+v", today, got.Daily)
 	}
 }
 
@@ -140,16 +140,16 @@ func TestInterceptJudgeUsageDaysWindow(t *testing.T) {
 	cutoff := time.Now().UTC().AddDate(0, 0, -1).Format("2006-01-02")
 	for _, day := range recent.Daily {
 		if day.Date < cutoff {
-			t.Errorf("days=1 인데 창 밖 버킷(%s)이 반환됨 (cutoff=%s)", day.Date, cutoff)
+			t.Errorf("days=1 returned an out-of-window bucket (%s) (cutoff=%s)", day.Date, cutoff)
 		}
 	}
 	if recent.Calls < 2 {
-		t.Errorf("누계 calls=%d want >=2 (창과 무관하게 전체 기간을 세야 함)", recent.Calls)
+		t.Errorf("cumulative calls=%d want >=2 (the whole period must be counted regardless of the window)", recent.Calls)
 	}
 
 	_, all := callJudgeUsage(t, s, "?days=0") // 0 = corrected to the default 30 days
 	if len(all.Daily) > 31 {
-		t.Errorf("days=0 보정 후 버킷 수가 비정상적으로 많음: %d", len(all.Daily))
+		t.Errorf("too many buckets after the days=0 correction: %d", len(all.Daily))
 	}
 }
 
@@ -168,9 +168,9 @@ func TestInterceptJudgeUsageWithoutDatabase(t *testing.T) {
 	}
 	var out db.JudgeUsage
 	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
-		t.Fatalf("응답 JSON 파싱 실패: %v", err)
+		t.Fatalf("failed to parse response JSON: %v", err)
 	}
 	if out.Calls != 0 || len(out.Daily) != 0 {
-		t.Errorf("DB 없을 때는 빈 계열이어야 함: %+v", out)
+		t.Errorf("without a DB the series must be empty: %+v", out)
 	}
 }

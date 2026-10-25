@@ -31,7 +31,8 @@ func TestInterceptDetailHTTP(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	id, err := m.pg.CreateInterceptPending(0, 0, "approval-http", "test", "Write", []byte(`{}`), "[模型] 确认", &db.InterceptAudit{InitialAction: "ask", UserMessage: "snapshot", ExecutionStatus: "not_started"})
+	// Allowlist §7 item 1: [模型] is the persisted model-vs-rule decision sentinel.
+	id, err := m.pg.CreateInterceptPending(0, 0, "approval-http", "test", "Write", []byte(`{}`), "[模型] confirmation", &db.InterceptAudit{InitialAction: "ask", UserMessage: "snapshot", ExecutionStatus: "not_started"})
 	if err != nil {
 		t.Fatal(err)
 	}

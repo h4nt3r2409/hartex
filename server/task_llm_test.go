@@ -109,6 +109,8 @@ func collectTaskLLMStream(seq iter.Seq2[llm.StreamEvent, error]) ([]llm.StreamEv
 
 func TestIsQuotaExhaustedError(t *testing.T) {
 	t.Parallel()
+	// Allowlist §7 item 4: these are literal upstream provider quota errors; the
+	// Chinese string is upstream API text used for quota detection.
 	positive := []string{
 		`openai: code=insufficient_quota status=429`,
 		`provider error: quota_exceeded`,

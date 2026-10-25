@@ -74,11 +74,11 @@ func (r *authTestRig) do(method, path, token string, body map[string]any) (int, 
 func (r *authTestRig) expect(code int, got int, body map[string]any, wantErr string) {
 	r.t.Helper()
 	if got != code {
-		r.t.Fatalf("상태 코드 = %d, 기대 %d (body=%v)", got, code, body)
+		r.t.Fatalf("status code = %d, want %d (body=%v)", got, code, body)
 	}
 	if wantErr != "" {
 		if msg, _ := body["error"].(string); msg != wantErr {
-			r.t.Fatalf("오류 문구 = %q, 기대 %q", msg, wantErr)
+			r.t.Fatalf("error message = %q, want %q", msg, wantErr)
 		}
 	}
 }
@@ -88,29 +88,29 @@ func TestAuthInitRequiresSetupTokenDB(t *testing.T) {
 	s := rig.s
 	s.bootstrapAuth()
 	if h, _ := s.cachedPassHash(); h != "" {
-		t.Fatal("빈 DB 에서는 비밀번호가 없어야 합니다")
+		t.Fatal("an empty DB must have no password")
 	}
 	setup := s.currentSetupToken()
 	if setup == "" {
-		t.Fatal("기동 시 설정 토큰이 만들어져야 합니다")
+		t.Fatal("a setup token must be created at startup")
 	}
 
 	code, body := rig.do(http.MethodGet, "/api/auth/status", "", nil)
 	rig.expect(200, code, body, "")
 	if body["initialized"] != false || body["setup_token_required"] != true {
-		t.Fatalf("초기화 전 status 가 다릅니다: %v", body)
+		t.Fatalf("status differs before initialization: %v", body)
 	}
 
 	// The reported PoC: a call that sends only a password without a token must be rejected.
 	code, body = rig.do(http.MethodPost, "/api/auth/init", "", map[string]any{"password": "attacker-set-password-123!"})
 	rig.expect(403, code, body, authErrSetupTokenInvalid)
 	if _, has := body["token"]; has {
-		t.Fatal("거부 응답에 토큰이 실리면 안 됩니다")
+		t.Fatal("a rejection response must not carry a token")
 	}
 	code, body = rig.do(http.MethodPost, "/api/auth/init", "", map[string]any{"password": "attacker-set-password-123!", "setup_token": "guess"})
 	rig.expect(403, code, body, authErrSetupTokenInvalid)
 	if h, _ := s.reloadPassHash(); h != "" {
-		t.Fatal("거부된 호출이 비밀번호를 저장하면 안 됩니다")
+		t.Fatal("a rejected call must not store a password")
 	}
 
 	// Even with a correct token, the server checks the minimum length.
@@ -124,7 +124,7 @@ func TestAuthInitRequiresSetupTokenDB(t *testing.T) {
 	rig.expect(200, code, body, "")
 	tok1, _ := body["token"].(string)
 	if tok1 == "" {
-		t.Fatal("초기화 성공 시 토큰이 있어야 합니다")
+		t.Fatal("a successful initialization must return a token")
 	}
 	code, body = rig.do(http.MethodGet, "/api/ping", tok1, nil)
 	rig.expect(200, code, body, "")
@@ -133,7 +133,7 @@ func TestAuthInitRequiresSetupTokenDB(t *testing.T) {
 	code, body = rig.do(http.MethodGet, "/api/auth/status", "", nil)
 	rig.expect(200, code, body, "")
 	if body["initialized"] != true || body["setup_token_required"] != false {
-		t.Fatalf("초기화 뒤 status 가 다릅니다: %v", body)
+		t.Fatalf("status differs after initialization: %v", body)
 	}
 
 	// Once initialized, re-initialization is impossible even with the setup token.
@@ -160,7 +160,7 @@ func TestAuthInitRequiresSetupTokenDB(t *testing.T) {
 	rig.expect(200, code, body, "")
 	tok3, _ := body["token"].(string)
 	if tok3 == "" {
-		t.Fatal("비밀번호 변경 응답에 새 토큰이 있어야 합니다")
+		t.Fatal("the password-change response must carry a new token")
 	}
 	for _, old := range []string{tok1, tok2} {
 		code, body = rig.do(http.MethodGet, "/api/ping", old, nil)
@@ -215,7 +215,7 @@ func TestAuthLoginThrottledDB(t *testing.T) {
 	code, body := rig.do(http.MethodPost, "/api/auth/login", "", map[string]any{"username": "ARTEX", "password": "operator-pass-123"})
 	rig.expect(429, code, body, authErrTooManyAttempts)
 	if _, has := body["token"]; has {
-		t.Fatal("냉각 중에는 올바른 비밀번호라도 토큰을 주면 안 됩니다")
+		t.Fatal("during cooldown even the correct password must not yield a token")
 	}
 	rig.s.limiter().reset(clientKey(httptest.NewRequest(http.MethodPost, "/api/auth/login", nil)))
 	code, body = rig.do(http.MethodPost, "/api/auth/login", "", map[string]any{"username": "ARTEX", "password": "operator-pass-123"})
@@ -229,7 +229,7 @@ func TestAuthBootstrapAdminPasswordEnvDB(t *testing.T) {
 	code, body := rig.do(http.MethodGet, "/api/auth/status", "", nil)
 	rig.expect(200, code, body, "")
 	if body["initialized"] != true {
-		t.Fatalf("환경 변수로 초기화되어야 합니다: %v", body)
+		t.Fatalf("must initialize from the environment variable: %v", body)
 	}
 	code, body = rig.do(http.MethodPost, "/api/auth/init", "", map[string]any{"password": "attacker-set-password-123!", "setup_token": rig.s.currentSetupToken()})
 	rig.expect(403, code, body, authErrPasswordAlreadySet)
@@ -245,9 +245,9 @@ func TestAuthBootstrapAdminPasswordEnvDB(t *testing.T) {
 	s2 := &Server{m: rig.s.m, jwtKey: rig.s.jwtKey}
 	s2.bootstrapAuth()
 	if h, _ := s2.cachedPassHash(); h != "" {
-		t.Fatal("8자 미만 환경 변수 비밀번호는 무시되어야 합니다")
+		t.Fatal("an environment password shorter than 8 characters must be ignored")
 	}
 	if s2.currentSetupToken() == "" {
-		t.Fatal("무시된 뒤에는 설정 토큰이 발급되어야 합니다")
+		t.Fatal("a setup token must be issued after it is ignored")
 	}
 }
