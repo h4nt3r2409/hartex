@@ -112,6 +112,7 @@ func TestRecordKeepsBodiesInIndex(t *testing.T) {
 // previous URL-only search: arbitrary substrings and CJK, across request and
 // response bodies. The Chinese body and search term below are a functional CJK
 // fixture for the FTS5 trigram tokenizer (a Unicode capability), not display copy.
+// The Chinese text is written as \u escapes so the raw file carries no CJK.
 func TestFullTextSearchMatchesBodies(t *testing.T) {
 	tr, _ := openTraffic(t)
 	if !tr.fts {
@@ -120,7 +121,7 @@ func TestFullTextSearchMatchesBodies(t *testing.T) {
 	const host = "api.example.com"
 	tr.record(newFlow(host, "POST", "/v1/login",
 		[]byte(`{"user":"admin","password":"P@ssw0rd"}`),
-		[]byte(`{"token":"abc123","note":"内网测试账号"}`)))
+		[]byte(`{"token":"abc123","note":"`+"\u5185\u7f51\u6d4b\u8bd5\u8d26\u53f7"+`"}`)))
 	tr.record(newFlow(host, "GET", "/v1/health", nil, []byte(`{"status":"ok"}`)))
 
 	hits := func(term string) int {
@@ -138,7 +139,7 @@ func TestFullTextSearchMatchesBodies(t *testing.T) {
 	if n := hits("ssw0r"); n != 1 {
 		t.Fatalf("substring search ssw0r hit %d, want 1", n)
 	}
-	if n := hits("内网测试"); n != 1 {
+	if n := hits("\u5185\u7f51\u6d4b\u8bd5"); n != 1 {
 		t.Fatalf("CJK search hit %d, want 1", n)
 	}
 	if n := hits("nonexistent-marker"); n != 0 {

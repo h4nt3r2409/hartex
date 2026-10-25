@@ -6,7 +6,7 @@ import "testing"
 // negative regression input: the English-only parser must not recognize it. It is not
 // an allowlist token and is never emitted or displayed.
 func TestFallbackCommandRejectsNonEnglishAliases(t *testing.T) {
-	if cmd, _ := fallbackCommand("意图: 读取报告"); cmd == "intent" {
+	if cmd, _ := fallbackCommand("\u610f\u56fe: \u8bfb\u53d6\u62a5\u544a"); cmd == "intent" {
 		t.Fatal("non-English intent alias must no longer be accepted")
 	}
 	if cmd, text := fallbackCommand("intent: read the report"); cmd != "intent" || text != "read the report" {
