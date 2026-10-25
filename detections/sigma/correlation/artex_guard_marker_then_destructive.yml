@@ -16,7 +16,6 @@ description: |
     ARTEX issued the command — the guard blocks these patterns, so a hit means the destructive
     command ran outside or despite the guard near an ARTEX run. Treat it as a high-priority lead.
 references:
-    - https://github.com/h4nt3r2409/hartex/blob/main/docs/defense-ko.md
     - https://github.com/h4nt3r2409/hartex/blob/main/docs/defense-en.md
     - https://github.com/h4nt3r2409/hartex
 author: hartex defense guide

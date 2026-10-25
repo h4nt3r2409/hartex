@@ -10,11 +10,11 @@ name: detections
 # In addition to the eight tests, three non-rule gates run under the same merge gate:
 # the harness registry sync check, the self-test of the host triage tool
 # (detections/triage/artex_host_triage.py), and the consistency check of the inline
-# Sigma correlation templates embedded as prose in the defense guides
-# (docs/defense-{ko,en}.md). All three are separate from the eight rule tests, and
+# Sigma correlation templates embedded as prose in the defense guide
+# (docs/defense-en.md). All three are separate from the eight rule tests, and
 # run-all.sh runs them the same way. The third gate reproduces the facts the templates
 # assert in the defense guide (`sigma check` passes, splunk/eql/loki conversion,
-# lucene/kusto correlation unsupported, identically-bodied ko/en rules), catching at
+# lucene/kusto correlation unsupported), catching at
 # the merge gate cases where upstream sigma-cli or a backend moves and the prose
 # silently goes stale.
 #
@@ -42,10 +42,9 @@ on:
       - "db/schema.sql"
       - "cmd/artex/main.go"
       - "traffic/traffic.go"
-      # The two files read by the third gate (defense template consistency check).
-      # Include them in the trigger because changes to these templates require
+      # The file read by the third gate (defense template consistency check).
+      # Include it in the trigger because changes to this template require
       # revalidation.
-      - "docs/defense-ko.md"
       - "docs/defense-en.md"
       - ".github/workflows/detections.yml"
   pull_request:
@@ -59,7 +58,6 @@ on:
       - "db/schema.sql"
       - "cmd/artex/main.go"
       - "traffic/traffic.go"
-      - "docs/defense-ko.md"
       - "docs/defense-en.md"
       - ".github/workflows/detections.yml"
 
@@ -82,7 +80,7 @@ jobs:
         run: detections/tests/check-harness-sync.sh
       - name: Host triage tool self-test (artex_host_triage.py --self-test · non-rule gate)
         run: detections/tests/triage-selftest.sh
-      - name: Defense guide inline Sigma template consistency check (sigma check · conversion matrix · identical ko/en body · non-rule gate)
+      - name: Defense guide inline Sigma template consistency check (English guide · sigma check · conversion matrix · non-rule gate)
         run: detections/tests/check-defense-template.sh
       - name: Sigma rule reproduction test (sigma check + backend conversion + indicator preservation)
         run: detections/tests/sigma/run.sh

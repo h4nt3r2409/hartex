@@ -11,7 +11,6 @@ description: |
     User-Agent, so a quiet result is inconclusive, not proof of safety; see the behaviour-based
     detection in the defense guide, section 4. Tune the count and window to your own baseline.
 references:
-    - https://github.com/h4nt3r2409/hartex/blob/main/docs/defense-ko.md
     - https://github.com/h4nt3r2409/hartex/blob/main/docs/defense-en.md
     - https://github.com/h4nt3r2409/hartex
 author: hartex defense guide

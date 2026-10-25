@@ -6,7 +6,7 @@
 #
 # 1) detections — only on commits that change detection rules (detections/) or the
 #    upstream sources pinned by those rules, plus the inline Sigma templates in the
-#    defense guides (docs/defense-{ko,en}.md), runs the runner that executes the eight
+#    defense guide (docs/defense-en.md), runs the runner that executes the eight
 #    detection tests and three gates at once (detections/tests/run-all.sh). By passing
 #    the same rule/source scope as CI (.github/workflows/detections.yml) first, it
 #    catches changes that modify rules without updating tests or layers, or changes
@@ -37,7 +37,7 @@ repos:
         entry: detections/tests/run-all.sh
         language: script
         pass_filenames: false
-        files: '^(detections/|enrich/enrich\.go|selfupdate/(github|stage)\.go|guard/guard\.go|db/db\.go|db/schema\.sql|cmd/artex/main\.go|traffic/traffic\.go|docs/defense-(ko|en)\.md)'
+        files: '^(detections/|enrich/enrich\.go|selfupdate/(github|stage)\.go|guard/guard\.go|db/db\.go|db/schema\.sql|cmd/artex/main\.go|traffic/traffic\.go|docs/defense-en\.md)'
       - id: docs
         name: Document internal link, image, and anchor (#heading) integrity check
         entry: python3 -I scripts/check-doc-links.py

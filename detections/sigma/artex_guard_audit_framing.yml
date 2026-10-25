@@ -8,7 +8,6 @@ description: |
     host's application or audit logs strongly supports that ARTEX ran on that host. This is a
     host and forensic indicator, not a target-side signal.
 references:
-    - https://github.com/h4nt3r2409/hartex/blob/main/docs/defense-ko.md
     - https://github.com/h4nt3r2409/hartex/blob/main/docs/defense-en.md
     - https://github.com/h4nt3r2409/hartex
 author: hartex defense guide
