@@ -1,8 +1,7 @@
 name: ci
 # Runs build, static analysis, and tests on every push and PR to catch regressions
-# introduced during Korean localization before merge. The release workflow (release.yml)
-# only runs on tags (v*) and only builds and deploys, so this workflow is responsible
-# for validating everyday changes.
+# before merge. The release workflow (release.yml) only runs on tags (v*) and only
+# builds and deploys, so this workflow is responsible for validating everyday changes.
 on:
   push:
     branches: ["**"]
@@ -39,8 +38,8 @@ jobs:
   # Handles DB integration tests that need a real PostgreSQL (notifications, evidence,
   # usage metering, etc.). Forces the paths the go job skips (notification channel
   # validation, evidence storage, llm_usage metering, etc.) through a real database, so
-  # even Korean-localization regressions that only surface in the DB integration path
-  # are caught before merge.
+  # even regressions that only surface in the DB integration path are caught before
+  # merge.
   #
   # The upstream test harness is designed so all packages share one database, create
   # tables once and reuse them, and implicitly depend on package execution order and

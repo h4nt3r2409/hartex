@@ -8,7 +8,7 @@ name: external-links
 # (workflow_dispatch), not on push/PR, and **does not block merges**; when an external
 # link breaks or closes, the periodic run shows it in red. Internal links and anchors
 # are handled by docs.yml, Go build/analysis/tests by ci.yml, detection rules by
-# detections.yml, and the Korean UI build by web.yml.
+# detections.yml, and the English UI build by web.yml.
 #
 # --strict fails only when there is at least one DOWN (404, 410, 5xx, DNS/connection
 # error) not in the allowlist (scripts/external-links-allowlist.txt). RESTRICTED (the

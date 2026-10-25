@@ -9,7 +9,7 @@ name: docs
 # internal references. It uses only the Python standard library and makes no network
 # connections, so it finishes deterministically and does not flicker due to external
 # factors such as Docker Hub rate limits. Go build/static analysis/tests are handled by
-# ci.yml, detection rule reproduction by detections.yml, and the Korean UI build by
+# ci.yml, detection rule reproduction by detections.yml, and the English UI build by
 # web.yml.
 on:
   push:

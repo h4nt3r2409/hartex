@@ -2,38 +2,21 @@
 #
 # If a URL listed here comes back DOWN during the liveness check, it is classified
 # as ALLOWED and excluded from the --strict exit code. Only dead links that we do
-# not own and cannot fix — inherited from preserved upstream text — belong here.
-# If a link curated by this repository breaks, fix the link instead of allowlisting it.
-# When adding an entry, always record why it cannot be fixed in a comment.
+# not own and cannot fix — inherited from the unreachable upstream project — belong
+# here. If a link curated by this repository breaks, fix the link instead of
+# allowlisting it. When adding an entry, always record why it cannot be fixed in a
+# comment.
 #
 # Format: one URL per line. Text after `#` is a comment; blank and comment-only
 # lines are ignored.
 
-# Contributor GitHub profile credited by upstream (Autumn-27/ARTEX) CHANGELOG.zh.md:539.
-# The account was renamed/deleted, so the profile returns 404. Under the preserve-
-# upstream-text policy, CHANGELOG.zh.md is left as upstream wrote it, so we do not
-# change it. Checked 2026-10-07.
-https://github.com/begininvoke
-
-# The upstream (Autumn-27/ARTEX) repository, online demo, release, and compare assets
-# are publicly unreachable (404), checked 2026-10. The URLs below are upstream assets
-# this fork references for provenance and credit. All return 404 as of 2026-10. The
+# The upstream (Autumn-27/ARTEX) repository and online demo are publicly unreachable
+# (404), checked 2026-10. The URLs below are upstream assets this fork references for
+# provenance and credit in its English documents. All return 404 as of 2026-10. The
 # AGPL-3.0 attribution must be kept, so the links themselves are not removed; curated
 # documents (README, CONTRIBUTING, MAINTAINING, SECURITY, docs/defense) annotate each
 # link with "(currently unreachable, checked 2026-10)". These are upstream-owned assets
-# we cannot restore, so they belong in the allowlist. The compare/release links come
-# from preserved upstream text (CHANGELOG.zh.md, README.zh.md) and stay as written.
+# we cannot restore, so they belong in the allowlist.
 https://artex-demo.vercel.app/
 https://github.com/Autumn-27/ARTEX
 https://github.com/Autumn-27/norma
-https://github.com/Autumn-27/ARTEX/releases
-https://github.com/Autumn-27/ARTEX/compare/v0.3.1...v0.3.2
-https://github.com/Autumn-27/ARTEX/compare/v0.3.2...v0.3.3
-https://github.com/Autumn-27/ARTEX/compare/v0.3.3...v0.3.4
-https://github.com/Autumn-27/ARTEX/compare/v0.3.4...v0.3.5
-https://github.com/Autumn-27/ARTEX/compare/v0.3.5...v0.3.6
-https://github.com/Autumn-27/ARTEX/compare/v0.3.6...v0.3.7
-https://github.com/Autumn-27/ARTEX/compare/v0.3.7...v0.3.8
-https://github.com/Autumn-27/ARTEX/compare/v0.3.8...v0.3.9
-https://github.com/Autumn-27/ARTEX/compare/v0.3.9...v0.3.10
-https://github.com/Autumn-27/ARTEX/compare/v0.3.10...HEAD

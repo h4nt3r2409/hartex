@@ -37,17 +37,17 @@ item G115 audited this classification exhaustively.
 Detection scope
 ---------------
 - **Han, Hangul, and Kana are detected**: CJK Unified Ideographs and Extension A
-  (㐀–鿿), CJK Compatibility Ideographs (豈–﫿), Supplementary Plane Extension B and
-  above (𠀀–), Hangul syllables and jamo (가–힣, ᄀ–ᇿ, ㄰–㆏), and Kana (぀–ヿ).
+  (㐀-鿿), CJK Compatibility Ideographs (豈-﫿), Supplementary Plane Extension B and
+  above (𠀀-), Hangul syllables and jamo (가-힣, ᄀ-ᇿ, ㄰-㆏), and Kana (぀-ヿ).
   Full-width punctuation is not treated as a leak by itself, to avoid false
   positives from preserved code blocks or quoted evidence.
 
-Intentional Han that must be allowed
+Intentional CJK that must be allowed
 ------------------------------------
-The native names in the language switcher (for example 中文) are intentional:
-they let a user recognize their own language. Add such characters to
-`ALLOWED_HAN` below with a comment explaining why they are kept, so the gate stays
-strict and only narrowly-scope exceptions pass.
+`ALLOWED_CJK` is empty: the English-only UI has no intentional non-English text. Keep it
+empty unless a future functional token genuinely must render on screen; if so, add only
+that character with a comment explaining why it is kept, so the gate stays strict and only
+narrowly scoped exceptions pass.
 
 Uses only the standard library and never touches the network.
 Run: `python3 -I scripts/check-web-cjk.py [out-directory]`
@@ -60,15 +60,14 @@ import subprocess
 import sys
 
 # Han, Hangul, and Kana blocks. Ranges: Extension A + Unified Ideographs
-# (U+3400–U+9FFF = 㐀–鿿), Compatibility Ideographs (U+F900–U+FAFF = 豈–﫿),
+# (U+3400–U+9FFF = 㐀-鿿), Compatibility Ideographs (U+F900–U+FAFF = 豈-﫿),
 # Supplementary Plane Extension B and above (U+20000–U+2FFFF), Hangul syllables
-# and jamo (가–힣, ᄀ–ᇿ, ㄰–㆏), and Kana (぀–ヿ).
+# and jamo (가-힣, ᄀ-ᇿ, ㄰-㆏), and Kana (぀-ヿ).
 CJK = re.compile(r"[㐀-鿿豈-﫿\U00020000-\U0002ffff가-힣ᄀ-ᇿ㄰-㆏぀-ヿ]")
 
-# Characters intentionally shown on screen (for example native names in the
-# language switcher). Empty means every detected character trips the gate. When
-# adding an exception, record both the character and why.
-# Example: ALLOWED_CJK = {"中", "文"}  # language-switcher label 中文 (native name)
+# Characters intentionally shown on screen. Empty means every detected character trips
+# the gate; the English-only UI has no intentional CJK. If a future functional token must
+# render, add only that character and record why.
 ALLOWED_CJK: set = set()
 
 

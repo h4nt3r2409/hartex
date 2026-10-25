@@ -1,8 +1,8 @@
 name: web
-# Runs the static export build of the Korean UI (web/) on every push/PR to catch
+# Runs the static export build of the English UI (web/) on every push/PR to catch
 # frontend regressions before merge. The release workflow (release.yml) only builds web
 # on tags (v*), but this fork has no tag push history and has never run it — so this
-# workflow is responsible for validating everyday web changes (TypeScript, React, i18n,
+# workflow is responsible for validating everyday web changes (TypeScript, React,
 # next-intl). Go build/tests are handled by ci.yml, so this runs only when web/ changes
 # (paths filter).
 on:
@@ -46,12 +46,9 @@ jobs:
       - name: npm ci
         run: npm ci
       - name: Unit tests (merge gate · vitest)
-        # Catch pure logic (getInitials/formatCurrency, i18n config, statusMeta) and i18n key consistency regressions before merge.
+        # Catch pure logic (getInitials/formatCurrency, statusMeta) and parsing/formatting
+        # regressions before merge.
         run: npm run test -- --run
-      - name: i18n locale key consistency (merge gate · 5 locales match the ko.json baseline)
-        # Check whether en/zh/es/ja have exactly the same key set as the ko.json baseline
-        # (both missing and extra keys fail).
-        run: npm run check:i18n
       - name: build:static (merge gate · includes type checking)
         run: npm run build:static
       - name: UI CJK leak guard (merge gate · zero Korean/Chinese/Japanese in out HTML)

@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
-"""Fail if untranslated Korean/Chinese text creeps back into the English-first source.
+"""Fail if non-English text creeps back into the English-only source.
 
-ARTEX is English-first: code comments, agent prompts, scripts, CI configuration, and
+ARTEX is English-only: code comments, agent prompts, scripts, CI configuration, tests, and
 developer documentation are written in English. A few strings are intentionally not
-English because they are machine values, upstream API markers, legacy wire formats,
-or localized product assets. This script scans the tracked source tree and reports
-every CJK line that is not explicitly allowed, so a future edit cannot silently
-reintroduce translation debt.
+English because they are functional machine values, legacy wire formats, detection
+patterns, or encoding support. This script scans the tracked source tree and reports every
+CJK line that is not explicitly allowed, so a future edit cannot silently reintroduce
+translation debt.
 
 What is scanned
 ---------------
 Tracked `.go`, `.ts`, `.tsx`, `.css`, `.sh`, `.py`, `.yml`, `.yaml`, `.sql`, `.md`,
-`.bat`, `.mjs`, and `.js` files. Tests (`*_test.go`, `*.test.*`, `*.spec.*`) are
-skipped because they intentionally carry non-English fixtures. JSON files are
-skipped because they are localized catalogs, evidence records, or machine data.
+`.bat`, `.mjs`, and `.js` files, including tests (`*_test.go`, `*.test.*`, `*.spec.*`).
+JSON files are skipped because they are machine data or the English message catalog.
+
+What is skipped
+---------------
+Two non-product trees are skipped explicitly: generated `graphify-out/` (rebuilt output)
+and process records under `docs/superpowers/` (change designs and plans, which
+necessarily quote tokens under removal). Neither is shipped product documentation. Do not
+add any other directory-level exemption.
 
 What is allowed
 ---------------
-`ALLOWED_FILES` lists whole files whose non-English content is a localized product
-asset or an intentional machine-value table. `ALLOWED_PATTERNS` lists line-level
-exceptions: wire sentinels (`[模型]`), functional input keywords, legacy protocol
-markers, native language names, and links into localized documents. Every entry
-has a reason; add a new one only when the text is genuinely not translation debt.
+`ALLOWED_PATTERNS` lists line-level exceptions for the functional allowlist in the
+English-only design (§7): wire sentinels, functional input keywords, legacy protocol
+markers, detection patterns, and encoding support. Every entry has a reason and names the
+§7 item it implements. Add a new one only when the text is genuinely functional and
+listed in §7.
 
 Uses only the standard library and never touches the network.
 Run: `python3 -I scripts/check-source-language.py`
@@ -37,89 +43,46 @@ SCAN_EXTENSIONS = (
     ".sql", ".md", ".bat", ".mjs", ".js",
 )
 
-# Whole files that are intentionally non-English: localized product assets,
-# machine-value tables, and evidence records.
-ALLOWED_FILES = {
-    # Localized message catalogs (values are ko/zh/es/ja by design).
-    "server/errmsg_catalog.go",
-    "config/msg_i18n.go",
-    # Localized label tables for notifications and interception actions.
-    "notify/notify.go",
-    "intercept/label_i18n.go",
-    # Native language names used to name a display language.
-    # Provider API error substrings used for quota detection.
-    # Functional input detection (Chinese ICP keyword, full-width punctuation).
-    "db/company_scope.go",
-    "web/src/lib/company-scope.ts",
-    # [模型] wire sentinel and its SQL/Go/TS consumers.
-    # Chat-mention wire labels and their matching regex.
-    "web/src/lib/chat-mentions.ts",
-    # Chinese log-classification keywords (functional, with English equivalents).
-    # Input trigger aliases and comments that quote localized UI values.
-    "server/server.go",
-    # Legacy DB migration sentinel (matches existing installations).
-    "server/finding_workflow.go",
-    # Legacy Chinese verdict markers accepted for backward compatibility.
-    # Localized web locale metadata and native language labels.
-    "web/src/config/app-config.ts",
-    "web/src/i18n/config.ts",
-    "web/src/lib/agent-i18n.ts",
-    # Full-width comma is accepted as an input separator.
-    "web/src/app/(main)/system/notify/page.tsx",
-    "web/src/app/(main)/system/notify/_components/channel-fields.ts",
-    # Namespace regex intentionally allows Hangul.
-    "web/src/scripts/extract-i18n.ts",
-    # Helper script documents CJK ranges and examples.
-    "scripts/check-web-cjk.py",
-    # A grep example intentionally matches Chinese login-page text.
-    # English docs contain native language names, Korean law names, and links into
-    # the Chinese/Korean localized documents (anchors included).
-    # The guard-detection rule and its fixtures keep the legacy Chinese marker so
-    # defenders can still match logs from older ARTEX builds.
-}
+# Generated output and change-process records, not shipped product documentation.
+# `graphify-out/` is rebuilt by `graphify update`; `docs/superpowers/` holds the design
+# and plan records for in-flight changes, which necessarily quote the tokens being
+# removed. Do not add any other directory-level exemption.
+SKIP_PREFIXES = ("graphify-out/", "docs/superpowers/")
 
-# Line-level exceptions. Each entry is (regex, reason).
+# Line-level exceptions for the functional allowlist in §7 of the English-only design.
+# Each entry is (regex, reason).
 ALLOWED_PATTERNS = [
-    (re.compile(r"模型"), "wire sentinel for model decision_source"),
-    (re.compile(r"【ARTEX 平台管控·非目标防御】"), "legacy guard detection marker"),
-    (re.compile(r"备案"), "functional ICP keyword"),
-    (re.compile(r"余额不足|额度不足|额度已用尽|欠费"), "provider quota error markers"),
-    (re.compile(r"한국어|中文|日本語|Español"), "native language names"),
-    (re.compile(r"정보통신망법|개인정보보호법"), "Korean law names"),
-    (re.compile(r"#截图预览|#安装|#反向代理部署|#开发"), "anchors in the Chinese README"),
-    (re.compile(r"grep -rhoaE"), "Chinese login-page grep example"),
-    (re.compile(r"未登录|未授权|登录失效|授权"), "Chinese login/authorization matching regex"),
-    (re.compile(r"가-힣|㐀-鿿|豈-﫿"), "CJK range in a check script"),
-    (re.compile(r"实际操作：|；成功后的后果：|；命中规则："), "legacy Chinese verdict markers"),
-    (re.compile(r"意图|提示|의도|힌트"), "functional input trigger aliases"),
+    # §7 item 1: persisted model-vs-rule decision sentinel, matched by SQL LIKE and
+    # strings.HasPrefix.
+    (re.compile(r"模型"), "[模型] model-vs-rule decision sentinel"),
+    # §7 item 2: persisted @[kind#id label] conversation wire format.
     (re.compile(r"漏洞|资产|企业|接口|应用|域名|子域名|服务"), "chat-mention wire labels"),
+    # §7 item 3: legacy Chinese verdict markers accepted from older prompts.
+    (re.compile(r"实际操作：|；成功后的后果：|；命中规则："), "legacy Chinese verdict markers"),
+    # §7 item 4: literal upstream LLM-provider quota error text.
+    (re.compile(r"余额不足|额度不足|额度已用尽|欠费"), "provider quota error markers"),
+    # §7 item 5: classifies log lines emitted by upstream tools.
     (re.compile(r"失败|丢弃|拒绝|禁用|重试|不可达"), "functional log-classification keywords"),
+    # §7 item 6: functional ICP-filing detection in target/company data, including
+    # the full-width and ideographic domain separators accepted by its normalizer.
+    (re.compile(r"备案|\.．。"), "functional ICP detection"),
+    # §7 item 7: byte-exact legacy traffic_search description migration sentinel.
+    (re.compile(r"查询记录代理已抓取的目标流量"), "legacy traffic_search description sentinel"),
+    # §7 item 8: lets defenders match audit logs from older ARTEX builds.
+    (re.compile(r"【ARTEX 平台管控·非目标防御】"), "legacy guard detection marker"),
+    # §7 item 9: GBK zip-name decoding fixture (Chinese entry names are the data the
+    # decoder exists to support).
+    (re.compile(r"中文技能|参考资料"), "GBK zip-name fixture"),
+    # §7 item 10: detection recipe for Chinese login/authorization pages on targets.
+    (re.compile(r"未登录|未授权|登录失效|授权"), "Chinese login/authorization matching regex"),
+    # §7 item 11: the guards cannot work without their CJK detector ranges.
+    (re.compile(r"가-힣|㐀-鿿|豈-﫿"), "CJK range in a check script"),
+    # §7 item 12: full-width comma accepted as an input separator (paste tolerance).
     (re.compile(r"，"), "full-width comma accepted as an input separator"),
-    (
-        re.compile(r"红幕科技 RedHaze Group"),
-        "verbatim page title quoted from a captured HTTP response",
-    ),
+    # §7 item 2: full-width brackets escape `[`/`]` inside a persisted chat-mention
+    # wire label so they cannot terminate the label.
+    (re.compile(r'"（" : "）"'), "chat-mention wire-label bracket escaping"),
 ]
-
-
-def is_localized_asset(path: str) -> bool:
-    if path.endswith(
-        (".ko.md", ".zh.md", ".es.md", ".ja.md", "-ko.md", "-zh.md", "-es.md", "-ja.md")
-    ):
-        return True
-    if path.startswith("web/messages/") and path.endswith(".json"):
-        return True
-    if path.startswith(".github/ISSUE_TEMPLATE/") and path.endswith("_ko.yml"):
-        return True
-    return False
-
-
-def is_test(path: str) -> bool:
-    return (
-        path.endswith("_test.go")
-        or ".test." in path
-        or ".spec." in path
-    )
 
 
 def main() -> int:
@@ -128,7 +91,7 @@ def main() -> int:
     for path in tracked:
         if not path.endswith(SCAN_EXTENSIONS):
             continue
-        if is_test(path) or is_localized_asset(path) or path in ALLOWED_FILES:
+        if path.startswith(SKIP_PREFIXES):
             continue
         try:
             lines = open(path, encoding="utf-8", errors="ignore").read().splitlines()
@@ -142,18 +105,18 @@ def main() -> int:
             offenders.append((path, lineno, line.strip()[:160]))
 
     if not offenders:
-        print("No untranslated Korean/Chinese text found in English-first source.")
+        print("English-only source: no untranslated Korean/Chinese/Japanese text found.")
         return 0
 
     print(
-        f"Untranslated Korean/Chinese text in {len(offenders)} English-first source lines:"
+        f"Untranslated Korean/Chinese/Japanese text in {len(offenders)} English-only source lines:"
     )
     for path, lineno, text in offenders:
         print(f"  {path}:{lineno}: {text}")
     print(
-        "\nTranslate the line, or — if it is a genuine wire value, localized asset, "
-        "or functional input token — add a narrowly scoped exception to "
-        "scripts/check-source-language.py with a reason."
+        "\nTranslate the line, or — if it is a genuine functional token or wire value — "
+        "add a narrowly scoped exception to ALLOWED_PATTERNS with a reason naming the "
+        "§7 item."
     )
     return 1
 

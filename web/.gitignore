@@ -35,8 +35,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# i18n — generated. Commit zh.json/ko.json, but exclude the per-key source index
-# (file:line): it is large and its line numbers shift on every source edit, making
-# diffs noisy. `npm run extract:i18n` regenerates it at any time.
-/messages/zh.sources.json

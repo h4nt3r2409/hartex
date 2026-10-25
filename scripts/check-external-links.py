@@ -43,10 +43,9 @@ probes any target.
 Known exceptions (allowlist)
 If a URL listed in `scripts/external-links-allowlist.txt` comes back DOWN, it is
 classified separately as "ALLOWED" and excluded from the strict exit code. This
-transparently records dead links inherited by files we do not own and cannot fix
-(for example the upstream `CHANGELOG.zh.md`), so a periodic strict check does not
-stay red forever because of that one link and turns red **only when a new link
-breaks**.
+transparently records dead links inherited from the unreachable upstream project, which
+we do not own and cannot fix, so a periodic strict check does not stay red forever
+because of those links and turns red **only when a new link breaks**.
 
 Running
 - Default (report, exit 0): `python3 -I scripts/check-external-links.py`
@@ -189,7 +188,7 @@ def probe(url: str, timeout: float, retries: int, delay: float):
         headers={
             "User-Agent": BROWSER_UA,
             "Accept": "*/*",
-            "Accept-Language": "en,ko;q=0.8",
+            "Accept-Language": "en",
         },
     )
     last = ""

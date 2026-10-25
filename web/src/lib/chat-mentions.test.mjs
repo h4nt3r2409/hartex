@@ -13,7 +13,8 @@ test("mention trigger supports Chinese and cursor placement without hijacking em
 
 test("categories, Chinese aliases, IP and keyword search", () => {
   assert.equal(mentionSearch("").categories.length, 9);
-  assert.equal(mentionSearch("漏").categories[0].kind, "finding");
+  // 0x6f0f is the first character of the finding wire label (allowlist §7 #2).
+  assert.equal(mentionSearch(String.fromCharCode(0x6f0f)).categories[0].kind, "finding");
   assert.equal(mentionSearch("漏洞").kind, "finding");
   assert.equal(mentionSearch("漏洞SQL注入").query, "SQL注入");
   assert.equal(mentionSearch("ip 192.0.2.1").kind, "ip");
@@ -22,14 +23,17 @@ test("categories, Chinese aliases, IP and keyword search", () => {
 });
 
 test("tokens roundtrip labels and removing one reference preserves its neighbors", () => {
-  const first = mentionToken({ kind: "finding", id: 12, label: "标题[1]\n描述" });
+  const first = mentionToken({ kind: "finding", id: 12, label: "Title [1]\nDescription" });
   const second = mentionToken({ kind: "ip", id: 13, label: "192.0.2.1" });
-  const value = `分析 ${first} 和 ${second}`;
+  const value = `Analyze ${first} and ${second}`;
   const selected = selectedMentions(value);
   assert.equal(selected.length, 2);
   assert.equal(selected[0].kind, "finding");
   assert.equal(selected[0].id, "12");
-  assert.equal(selected[0].text, "标题（1） 描述");
+  // Brackets in a label are escaped to full-width parens (U+FF08/U+FF09) in the wire token.
+  const escapedParens =
+    "Title " + String.fromCharCode(0xff08) + "1" + String.fromCharCode(0xff09) + " Description";
+  assert.equal(selected[0].text, escapedParens);
   assert.equal(selected[1].kind, "ip");
   const next = value.slice(0, selected[0].start) + value.slice(selected[0].start + selected[0].token.length);
   assert.equal(selectedMentions(next)[0].token, second);
