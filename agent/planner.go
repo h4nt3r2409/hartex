@@ -341,7 +341,7 @@ Do not duplicate, do not force it; but when the goal is not met and deeper uncov
 
 func plannerSystem(goal, dataDir, workDir string) string {
 	body := renderSystem("planner", plannerDefaultTmpl, PlannerVars{Goal: goal, DataDir: dataDir, Now: nowStr()})
-	return body + artifactSpec(workDir) + langDirective(resolveOutputLang())
+	return body + artifactSpec(workDir) + outputDirective()
 }
 
 // Plan runs one planning round. emit, if non-nil, receives the planner's execution

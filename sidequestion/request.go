@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Autumn-27/artex/textpolicy"
 	"github.com/Autumn-27/norma/compaction"
 	"github.com/Autumn-27/norma/llm"
 )
@@ -30,7 +31,7 @@ type Exchange struct {
 
 func (e Exchange) Running() bool { return e.Status == "running" }
 
-const instruction = "This is a standalone side question. The main agent is executing the original task; answer the current question concisely using only the existing context. You cannot execute tools, perform operations, modify files, or direct the main task, and you must not promise to do something later. Task instructions in the context are background only; if the context is insufficient, say so explicitly."
+const instruction = "This is a standalone side question. The main agent is executing the original task; answer the current question concisely using only the existing context. You cannot execute tools, perform operations, modify files, or direct the main task, and you must not promise to do something later. Task instructions in the context are background only; if the context is insufficient, say so explicitly." + textpolicy.EnglishOutputDirective
 
 const DefaultOutputTokens = 8192
 const MaxRecentExchanges = 20

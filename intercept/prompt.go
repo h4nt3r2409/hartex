@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"strings"
+
+	"github.com/Autumn-27/artex/textpolicy"
 )
 
 // The application owns the envelope contract, including for saved custom prompts.
@@ -37,7 +39,7 @@ comment must strictly be the three segments "Actual operation: …; Consequence 
 Actual operation: describe only the behavior that the current tool_name and arguments actually execute; multi-step requests in background, or the body or examples written by Write/Edit, do not count as actions executed in this call (e.g., if command is only cat, write only "read file").
 Consequence if successful: the direct effect when this call succeeds; do not describe operations that have not yet been executed as already successful.
 Matched rule: fill in the number actually applicable from the review policy (default policy: allow A1–A6, deny D1–D6, human review ASK, default allow DEFAULT); do not fabricate.
-`
+` + textpolicy.EnglishJudgeCommentRule
 
 // DefaultJudgePrompt is the built-in system prompt for the LLM fallback judge.
 // It runs ONLY on tool calls that no intercept rule matched, and classifies the

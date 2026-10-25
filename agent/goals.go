@@ -68,18 +68,17 @@ First register the scope with add_task_scope (if any), then call set_goals to su
 
 // goalsSystem assembles the goals-decomposer system prompt: the rendered body
 // [A] (DB-overridable), the code-owned scope-extraction tail when add_task_scope
-// is wired (withScope), and the code-owned Korean output-language tail [C] last —
+// is wired (withScope), and the code-owned English output-language tail [C] last —
 // mirroring chatSystem/plannerSystem so a DB-edited body can never drop the tail.
-// DecomposeGoalsWithProvider and the localization test share this one assembly, so
-// the langDirective tail can't drift between runtime and test. EngagementDescription
-// is intentionally left empty: the task description rides in the user message, not
-// the {{.EngagementDescription}} var (see DecomposeGoalsWithProvider).
+// EngagementDescription is intentionally left empty: the task description rides in
+// the user message, not the {{.EngagementDescription}} var (see
+// DecomposeGoalsWithProvider).
 func goalsSystem(dataDir string, withScope bool) string {
 	sys := renderSystem("goals", goalsDefaultTmpl, GoalsVars{DataDir: dataDir, Now: nowStr()})
 	if withScope {
 		sys += goalsScopeTail
 	}
-	return sys + langDirective(resolveOutputLang())
+	return sys + outputDirective()
 }
 
 // GoalSpec is one decomposed objective.

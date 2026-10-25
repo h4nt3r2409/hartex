@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+func TestJudgePromptRequiresEnglishComment(t *testing.T) {
+	if !strings.Contains(DefaultJudgePrompt, "Write the comment value in English") {
+		t.Fatalf("judge prompt must require an English comment")
+	}
+}
+
 func TestParseVerdict(t *testing.T) {
 	for _, action := range []string{"allow", "ask", "deny"} {
 		t.Run(action, func(t *testing.T) {

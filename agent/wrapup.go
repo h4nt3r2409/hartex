@@ -104,25 +104,19 @@ func wrapupSettlement(agentKey string, disabledTools []string) *harness.Settleme
 	}
 }
 
-// withWrapupLang appends the output-language directive (langDirective) after the wrap-up prompt.
-// Unlike the system prompt, the wrap-up prompt does not automatically get the langDirective tail,
-// so it must be appended explicitly here so that the final one-sentence summary shown to the user
-// follows the selected display language.
+// withWrapupLang appends the fixed English output directive after the wrap-up
+// prompt. Unlike the system prompt, the wrap-up prompt does not automatically get
+// the outputDirective tail, so it must be appended explicitly here so that the
+// final one-sentence summary shown to the user is English.
 // The wrap-up prose itself is an operator instruction the model reads (English,
-// like the rest of the prompt), and this tail only forces the language of
-// user-visible output with the highest priority. It is harmless for the planner
-// family, which does not emit a summary. For the default language (English) the
-// tail is omitted: the wrapping prompt is already English, and this keeps the
-// default path's model input identical to the previous revision.
+// like the rest of the prompt), and this tail forces the language of user-visible
+// output with the highest priority. It is harmless for the planner family, which
+// does not emit a summary.
 func withWrapupLang(prompt string) string {
 	if strings.TrimSpace(prompt) == "" {
 		return prompt
 	}
-	lang := resolveOutputLang()
-	if lang == defaultOutputLang {
-		return prompt
-	}
-	return prompt + langDirective(lang)
+	return prompt + outputDirective()
 }
 
 // ---------- Task-level timeout wrap-up wording (see the task-timeout and wrap-up design notes) ----------

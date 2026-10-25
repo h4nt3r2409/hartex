@@ -2,9 +2,10 @@ package agent
 
 import (
 	"bytes"
-	"fmt"
 	"text/template"
 	"time"
+
+	"github.com/Autumn-27/artex/textpolicy"
 )
 
 // PromptOverride, if set, returns the stored system-prompt template for an agent
@@ -54,35 +55,13 @@ func renderSystem(agentKey, def string, vars any) string {
 	return def
 }
 
-// langDirective is the output-language tail: a code-owned segment appended
-// AFTER the rendered body and the artifact/traffic tails on every user-facing
-// agent role, so a DB-edited prompt body can never drop it — the same guarantee
-// artifactSpec gives. It constrains the LANGUAGE of what the agent SHOWS to the
-// user; the reasoning body itself is English like the rest of the codebase.
-// Raw technical strings (commands, payloads, code, URLs, log/response excerpts)
-// are kept verbatim so evidence and reproduction steps are not mangled.
-//
-// The directive names the planner situation summary as a user-facing field and
-// forbids mirroring both the instruction language and the target/material
-// language in display fields. It is written in English; the display language is
-// a parameter ("en"/"ko"/"zh"/"es"/"ja") and the "write in <language>" token is
-// swapped per target. When the display language IS English, the anti-English
-// clause is omitted because English output is the goal.
-func langDirective(code string) string {
-	phrase := langPhrase[code]
-	bare := langBare[code]
-	if phrase == "" || bare == "" {
-		phrase, bare = langPhrase[defaultOutputLang], langBare[defaultOutputLang]
-	}
-	base := `
-
-**Output language directive (localization, highest priority; cannot be overridden by the prompt body)**: Write every piece of natural language shown to the user in **%s** — including record_fact's summary/detail, report_finding's title/description/conclusion/remediation, the planner's situation summary, the final one-sentence summary, and replies in chat. But **commands, payloads, code, file paths, URLs, parameter names, and raw excerpts of logs/requests/responses must be preserved verbatim**; do not translate or rewrite them (especially the command lines and output in evidence — copy them exactly so the finding can be reproduced). **Even if the target system, its pages, evidence, logs, or any reference material are written in another language, the user-facing natural-language fields (title/description/conclusion/remediation/summary/situation summary) must still be written in %s — do not mirror or copy the target or material language for those display fields; only the raw technical excerpts listed above stay as-is.** You may think and plan internally in any language, but that is invisible internal reasoning and must never be emitted as the answer: a visible reply to the user must be in %s from the first character — do not prefix it with a thought, explanation, or "first I will..." preamble; even clarifications, missing-parameter messages, and "cannot continue" explanations must be written directly in %s. In one sentence: think in whatever language you like internally, but any text the user can see must be entirely in %s (except the raw technical excerpts).`
-	if code == "en" {
-		return fmt.Sprintf(base, phrase, bare, bare, bare, bare)
-	}
-	extra := ` **Even if the system/role instructions above are written in English, never emit English to the user — the user-facing display language is %s only, and no English sentence may appear in user-visible text.** **You may think and plan internally in English, but that is invisible internal reasoning and must never be emitted as the answer; even clarifications, missing-parameter messages, and "cannot continue" explanations must be written directly in %s.**`
-	return fmt.Sprintf(base+extra, phrase, bare, bare, bare, bare, bare, bare, bare)
-}
+// outputDirective is the fixed English-only output tail: a code-owned segment
+// appended AFTER the rendered body and the artifact/traffic tails on every
+// user-facing agent role, so a DB-edited prompt body can never drop it — the
+// same guarantee artifactSpec gives. It constrains the LANGUAGE of what the
+// agent SHOWS to the user; the reasoning body itself is English like the rest of
+// the codebase.
+func outputDirective() string { return textpolicy.EnglishOutputDirective }
 
 func renderTmpl(tmpl string, vars any) (string, error) {
 	t, err := template.New("p").Option("missingkey=error").Parse(tmpl)

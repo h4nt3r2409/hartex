@@ -40,23 +40,3 @@ func resolveOutputLang() string {
 	}
 	return defaultOutputLang
 }
-
-// langPhrase is how the directive names a language the first time, with the
-// native-script name in parentheses so the model cannot confuse it with another.
-var langPhrase = map[string]string{
-	"ko": "Korean (한국어)",
-	"en": "English",
-	"zh": "Chinese (简体中文)",
-	"es": "Spanish (Español)",
-	"ja": "Japanese (日本語)",
-}
-
-// langBare is the short language name used when the directive refers to the
-// language again.
-var langBare = map[string]string{
-	"ko": "Korean",
-	"en": "English",
-	"zh": "Chinese",
-	"es": "Spanish",
-	"ja": "Japanese",
-}

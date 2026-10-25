@@ -145,7 +145,10 @@ func TestBuildRequestCompactionToolPairingAndBudget(t *testing.T) {
 			}
 		}
 	}
-	s.Model.WindowTokens = 1000
+	// The answering instruction carries the fixed English output directive, so the
+	// base request is larger than the bare question. This window still fits the
+	// base but forces the side history to shrink below the exchange cap.
+	s.Model.WindowTokens = 2000
 	r, err = BuildRequest(s, history, "current question")
 	if err != nil {
 		t.Fatal(err)
