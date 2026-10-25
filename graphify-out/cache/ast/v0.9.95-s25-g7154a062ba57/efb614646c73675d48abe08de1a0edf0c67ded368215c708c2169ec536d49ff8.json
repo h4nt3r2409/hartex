@@ -1,0 +1,1 @@
+{"nodes": [{"id": "$graphify-root$_intercept_label_i18n_go", "label": "label_i18n.go", "file_type": "code", "source_file": "intercept/label_i18n.go", "source_location": "L1"}], "edges": [], "raw_calls": [], "go_imports": {}, "go_type_table": {"path": "$graphify-root$/intercept/label_i18n.go", "table": {}}}

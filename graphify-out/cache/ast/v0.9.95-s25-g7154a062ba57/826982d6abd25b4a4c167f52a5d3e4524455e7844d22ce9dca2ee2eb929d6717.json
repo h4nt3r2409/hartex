@@ -1,0 +1,1 @@
+{"nodes": [{"id": "$graphify-root$_server_errmsg_catalog_go", "label": "errmsg_catalog.go", "file_type": "code", "source_file": "server/errmsg_catalog.go", "source_location": "L1"}], "edges": [], "raw_calls": [], "go_imports": {}, "go_type_table": {"path": "$graphify-root$/server/errmsg_catalog.go", "table": {}}}
