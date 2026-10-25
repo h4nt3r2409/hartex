@@ -68,7 +68,7 @@ import type {
   TaskNode,
   TokenTotal,
 } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 // resolutionLabel names the LLM a session runs on. The badge shows this alone and
 // keeps the model id in its tooltip. Env-backed configs can arrive without a name,
@@ -1696,10 +1696,10 @@ export function SessionsTab({ taskId }: { taskId: string }) {
                 </TooltipTrigger>
                 <TooltipContent>
                   {t("tokens.full", {
-                    input: taskTokens.input_tokens.toLocaleString(),
-                    output: taskTokens.output_tokens.toLocaleString(),
-                    cacheRead: taskTokens.cache_read_tokens.toLocaleString(),
-                    cacheWrite: taskTokens.cache_write_tokens.toLocaleString(),
+                    input: formatNumber(taskTokens.input_tokens),
+                    output: formatNumber(taskTokens.output_tokens),
+                    cacheRead: formatNumber(taskTokens.cache_read_tokens),
+                    cacheWrite: formatNumber(taskTokens.cache_write_tokens),
                   })}
                 </TooltipContent>
               </Tooltip>
@@ -1886,10 +1886,10 @@ export function SessionsTab({ taskId }: { taskId: string }) {
                     </TooltipTrigger>
                     <TooltipContent>
                       {t("tokens.full", {
-                        input: activeTokens.input_tokens.toLocaleString(),
-                        output: activeTokens.output_tokens.toLocaleString(),
-                        cacheRead: activeTokens.cache_read_tokens.toLocaleString(),
-                        cacheWrite: activeTokens.cache_write_tokens.toLocaleString(),
+                        input: formatNumber(activeTokens.input_tokens),
+                        output: formatNumber(activeTokens.output_tokens),
+                        cacheRead: formatNumber(activeTokens.cache_read_tokens),
+                        cacheWrite: formatNumber(activeTokens.cache_write_tokens),
                       })}
                     </TooltipContent>
                   </Tooltip>

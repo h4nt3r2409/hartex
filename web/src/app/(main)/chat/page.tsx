@@ -1273,7 +1273,7 @@ export default function ChatPage() {
     if (agentFilter !== null) keys.add(agentFilter);
     return [...keys]
       .map((key) => ({ key, name: agentNameOf(key), count: counts.get(key) ?? 0 }))
-      .sort((a, b) => a.name.localeCompare(b.name, "ko"));
+      .sort((a, b) => a.name.localeCompare(b.name, "en"));
   }, [convs, chatAgents, agentNameOf, agentFilter]);
   const conversationCountLabel =
     agentFilter === null

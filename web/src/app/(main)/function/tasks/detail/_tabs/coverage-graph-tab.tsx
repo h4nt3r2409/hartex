@@ -91,7 +91,7 @@ type RenderNode = AssetRenderNode | FoldNode;
 
 function sortChildren(a: CoverageGraphNode, b: CoverageGraphNode): number {
   if (a.tested !== b.tested) return a.tested ? -1 : 1;
-  return (a.label || "").localeCompare(b.label || "");
+  return (a.label || "").localeCompare(b.label || "", "en");
 }
 
 function computeVisible(

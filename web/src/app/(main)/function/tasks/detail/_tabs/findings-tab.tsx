@@ -192,7 +192,7 @@ export function FindingsTab({ taskId }: { taskId: string }) {
     .sort((a, b) => {
       const compared = Date.parse(a.ts) - Date.parse(b.ts);
       if (compared !== 0) return sortPreference.direction === "asc" ? compared : -compared;
-      return b.id.localeCompare(a.id, undefined, { numeric: true });
+      return b.id.localeCompare(a.id, "en", { numeric: true });
     });
 
   return (

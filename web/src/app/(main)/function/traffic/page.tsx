@@ -248,7 +248,7 @@ export default function TrafficPage() {
     () =>
       [...hosts].sort((a, b) => {
         const countOrder = hostCountSortDirection === "asc" ? a.count - b.count : b.count - a.count;
-        return countOrder || a.host.localeCompare(b.host);
+        return countOrder || a.host.localeCompare(b.host, "en");
       }),
     [hosts, hostCountSortDirection],
   );

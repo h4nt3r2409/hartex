@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 
-import { formatCurrency, getInitials } from "./utils";
+import { formatCurrency, formatNumber, getInitials } from "./utils";
 
 describe("getInitials", () => {
   it("takes the first letter of each word, uppercased", () => {
@@ -14,6 +14,10 @@ describe("getInitials", () => {
     expect(getInitials("   ")).toBe("?");
     expect(getInitials(undefined as unknown as string)).toBe("?");
   });
+});
+
+test("numbers use English grouping", () => {
+  expect(formatNumber(1234567)).toBe("1,234,567");
 });
 
 describe("formatCurrency", () => {

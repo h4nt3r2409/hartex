@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
 import type { FindingTrafficDetail, TrafficDetail } from "@/lib/types";
+import { formatNumber } from "@/lib/utils";
 
 export function TrafficEvidenceViewer({
   findingId,
@@ -92,7 +93,7 @@ export function TrafficEvidenceViewer({
               <TabsContent key={side} value={side}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs text-muted-foreground">
-                    {t("viewer.bodyBytes", { bytes: detail[side].total.toLocaleString() })}
+                    {t("viewer.bodyBytes", { bytes: formatNumber(detail[side].total) })}
                     {detail[side].truncated ? t("viewer.previewSuffix") : ""}
                   </span>
                   <Button

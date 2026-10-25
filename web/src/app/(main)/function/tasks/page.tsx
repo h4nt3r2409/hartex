@@ -119,6 +119,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { getDateLocale } from "@/i18n/datetime";
 import { ApiError, api } from "@/lib/api";
 import { getLocalStorageValue, setLocalStorageValue } from "@/lib/local-storage.client";
 import { type SortDirection, useStoredSortPreference } from "@/lib/sort-preference";
@@ -135,7 +136,7 @@ import type {
   TaskCategory,
   TaskStatus,
 } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 // fmtBytes renders a human file size for the upload manifest.
 function fmtBytes(n: number): string {
@@ -265,7 +266,7 @@ function taskIsPinned(task: Task): boolean {
 }
 
 function compareTaskIDs(left: string, right: string): number {
-  return left.localeCompare(right, undefined, { numeric: true, sensitivity: "base" });
+  return left.localeCompare(right, "en", { numeric: true, sensitivity: "base" });
 }
 
 function taskCreatedUnix(task: Task): number {
@@ -279,7 +280,7 @@ function compareTasks(left: Task, right: Task, field: TaskSortField, direction: 
   const rightPinned = taskIsPinned(right);
   if (leftPinned !== rightPinned) return leftPinned ? -1 : 1;
   if (leftPinned && left.pinned_at !== right.pinned_at) {
-    return (right.pinned_at ?? "").localeCompare(left.pinned_at ?? "");
+    return (right.pinned_at ?? "").localeCompare(left.pinned_at ?? "", "en");
   }
 
   let compared = 0;
@@ -1613,7 +1614,7 @@ function archiveDate(value?: string): string {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  return date.toLocaleString();
+  return date.toLocaleString(getDateLocale());
 }
 
 function ArchiveDeleteDialog({
@@ -1637,7 +1638,7 @@ function ArchiveDeleteDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>{t("archive.deleteTitle", { count: archives.length })}</AlertDialogTitle>
           <AlertDialogDescription className="[overflow-wrap:anywhere]">
-            {t("archive.deleteDescription", { size: formatArchiveBytes(bytes), rows: rows.toLocaleString() })}
+            {t("archive.deleteDescription", { size: formatArchiveBytes(bytes), rows: formatNumber(rows) })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -1955,7 +1956,7 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                     >
                       {archiveCompressionLabel(t, archive)}
                     </TableCell>
-                    <TableCell className="text-xs tabular-nums">{archiveDataTotal(archive).toLocaleString()}</TableCell>
+                    <TableCell className="text-xs tabular-nums">{formatNumber(archiveDataTotal(archive))}</TableCell>
                     <TableCell>
                       <div className="flex min-w-0 flex-col gap-1.5">
                         <ArchiveStateBadge state={archive.state} />

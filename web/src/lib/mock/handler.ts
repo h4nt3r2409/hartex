@@ -720,7 +720,7 @@ function mockBuildAssetTree(list: (typeof mockFindings)[number][]): MockAssetTre
   if (unassigned.total > 0) out.push(unassigned);
   out.sort((left, right) => {
     if ((left.kind === "none") !== (right.kind === "none")) return left.kind === "none" ? 1 : -1;
-    return right.total - left.total || left.label.localeCompare(right.label);
+    return right.total - left.total || left.label.localeCompare(right.label, "en");
   });
   return out;
 }
@@ -998,7 +998,7 @@ function sortMockConversations() {
     if (aPinned !== bPinned) return bPinned - aPinned;
     const aTime = a.pinned_at ?? a.updated_at;
     const bTime = b.pinned_at ?? b.updated_at;
-    return bTime.localeCompare(aTime) || b.id - a.id;
+    return bTime.localeCompare(aTime, "en") || b.id - a.id;
   });
 }
 
@@ -1007,8 +1007,8 @@ function sortMockTasks() {
     const aPinned = a.pinned_at ? 1 : 0;
     const bPinned = b.pinned_at ? 1 : 0;
     if (aPinned !== bPinned) return bPinned - aPinned;
-    if (a.pinned_at !== b.pinned_at) return (b.pinned_at ?? "").localeCompare(a.pinned_at ?? "");
-    return b.id.localeCompare(a.id, undefined, { numeric: true });
+    if (a.pinned_at !== b.pinned_at) return (b.pinned_at ?? "").localeCompare(a.pinned_at ?? "", "en");
+    return b.id.localeCompare(a.id, "en", { numeric: true });
   });
 }
 
@@ -1080,7 +1080,7 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
         (a, b) =>
           Number(String(b.id) === query) - Number(String(a.id) === query) ||
           b.id - a.id ||
-          a.kind.localeCompare(b.kind),
+          a.kind.localeCompare(b.kind, "en"),
       );
     const offset = Math.max(0, Number(q.get("cursor")) || 0);
     return {
@@ -1377,7 +1377,7 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
     template.description = description;
     template.goal = goal;
     template.updated_at = new Date().toISOString();
-    mockTaskTemplates.sort((a, b) => b.updated_at.localeCompare(a.updated_at) || b.id - a.id);
+    mockTaskTemplates.sort((a, b) => b.updated_at.localeCompare(a.updated_at, "en") || b.id - a.id);
     return template;
   }
   if (seg[0] === "task-templates" && seg.length === 2 && m === "DELETE") {
@@ -1953,8 +1953,8 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
     });
     groups.sort((left, right) =>
       q.get("sort") === "severity"
-        ? right.max_severity - left.max_severity || right.last_found_at.localeCompare(left.last_found_at)
-        : right.last_found_at.localeCompare(left.last_found_at),
+        ? right.max_severity - left.max_severity || right.last_found_at.localeCompare(left.last_found_at, "en")
+        : right.last_found_at.localeCompare(left.last_found_at, "en"),
     );
     const rawPage = Number(q.get("page") ?? 1);
     const rawPageSize = Number(q.get("limit") ?? 10);
@@ -2290,7 +2290,7 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
       if (c.is_error) s.errors++;
       tally.set(tool, s);
     }
-    return { stats: [...tally.values()].sort((a, b) => b.total - a.total || a.tool.localeCompare(b.tool)) };
+    return { stats: [...tally.values()].sort((a, b) => b.total - a.total || a.tool.localeCompare(b.tool, "en")) };
   }
 
   // ── LLM ──

@@ -78,6 +78,12 @@ export async function copyText(text: string): Promise<boolean> {
   }
 }
 
+// formatNumber formats a number with English digit grouping. The product is English-only,
+// so the output must not follow the browser locale.
+export function formatNumber(value: number): string {
+  return value.toLocaleString("en-US");
+}
+
 export const getInitials = (str: string): string => {
   if (typeof str !== "string" || !str.trim()) return "?";
 

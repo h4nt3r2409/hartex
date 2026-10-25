@@ -113,7 +113,7 @@ function buildTree(entries: string[]): TreeNode[] {
 function sortNodes(nodes: TreeNode[]): void {
   nodes.sort((a, b) => {
     if (a.type !== b.type) return a.type === "dir" ? -1 : 1;
-    return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+    return a.name.localeCompare(b.name, "en", { sensitivity: "base" });
   });
   for (const n of nodes) {
     if (n.children.length > 0) sortNodes(n.children);

@@ -26,6 +26,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { SideQuestions } from "@/hooks/use-side-questions";
+import { getDateLocale } from "@/i18n/datetime";
 import { cn } from "@/lib/utils";
 
 type ComposerLayout = "inline" | "stacked";
@@ -86,7 +87,7 @@ function SidePanel({
         {side.snapshot ? (
           <>
             <p>{side.snapshot.model.model}</p>
-            <p>{t("contextUpdatedAt", { time: new Date(side.snapshot.captured_at).toLocaleString() })}</p>
+            <p>{t("contextUpdatedAt", { time: new Date(side.snapshot.captured_at).toLocaleString(getDateLocale()) })}</p>
           </>
         ) : (
           t("firstRunHint")
@@ -121,8 +122,8 @@ function SidePanel({
               <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs">
                 <Badge variant="secondary">{t(`status.${item.status}`)}</Badge>
                 <span className="truncate">{item.model.model}</span>
-                <time dateTime={item.snapshot_at} title={new Date(item.snapshot_at).toLocaleString()}>
-                  {t("contextTime", { time: new Date(item.snapshot_at).toLocaleTimeString() })}
+                <time dateTime={item.snapshot_at} title={new Date(item.snapshot_at).toLocaleString(getDateLocale())}>
+                  {t("contextTime", { time: new Date(item.snapshot_at).toLocaleTimeString(getDateLocale()) })}
                 </time>
               </div>
               {item.context?.estimated_input_tokens != null && (

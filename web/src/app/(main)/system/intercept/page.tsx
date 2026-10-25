@@ -29,6 +29,7 @@ import type {
   LLMProfile,
   Tool,
 } from "@/lib/types";
+import { formatNumber } from "@/lib/utils";
 
 // fmtTokens abbreviates token counts (1.2k / 3.4M). Used in the judge usage stats.
 function fmtTokens(n: number): string {
@@ -266,7 +267,7 @@ function JudgeCard() {
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-              <JudgeStat label={t("judge.usageCalls")} value={usage.calls.toLocaleString()} />
+              <JudgeStat label={t("judge.usageCalls")} value={formatNumber(usage.calls)} />
               <JudgeStat label={t("judge.usageInput")} value={fmtTokens(usage.input_tokens)} />
               <JudgeStat label={t("judge.usageOutput")} value={fmtTokens(usage.output_tokens)} />
               <JudgeStat label={t("judge.usageCacheRead")} value={fmtTokens(usage.cache_read_tokens)} />
