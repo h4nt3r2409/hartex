@@ -75,10 +75,10 @@ func (s *Server) scopeSentryClient(ctx context.Context) (*mcphttp.Client, error)
 		return nil, err
 	}
 	if m == nil {
-		return nil, fmt.Errorf(trMsg(errSSDataSourceMissingFmt), scopeSentryMCPName)
+		return nil, fmt.Errorf(errSSDataSourceMissingFmt, scopeSentryMCPName)
 	}
 	if m.URL == "" {
-		return nil, fmt.Errorf(trMsg(errSSDataSourceNoURLFmt), scopeSentryMCPName)
+		return nil, fmt.Errorf(errSSDataSourceNoURLFmt, scopeSentryMCPName)
 	}
 	return mcphttp.New(ctx, m.Name, m.URL, jsonStrMap(m.Env), m.Insecure)
 }
@@ -359,7 +359,7 @@ func (s *Server) syncSSRun(w http.ResponseWriter, r *http.Request) {
 			}
 			items, truncated, ferr := s.ssPageAll(ctx, cl, ssType, filter, pageSize)
 			if ferr != nil {
-				errs = append(errs, fmt.Sprintf(trMsg(errSSFetchFmt), at, target, ferr))
+				errs = append(errs, fmt.Sprintf(errSSFetchFmt, at, target, ferr))
 				continue
 			}
 			if truncated {
@@ -456,7 +456,7 @@ func (s *Server) ssIngest(as *db.AssetStore, assetType string, raw json.RawMessa
 			IP    []string `json:"ip"`
 		}
 		if err := json.Unmarshal(raw, &it); err != nil {
-			return trMsg(errSSParseSubdomainPrefix) + err.Error()
+			return errSSParseSubdomainPrefix + err.Error()
 		}
 		if it.Host == "" {
 			return ""
@@ -480,7 +480,7 @@ func (s *Server) ssIngest(as *db.AssetStore, assetType string, raw json.RawMessa
 			ICP         string `json:"icp"`
 		}
 		if err := json.Unmarshal(raw, &it); err != nil {
-			return trMsg(errSSParseAppPrefix) + err.Error()
+			return errSSParseAppPrefix + err.Error()
 		}
 		if it.Name == "" {
 			return ""
@@ -502,7 +502,7 @@ func (s *Server) ssIngest(as *db.AssetStore, assetType string, raw json.RawMessa
 			Icon     string   `json:"icon"`
 		}
 		if err := json.Unmarshal(raw, &it); err != nil {
-			return trMsg(errSSParseServicePrefix) + err.Error()
+			return errSSParseServicePrefix + err.Error()
 		}
 		if it.Service == "http" || it.URL != "" {
 			if it.URL == "" {

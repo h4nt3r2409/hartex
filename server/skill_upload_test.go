@@ -211,8 +211,8 @@ func TestUploadSkillEncrypted(t *testing.T) {
 	if rr.Code != 400 {
 		t.Fatalf("status = %d, want 400 (body %s)", rr.Code, rr.Body)
 	}
-	if msg, _ := out["error"].(string); !strings.Contains(msg, "암호화") {
-		t.Fatalf("error = %q, want 암호화 hint", msg)
+	if msg, _ := out["error"].(string); !strings.Contains(msg, "encrypted") {
+		t.Fatalf("error = %q, want encrypted hint", msg)
 	}
 }
 

@@ -158,10 +158,10 @@ func (s *Server) admitTaskWhen(t *Task, mode string, requirePaused bool) (queued
 	lifecycle := t.lifecycleSnapshot()
 	if requirePaused {
 		if isTerminalStatus(lifecycle.Status) {
-			return false, fmt.Errorf("%s", trMsg(errGoalResumeTerminal))
+			return false, fmt.Errorf("%s", errGoalResumeTerminal)
 		}
 		if !lifecycle.Paused {
-			return false, fmt.Errorf("%s", trMsg(errGoalResumeNotPaused))
+			return false, fmt.Errorf("%s", errGoalResumeNotPaused)
 		}
 		mode = s.resumeAdmissionMode(t)
 	}

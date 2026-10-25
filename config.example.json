@@ -16,7 +16,5 @@
     }
   },
   "_comment_skill_dir": "Skills root directory (each subdirectory is one skill and contains SKILL.md). Precedence: environment variable ARTEX_SKILL_DIR > this field > default (skills/ next to the executable). Leave it empty or remove the field to use the default. Relative paths resolve against the current working directory.",
-  "skill_dir": "/opt/artex/skills",
-  "_comment_language": "Default user-facing output language (one of en, ko, zh, es, ja). Agent-generated reports, summaries, chat replies, and backend messages follow this language. Precedence: environment variable ARTEX_LANG > this field > default (en). At runtime the display language chosen in Settings overrides this default. Leave it empty or remove the field to use the default (en).",
-  "language": "en"
+  "skill_dir": "/opt/artex/skills"
 }

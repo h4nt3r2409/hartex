@@ -186,7 +186,7 @@ func (s *Server) pgTestCustomTool(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, 400, errCustomToolShellNoExec)
 		return
 	default:
-		writeErr(w, 400, trMsg(errCustomToolUnknownKindPrefix)+req.Kind)
+		writeErr(w, 400, errCustomToolUnknownKindPrefix+req.Kind)
 		return
 	}
 	writeJSON(w, 200, map[string]any{"output": res.Flatten(), "is_error": res.IsError})
@@ -223,7 +223,7 @@ func (s *Server) seedPythonInterpreter() {
 	}
 	if p := detectPython(); p != "" {
 		_ = s.m.pg.SetSetting(settingPythonInterp, p)
-		log.Printf(logT("[custom-tool] auto-detected python interpreter: %s"), p)
+		log.Printf("[custom-tool] auto-detected python interpreter: %s", p)
 	}
 }
 

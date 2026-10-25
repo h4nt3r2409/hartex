@@ -10,7 +10,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/Autumn-27/artex/config"
 	"github.com/Autumn-27/artex/db"
 )
 
@@ -29,11 +28,6 @@ type authTestRig struct {
 
 func newAuthTestRig(t *testing.T) *authTestRig {
 	t.Helper()
-	// This rig builds a bare Server (no New()), so the runtime language hook is not
-	// wired. Pin the English-first default so the tests assert the canonical messages.
-	prevLang := config.CurrentLanguage
-	config.CurrentLanguage = func() string { return "en" }
-	t.Cleanup(func() { config.CurrentLanguage = prevLang })
 	dsn, _, err := db.DSN()
 	if err != nil {
 		t.Skipf("no database config (%v) — skipping", err)

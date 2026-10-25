@@ -543,7 +543,7 @@ func (s *Server) refreshBuiltinToolSchemas() {
 		}
 	}
 	_ = s.m.pg.SetSetting(flag, "true")
-	log.Print(logT("[tools] refreshed orchestration/platform tool schemas to code defaults (one-time)"))
+	log.Print("[tools] refreshed orchestration/platform tool schemas to code defaults (one-time)")
 }
 
 // unbindGoalMetDefault removes goal_met's default "planner" binding ONCE (guarded by
@@ -785,7 +785,7 @@ func (s *Server) seedReporterAgent() {
 	}); err != nil {
 		log.Printf("[reporter] failed to create trigger: %v", err)
 	}
-	log.Printf(logT("[reporter] pre-configured the \"%s\" agent + finding trigger"), reporterAgentName)
+	log.Printf("[reporter] pre-configured the \"%s\" agent + finding trigger", reporterAgentName)
 }
 
 // seedAutoReportFindingBinding adds "auto" to report_finding's binding ONCE so

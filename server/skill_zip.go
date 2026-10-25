@@ -72,7 +72,7 @@ func zipMethodName(m uint16) string {
 func newSkillZipReader(buf []byte) (*zip.Reader, error) {
 	zr, err := zip.NewReader(bytes.NewReader(buf), int64(len(buf)))
 	if err != nil {
-		return nil, fmt.Errorf(trMsg(errSkillZipParse), err)
+		return nil, fmt.Errorf(errSkillZipParse, err)
 	}
 	zr.RegisterDecompressor(zipMethodBzip2, func(r io.Reader) io.ReadCloser {
 		return io.NopCloser(bzip2.NewReader(r))
@@ -127,7 +127,7 @@ func zipEntryName(f *zip.File) string {
 func checkSkillZipMethods(entries []skillZipEntry) error {
 	for _, e := range entries {
 		if e.f.Flags&0x1 != 0 || e.f.Method == zipMethodAES {
-			return fmt.Errorf(trMsg(errSkillZipEncrypted), e.name)
+			return fmt.Errorf(errSkillZipEncrypted, e.name)
 		}
 		switch e.f.Method {
 		case zipMethodStore, zipMethodDeflate, zipMethodBzip2, zipMethodZstd, zipMethodZstdPKW:

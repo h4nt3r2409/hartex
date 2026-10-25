@@ -85,9 +85,9 @@ func run() int {
 		cfgPath = abs
 	}
 	if _, e := os.Stat(cfgPath); e == nil {
-		log.Printf(config.T("[config] config file: %s"), cfgPath)
+		log.Printf("[config] config file: %s", cfgPath)
 	} else {
-		log.Printf(config.T("[config] config file: %s (not found · using only environment variable ARTEX_PG_DSN)"), cfgPath)
+		log.Printf("[config] config file: %s (not found · using only environment variable ARTEX_PG_DSN)", cfgPath)
 	}
 
 	sigCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -111,7 +111,7 @@ func run() int {
 	if abs, err := filepath.Abs(skillDir); err == nil {
 		skillDir = abs
 	}
-	log.Printf(config.T("[config] skill directory: %s"), skillDir)
+	log.Printf("[config] skill directory: %s", skillDir)
 	srv := server.New(ctx, mgr, skillDir, *dataDir, config.BaseDir())
 	srv.WarnIfExposed(*addr)
 	httpSrv := &http.Server{

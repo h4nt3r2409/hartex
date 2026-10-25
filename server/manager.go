@@ -276,10 +276,6 @@ const (
 	// agent integrated into the platform (planner/worker/main agent/conversation) have their context compression taken over by noa, replacing the built-in compaction.
 	// Read once per run; toggling it only affects runs started afterwards.
 	settingNoaCompaction = "noa_compaction"
-	// settingOutputLanguage is the runtime value of the user-facing output language ("en"/"ko"/"zh"/"es").
-	// When empty it falls back to config.Language() (ARTEX_LANG · settings file · default Korean). Both the agent
-	// output language (langDirective) and the backend message catalog follow this value.
-	settingOutputLanguage = "output_language"
 	// defaultWebSearchBackend is used when web search is on but no backend was picked.
 	defaultWebSearchBackend = "ddgs"
 	// deepSeekWebSearchBackend borrows the active LLM profile instead of its own
@@ -370,7 +366,7 @@ func NewManager(dir, proxyAddr string) (*Manager, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf(logT("[pg] database configuration source: %s"), source)
+	log.Printf("[pg] database configuration source: %s", source)
 	pg, err := pgdb.Open(dsn)
 	if err != nil {
 		return nil, err
@@ -689,9 +685,9 @@ func (m *Manager) syncBrowserMCPProxy() {
 		return
 	}
 	if proxy != "" {
-		log.Printf(logT("[mcp] browser MCP capture proxy attached: %s (CA %s)"), proxy, cert)
+		log.Printf("[mcp] browser MCP capture proxy attached: %s (CA %s)", proxy, cert)
 	} else {
-		log.Print(logT("[mcp] browser MCP capture proxy configuration removed"))
+		log.Print("[mcp] browser MCP capture proxy configuration removed")
 	}
 }
 

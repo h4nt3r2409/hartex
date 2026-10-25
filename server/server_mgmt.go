@@ -2066,7 +2066,7 @@ func (s *Server) pgListModels(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if apiKey == "" {
-		writeJSON(w, 200, map[string]any{"ok": false, "error": trMsg(errMgmtNoAPIKey)})
+		writeJSON(w, 200, map[string]any{"ok": false, "error": errMgmtNoAPIKey})
 		return
 	}
 
@@ -2217,7 +2217,7 @@ func withGlobalVars(vars []db.PromptVar) []db.PromptVar {
 func validateTemplate(tmpl string, catalog []db.PromptVar) string {
 	t, err := template.New("p").Option("missingkey=error").Parse(tmpl)
 	if err != nil {
-		return trMsg(errMgmtTmplSyntax) + err.Error()
+		return errMgmtTmplSyntax + err.Error()
 	}
 	allowed := map[string]bool{}
 	for _, v := range catalog {
@@ -2225,7 +2225,7 @@ func validateTemplate(tmpl string, catalog []db.PromptVar) string {
 	}
 	for _, name := range templateFields(t) {
 		if !allowed[name] {
-			return trMsg(errMgmtTmplVarPre) + name + trMsg(errMgmtTmplVarPost)
+			return errMgmtTmplVarPre + name + errMgmtTmplVarPost
 		}
 	}
 	return ""

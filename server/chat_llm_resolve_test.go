@@ -11,9 +11,6 @@ import (
 // to the actual configuration state: nothing configured vs. configured-but-not-
 // activated must read differently so the user knows what to do.
 func TestChatUnavailableReasonDistinguishesStates(t *testing.T) {
-	// The package TestMain pins Korean for the localization golden tests; this test
-	// asserts the English-first source constants, so opt into the English default.
-	t.Setenv("ARTEX_LANG", "")
 	m, err := NewManager(t.TempDir(), "")
 	if err != nil {
 		t.Skipf("postgres unavailable (%v) — skipping", err)

@@ -54,7 +54,7 @@ func (s *Server) wireInterceptReviewer() {
 		}
 		prov, _, ok := s.providerForProfile(profileID)
 		if !ok {
-			return intercept.Decision{ProfileID: profileID}, fmt.Errorf(trMsg(errJudgeModelUnavailable), profileID)
+			return intercept.Decision{ProfileID: profileID}, fmt.Errorf(errJudgeModelUnavailable, profileID)
 		}
 		// Tag this call's usage as the "judge" lane so the config page can report
 		// how much the fallback approval has spent, separate from model profiles.

@@ -122,18 +122,18 @@ func (s *Server) applyTaskControlWithCause(t *Task, action string, pauseCause er
 		defer s.concMu.Unlock()
 		current, exists := s.m.Task(t.ID)
 		if !exists || current != t || s.engine.IsDeleting(t.ID) {
-			return out, fmt.Errorf("%s", trMsg(errTaskCtrlDeleting))
+			return out, fmt.Errorf("%s", errTaskCtrlDeleting)
 		}
 		if !s.engine.beginTaskOperation(t.ID) {
-			return out, fmt.Errorf("%s", trMsg(errTaskCtrlDeleting))
+			return out, fmt.Errorf("%s", errTaskCtrlDeleting)
 		}
 		defer s.engine.decInflight(t.ID)
 		lifecycle := t.lifecycleSnapshot()
 		if isTerminalStatus(lifecycle.Status) {
-			return out, fmt.Errorf("%s", trMsg(errTaskCtrlTerminalPause))
+			return out, fmt.Errorf("%s", errTaskCtrlTerminalPause)
 		}
 		if lifecycle.Paused {
-			return out, fmt.Errorf("%s", trMsg(errTaskCtrlAlreadyPaused))
+			return out, fmt.Errorf("%s", errTaskCtrlAlreadyPaused)
 		}
 		wasQueued := lifecycle.Queued
 		wasEnginePaused := s.engine.IsPaused(t.ID)
@@ -163,7 +163,7 @@ func (s *Server) applyTaskControlWithCause(t *Task, action string, pauseCause er
 	default:
 		return out, fmt.Errorf("action must be pause|resume")
 	}
-	log.Printf("[task] #%s %s", t.ID, logT(map[string]string{"pause": "paused", "resume": "resumed"}[action]))
+	log.Printf("[task] #%s %s", t.ID, map[string]string{"pause": "paused", "resume": "resumed"}[action])
 	return out, nil
 }
 
@@ -190,7 +190,7 @@ func (s *Server) applyIntentControl(ctx context.Context, t *Task, iid int64, act
 	}
 	if node == nil {
 		if inherited, sourceErr := t.Store.GetNodeWithSources(iid); sourceErr == nil && inherited != nil && inherited.Inherited {
-			return out, fmt.Errorf("%s", trMsg(errIntentCtrlInheritedReadonly))
+			return out, fmt.Errorf("%s", errIntentCtrlInheritedReadonly)
 		}
 		return out, fmt.Errorf("intent not found")
 	}
@@ -200,7 +200,7 @@ func (s *Server) applyIntentControl(ctx context.Context, t *Task, iid int64, act
 	switch action {
 	case "pause":
 		if node.State != "running" {
-			return out, fmt.Errorf("%s", trMsg(errIntentCtrlOnlyRunningPause))
+			return out, fmt.Errorf("%s", errIntentCtrlOnlyRunningPause)
 		}
 		if err := s.engine.ControlWork(ctx, iid, "pause"); err != nil {
 			return out, err
@@ -208,14 +208,14 @@ func (s *Server) applyIntentControl(ctx context.Context, t *Task, iid int64, act
 		out.State = "paused"
 	case "resume":
 		if node.State != "paused" {
-			return out, fmt.Errorf("%s", trMsg(errIntentCtrlOnlyPausedResume))
+			return out, fmt.Errorf("%s", errIntentCtrlOnlyPausedResume)
 		}
 		changed, err := t.Store.CompareAndSetIntentState(iid, "paused", "open")
 		if err != nil {
 			return out, err
 		}
 		if !changed {
-			return out, fmt.Errorf(trMsg(errIntentCtrlStateConflictFmt), db.ErrIntentStateConflict)
+			return out, fmt.Errorf(errIntentCtrlStateConflictFmt, db.ErrIntentStateConflict)
 		}
 		t.Notify()
 		out.State = "open"
@@ -229,11 +229,11 @@ func (s *Server) applyIntentControl(ctx context.Context, t *Task, iid int64, act
 		//     task root fact are preserved.
 		// Both modes notify the planner with cancelled (intent content + deletion reason), so that it plans again accordingly.
 		if node.State != "running" && node.State != "paused" && node.State != "open" {
-			return out, fmt.Errorf("%s", trMsg(errIntentCtrlOnlyDeletable))
+			return out, fmt.Errorf("%s", errIntentCtrlOnlyDeletable)
 		}
 		reason = strings.TrimSpace(reason)
 		if reason == "" {
-			return out, fmt.Errorf("%s", trMsg(errIntentCtrlReasonRequired))
+			return out, fmt.Errorf("%s", errIntentCtrlReasonRequired)
 		}
 		if node.State == "running" {
 			if err := s.engine.ControlWork(ctx, iid, "cancel"); err != nil {
@@ -280,7 +280,7 @@ func (s *Server) controlTasksBatch(w http.ResponseWriter, r *http.Request) {
 	}
 	taskIDs := normalizeBatchTaskIDs(req.TaskIDs)
 	if len(taskIDs) == 0 || len(taskIDs) > maxBatchControlIDs {
-		writeErr(w, 400, fmt.Sprintf(trMsg(errTaskCtrlBatchSizeFmt), maxBatchControlIDs))
+		writeErr(w, 400, fmt.Sprintf(errTaskCtrlBatchSizeFmt, maxBatchControlIDs))
 		return
 	}
 	items := make([]batchControlItem, 0, len(taskIDs))

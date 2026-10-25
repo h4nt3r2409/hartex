@@ -86,7 +86,7 @@ func loadOrCreateJWTKey(keyDir, dataDir string) ([]byte, error) {
 			if data, rerr := os.ReadFile(legacy); rerr == nil {
 				if werr := os.WriteFile(path, data, 0o600); werr == nil {
 					_ = os.Remove(legacy)
-					log.Printf(logT("[auth] moved JWT key from %s to %s (out of the discoverable workspace)"), legacy, path)
+					log.Printf("[auth] moved JWT key from %s to %s (out of the discoverable workspace)", legacy, path)
 				}
 			}
 		}
@@ -101,7 +101,7 @@ func loadOrCreateJWTKey(keyDir, dataDir string) ([]byte, error) {
 	if err := os.WriteFile(path, []byte(key), 0600); err != nil {
 		return nil, fmt.Errorf("write jwt key: %w", err)
 	}
-	log.Printf(logT("[auth] wrote new JWT key to %s"), path)
+	log.Printf("[auth] wrote new JWT key to %s", path)
 	return []byte(key), nil
 }
 
@@ -241,7 +241,7 @@ func (s *Server) bootstrapAuth() {
 	if err != nil {
 		// Unknown whether a password exists: neither initialise from the env var
 		// nor issue a setup token now. authStatus re-reads on every request.
-		log.Printf(logT("[auth] could not read the password state; skipping first-run initialisation: %v"), err)
+		log.Printf("[auth] could not read the password state; skipping first-run initialisation: %v", err)
 		return
 	}
 	if hash != "" {
@@ -249,22 +249,22 @@ func (s *Server) bootstrapAuth() {
 	}
 	if pw := os.Getenv(adminPasswordEnv); pw != "" {
 		if utf8.RuneCountInString(pw) < minPasswordLen {
-			log.Printf(logT("[auth] ignoring %s because it is shorter than %d characters; initialise with the setup token instead"), adminPasswordEnv, minPasswordLen)
+			log.Printf("[auth] ignoring %s because it is shorter than %d characters; initialise with the setup token instead", adminPasswordEnv, minPasswordLen)
 		} else if len(pw) > maxPasswordBytes {
-			log.Printf(logT("[auth] ignoring %s because it exceeds %d bytes; initialise with the setup token instead"), adminPasswordEnv, maxPasswordBytes)
+			log.Printf("[auth] ignoring %s because it exceeds %d bytes; initialise with the setup token instead", adminPasswordEnv, maxPasswordBytes)
 		} else if h, err := bcrypt.GenerateFromPassword([]byte(pw), bcrypt.DefaultCost); err != nil {
-			log.Printf(logT("[auth] failed to hash %s: %v"), adminPasswordEnv, err)
+			log.Printf("[auth] failed to hash %s: %v", adminPasswordEnv, err)
 		} else if inserted, err := s.m.pg.InsertSettingIfAbsent(authPassKey, string(h)); err != nil {
 			// Same first-set-only guarantee as authInit: an upsert here would let a
 			// second instance starting with a different value overwrite the password.
-			log.Printf(logT("[auth] failed to store %s: %v"), adminPasswordEnv, err)
+			log.Printf("[auth] failed to store %s: %v", adminPasswordEnv, err)
 		} else if !inserted {
 			// Another instance set the password between our read and this write.
 			_, _ = s.reloadPassHash()
 			return
 		} else {
 			s.setPassHash(string(h))
-			log.Printf(logT("[auth] initialised the admin password from environment variable %s (username ARTEX)"), adminPasswordEnv)
+			log.Printf("[auth] initialised the admin password from environment variable %s (username ARTEX)", adminPasswordEnv)
 			return
 		}
 	}
@@ -282,17 +282,17 @@ func (s *Server) currentSetupToken() string {
 	}
 	if v := strings.TrimSpace(os.Getenv(setupTokenEnv)); v != "" {
 		s.setupToken = v
-		log.Printf(logT("[auth] the admin password has not been set yet. The setup token is the value of environment variable %s (not printed to the log)"), setupTokenEnv)
+		log.Printf("[auth] the admin password has not been set yet. The setup token is the value of environment variable %s (not printed to the log)", setupTokenEnv)
 		return s.setupToken
 	}
 	tok, err := randomToken(setupTokenLen)
 	if err != nil {
-		log.Printf(logT("[auth] failed to generate the setup token: %v"), err)
+		log.Printf("[auth] failed to generate the setup token: %v", err)
 		return ""
 	}
 	s.setupToken = tok
-	log.Printf(logT("[auth] the admin password has not been set yet. Setup token: %s"), tok)
-	log.Print(logT("[auth] enter the value above in the \"Setup token\" field on the first screen (/setup), or send it as setup_token in the POST /api/auth/init body. This token is never sent over the network and is only visible in this console log"))
+	log.Printf("[auth] the admin password has not been set yet. Setup token: %s", tok)
+	log.Print("[auth] enter the value above in the \"Setup token\" field on the first screen (/setup), or send it as setup_token in the POST /api/auth/init body. This token is never sent over the network and is only visible in this console log")
 	return s.setupToken
 }
 
@@ -439,7 +439,7 @@ func (s *Server) WarnIfExposed(addr string) {
 	if h, err := s.cachedPassHash(); err != nil || h != "" {
 		return
 	}
-	log.Printf(logT("[auth] warning: the admin password has not been set yet and the server is bound to %q, so other hosts can connect. Initialisation still requires the setup token, but do not expose this port to external networks until initial setup is complete (default 127.0.0.1:8787)"), addr)
+	log.Printf("[auth] warning: the admin password has not been set yet and the server is bound to %q, so other hosts can connect. Initialisation still requires the setup token, but do not expose this port to external networks until initial setup is complete (default 127.0.0.1:8787)", addr)
 }
 
 // extractToken reads the JWT from Authorization: Bearer header,
@@ -537,7 +537,7 @@ func (s *Server) authInit(w http.ResponseWriter, r *http.Request) {
 	}
 	if !s.checkSetupToken(req.SetupToken) {
 		s.limiter().fail(key)
-		log.Printf(logT("[auth] initial setup rejected: setup token mismatch (client=%s)"), clientLogID(r))
+		log.Printf("[auth] initial setup rejected: setup token mismatch (client=%s)", clientLogID(r))
 		writeErr(w, 403, authErrSetupTokenInvalid)
 		return
 	}
@@ -564,7 +564,7 @@ func (s *Server) authInit(w http.ResponseWriter, r *http.Request) {
 	// request can set it first, and the read check can be neutralised by a failure.
 	inserted, err := pg.InsertSettingIfAbsent(authPassKey, string(hash))
 	if err != nil {
-		writeErr(w, 500, trMsg(authErrSaveFailedPrefix)+err.Error())
+		writeErr(w, 500, authErrSaveFailedPrefix+err.Error())
 		return
 	}
 	if !inserted {
@@ -579,7 +579,7 @@ func (s *Server) authInit(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, 500, authErrTokenGen)
 		return
 	}
-	log.Printf(logT("[auth] admin password initialised (client=%s)"), clientLogID(r))
+	log.Printf("[auth] admin password initialised (client=%s)", clientLogID(r))
 	writeJSON(w, 200, map[string]any{"token": tok})
 }
 
@@ -633,7 +633,7 @@ func (s *Server) authChangePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(req.OldPassword)); err != nil {
 		s.limiter().fail(key)
-		log.Printf(logT("[auth] password change rejected: current password mismatch (client=%s)"), clientLogID(r))
+		log.Printf("[auth] password change rejected: current password mismatch (client=%s)", clientLogID(r))
 		writeErr(w, 401, authErrCurrentPasswordWrong)
 		return
 	}
@@ -643,7 +643,7 @@ func (s *Server) authChangePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := pg.SetSetting(authPassKey, string(newHash)); err != nil {
-		writeErr(w, 500, trMsg(authErrSaveFailedPrefix)+err.Error())
+		writeErr(w, 500, authErrSaveFailedPrefix+err.Error())
 		return
 	}
 	s.setPassHash(string(newHash))
@@ -653,7 +653,7 @@ func (s *Server) authChangePassword(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, 500, authErrTokenGen)
 		return
 	}
-	log.Printf(logT("[auth] admin password changed; all existing sessions are invalidated (client=%s)"), clientLogID(r))
+	log.Printf("[auth] admin password changed; all existing sessions are invalidated (client=%s)", clientLogID(r))
 	writeJSON(w, 200, map[string]any{"ok": true, "token": tok})
 }
 
@@ -690,7 +690,7 @@ func (s *Server) authLogin(w http.ResponseWriter, r *http.Request) {
 	pwErr := bcrypt.CompareHashAndPassword([]byte(hash), []byte(req.Password))
 	if req.Username != "ARTEX" || pwErr != nil {
 		s.limiter().fail(key)
-		log.Printf(logT("[auth] login failed (client=%s)"), clientLogID(r))
+		log.Printf("[auth] login failed (client=%s)", clientLogID(r))
 		writeErr(w, 401, authErrBadCredential)
 		return
 	}

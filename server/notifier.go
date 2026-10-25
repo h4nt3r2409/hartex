@@ -233,7 +233,7 @@ func (n *Notifier) stepRealtime(ctx context.Context, ch *db.NotificationChannel,
 	}
 	channel, cfg, ok := n.adapt(ch)
 	if !ok {
-		_ = n.pg.FailDeliveries(ctx, deliveryIDs(deliveries), fmt.Sprintf(trMsg(errDeliveryChannelKindUnregistered), ch.Kind))
+		_ = n.pg.FailDeliveries(ctx, deliveryIDs(deliveries), fmt.Sprintf(errDeliveryChannelKindUnregistered, ch.Kind))
 		return
 	}
 	for _, dl := range deliveries {
@@ -269,7 +269,7 @@ func (n *Notifier) stepDigest(ctx context.Context, ch *db.NotificationChannel, a
 	}
 	channel, cfg, ok := n.adapt(ch)
 	if !ok {
-		_ = n.pg.FailDeliveries(ctx, deliveryIDs(deliveries), fmt.Sprintf(trMsg(errDeliveryChannelKindUnregistered), ch.Kind))
+		_ = n.pg.FailDeliveries(ctx, deliveryIDs(deliveries), fmt.Sprintf(errDeliveryChannelKindUnregistered, ch.Kind))
 		return
 	}
 	msg, included, err := n.renderBatch(ctx, deliveries, baseURL, int(window.Minutes()))
@@ -328,7 +328,7 @@ func (n *Notifier) send(ctx context.Context, channel notify.Channel, cfg map[str
 			// RescheduleDeliveries—this is not a failure and should not consume the retry
 			// budget (the optimistic +1 at claim time is subtracted back there).
 			if err := n.pg.DeferDeliveries(ctx, deliveryIDs(rest),
-				fmt.Sprintf(trMsg(errDeliveryChannelLengthCapped), delivered)); err != nil {
+				fmt.Sprintf(errDeliveryChannelLengthCapped, delivered)); err != nil {
 				log.Printf("[notify] failed to queue deferred segment channel=%s ids=%v: %v", channel.Kind(), deliveryIDs(rest), err)
 			}
 		}
@@ -337,7 +337,7 @@ func (n *Notifier) send(ctx context.Context, channel notify.Channel, cfg map[str
 	if err == nil {
 		// The channel neither errored nor reported how many were delivered. Treat it as a
 		// failure (with backoff) so this delivery is not repeatedly claimed yet never marked off.
-		err = fmt.Errorf(trMsg(errDeliveryNoDeliveredCount), delivered)
+		err = fmt.Errorf(errDeliveryNoDeliveredCount, delivered)
 	}
 
 	// Failure handling is decided **per item**, not by judging on the whole batch's maximum
@@ -369,7 +369,7 @@ func (n *Notifier) send(ctx context.Context, channel notify.Channel, cfg map[str
 		}
 	}
 	if len(exhaustedIDs) > 0 {
-		reason := fmt.Sprintf(trMsg(errDeliveryRetryExhausted), db.MaxNotifyAttempts, err)
+		reason := fmt.Sprintf(errDeliveryRetryExhausted, db.MaxNotifyAttempts, err)
 		if fErr := n.pg.FailDeliveries(ctx, exhaustedIDs, reason); fErr != nil {
 			log.Printf("[notify] error marking failure status channel=%s ids=%v: %v", channel.Kind(), exhaustedIDs, fErr)
 		}
@@ -469,7 +469,7 @@ func (n *Notifier) renderBatch(ctx context.Context, deliveries []*db.Notificatio
 		included = append(included, dl)
 	}
 	if len(items) == 0 {
-		return notify.Message{}, nil, fmt.Errorf(trMsg(errDeliveryBatchAllUnparseable), len(deliveries))
+		return notify.Message{}, nil, fmt.Errorf(errDeliveryBatchAllUnparseable, len(deliveries))
 	}
 	return notify.Message{
 		Items:         items,
@@ -583,10 +583,10 @@ func (n *Notifier) digestInterval() time.Duration {
 func parseSnapshot(dl *db.NotificationDelivery) (notify.Snapshot, error) {
 	var snap notify.Snapshot
 	if len(dl.Snapshot) == 0 {
-		return snap, fmt.Errorf(trMsg(errDeliverySnapshotEmpty), dl.ID)
+		return snap, fmt.Errorf(errDeliverySnapshotEmpty, dl.ID)
 	}
 	if err := json.Unmarshal(dl.Snapshot, &snap); err != nil {
-		return snap, fmt.Errorf(trMsg(errDeliverySnapshotParse), dl.ID, err)
+		return snap, fmt.Errorf(errDeliverySnapshotParse, dl.ID, err)
 	}
 	if snap.Kind == "" {
 		// The event type follows the event row; the copy in the snapshot may have been written
