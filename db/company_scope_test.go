@@ -41,6 +41,8 @@ func TestParseScopeLine(t *testing.T) {
 }
 
 func TestParseAutoScopeLine(t *testing.T) {
+	// Allowlist §7 item 6: Chinese ICP-filing (备案/ICP) detection. These forms are
+	// functional input the parser must recognize; translating them would erase the test.
 	cases := []struct {
 		name       string
 		input      string
@@ -256,10 +258,10 @@ func TestCompanyICPAttribution(t *testing.T) {
 	t.Cleanup(func() {
 		// Do not swallow errors: a failed cleanup pollutes later tests, so it must surface in this run.
 		if _, err := d.Exec(`DELETE FROM assets WHERE task_ids @> ARRAY[$1]::bigint[]`, suffix); err != nil {
-			t.Errorf("清理测试资产失败: %v", err)
+			t.Errorf("failed to clean up test assets: %v", err)
 		}
 		if _, err := d.Exec(`DELETE FROM companies WHERE id=$1`, companyID); err != nil {
-			t.Errorf("清理测试公司失败: %v", err)
+			t.Errorf("failed to clean up test companies: %v", err)
 		}
 	})
 

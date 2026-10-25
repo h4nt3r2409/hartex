@@ -20,10 +20,10 @@ func singleMsg() Message {
 	return Message{
 		Items: []Item{{
 			FindingID: 42,
-			Name:      `登录处 "SQL注入" 风险`,
-			VulnClass: "SQL注入",
+			Name:      `Login form "SQL injection" risk`,
+			VulnClass: "SQL injection",
 			Severity:  "high",
-			Summary:   "参数 id\n未过滤 导致注入",
+			Summary:   "parameter id\nunfiltered leading to injection",
 			Assets:    []string{"a.example.com", "b.example.com"},
 			DetailURL: "https://artex.local/function/findings/detail?id=42",
 		}},
@@ -36,10 +36,10 @@ func batchMsg(n int) Message {
 	for i := 0; i < n; i++ {
 		m.Items = append(m.Items, Item{
 			FindingID: int64(i + 1),
-			Name:      "漏洞" + itoa(i+1),
+			Name:      "Vulnerability " + itoa(i+1),
 			VulnClass: "XSS",
 			Severity:  "medium",
-			Summary:   "反射型跨站脚本",
+			Summary:   "reflected cross-site scripting",
 			Assets:    []string{"target.example.com"},
 		})
 	}
@@ -54,7 +54,7 @@ func capturePost(t *testing.T, respBody string, assert func(t *testing.T, body m
 		var body map[string]any
 		if len(raw) > 0 {
 			if err := json.Unmarshal(raw, &body); err != nil {
-				t.Errorf("请求体不是合法 JSON: %v\n原文: %s", err, raw)
+				t.Errorf("request body is not valid JSON: %v\nraw: %s", err, raw)
 			}
 		}
 		if assert != nil {
@@ -70,30 +70,30 @@ func capturePost(t *testing.T, respBody string, assert func(t *testing.T, body m
 func TestDingTalkSendsActionCardWhenLinkPresent(t *testing.T) {
 	srv := capturePost(t, `{"errcode":0,"errmsg":"ok"}`, func(t *testing.T, body map[string]any, _ *http.Request) {
 		if body["msgtype"] != "actionCard" {
-			t.Fatalf("有回链时应发 actionCard，得到 %v", body["msgtype"])
+			t.Fatalf("with a back link it must send actionCard, got %v", body["msgtype"])
 		}
 		card, _ := body["actionCard"].(map[string]any)
 		if card["singleURL"] != "https://artex.local/function/findings/detail?id=42" {
-			t.Errorf("回链丢失: %v", card["singleURL"])
+			t.Errorf("back link lost: %v", card["singleURL"])
 		}
 	})
 	if _, err := (dingTalkChannel{}).Send(context.Background(), map[string]any{"webhook": srv.URL}, singleMsg()); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 }
 
 func TestDingTalkFallsBackToMarkdownForBatch(t *testing.T) {
 	srv := capturePost(t, `{"errcode":0,"errmsg":"ok"}`, func(t *testing.T, body map[string]any, _ *http.Request) {
 		if body["msgtype"] != "markdown" {
-			t.Fatalf("汇总消息应发 markdown，得到 %v", body["msgtype"])
+			t.Fatalf("a digest must be sent as markdown, got %v", body["msgtype"])
 		}
 		md, _ := body["markdown"].(map[string]any)
 		if !strings.Contains(md["text"].(string), "New vulnerabilities in the last 30 minutes") {
-			t.Errorf("汇总正文缺少时间窗: %v", md["text"])
+			t.Errorf("digest body is missing the time window: %v", md["text"])
 		}
 	})
 	if _, err := (dingTalkChannel{}).Send(context.Background(), map[string]any{"webhook": srv.URL}, batchMsg(3)); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 }
 
@@ -103,36 +103,36 @@ func TestDingTalkBusinessErrorIsPermanent(t *testing.T) {
 	srv := capturePost(t, `{"errcode":310000,"errmsg":"keywords not in content"}`, nil)
 	_, err := (dingTalkChannel{}).Send(context.Background(), map[string]any{"webhook": srv.URL}, singleMsg())
 	if err == nil {
-		t.Fatal("errcode 非 0 应报错")
+		t.Fatal("a non-zero errcode must return an error")
 	}
 	if !IsPermanent(err) {
-		t.Fatalf("关键词不匹配属于配置错误，应标记为永久失败，得到 %v", err)
+		t.Fatalf("a keyword mismatch is a config error and must be permanent, got %v", err)
 	}
 	if !strings.Contains(err.Error(), "310000") {
-		t.Errorf("错误信息应带上平台错误码，得到 %v", err)
+		t.Errorf("the error must include the platform error code, got %v", err)
 	}
 }
 
-func TestWeComTruncatesCJKWithinByteLimit(t *testing.T) {
+func TestWeComTruncatesMultibyteWithinByteLimit(t *testing.T) {
 	var contentLen int
 	srv := capturePost(t, `{"errcode":0,"errmsg":"ok"}`, func(t *testing.T, body map[string]any, _ *http.Request) {
 		md, _ := body["markdown"].(map[string]any)
 		content, _ := md["content"].(string)
 		contentLen = len(content)
 		if !utf8.ValidString(content) {
-			t.Fatal("截断后不是合法 UTF-8——企微会整条拒收")
+			t.Fatal("truncation produced invalid UTF-8; WeCom rejects the whole message")
 		}
 	})
-	// Build a sufficiently long batch of Chinese summaries that necessarily exceeds 4096 bytes.
+	// Build a sufficiently long batch of multibyte summaries that necessarily exceeds 4096 bytes.
 	m := batchMsg(200)
 	if _, err := (weComChannel{}).Send(context.Background(), map[string]any{"webhook": srv.URL}, m); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 	if contentLen > weComMarkdownLimit {
-		t.Fatalf("正文 %d 字节超出企微上限 %d", contentLen, weComMarkdownLimit)
+		t.Fatalf("body is %d bytes, over the WeCom limit %d", contentLen, weComMarkdownLimit)
 	}
 	if contentLen == 0 {
-		t.Fatal("正文为空")
+		t.Fatal("body is empty")
 	}
 }
 
@@ -140,13 +140,13 @@ func TestWeComRateLimitIsRetryableButKeyErrorIsPermanent(t *testing.T) {
 	limited := capturePost(t, `{"errcode":45009,"errmsg":"api freq out of limit"}`, nil)
 	_, err := (weComChannel{}).Send(context.Background(), map[string]any{"webhook": limited.URL}, singleMsg())
 	if err == nil || IsPermanent(err) {
-		t.Fatalf("45009 是滚动窗口限流，应可重试，得到 %v", err)
+		t.Fatalf("45009 is rolling-window rate limiting and must be retryable, got %v", err)
 	}
 
 	badKey := capturePost(t, `{"errcode":93000,"errmsg":"invalid webhook url"}`, nil)
 	_, err = (weComChannel{}).Send(context.Background(), map[string]any{"webhook": badKey.URL}, singleMsg())
 	if err == nil || !IsPermanent(err) {
-		t.Fatalf("93000 是 key 无效，重试不会自愈，应为永久失败，得到 %v", err)
+		t.Fatalf("93000 means the key is invalid; retrying cannot heal it, so it must be permanent, got %v", err)
 	}
 }
 
@@ -154,16 +154,16 @@ func TestFeishuCardStructureAndSign(t *testing.T) {
 	const secret = "SECtest123"
 	srv := capturePost(t, `{"code":0,"msg":"success"}`, func(t *testing.T, body map[string]any, _ *http.Request) {
 		if body["msg_type"] != "interactive" {
-			t.Fatalf("应发交互式卡片，得到 %v", body["msg_type"])
+			t.Fatalf("must send an interactive card, got %v", body["msg_type"])
 		}
 		card, _ := body["card"].(map[string]any)
 		header, _ := card["header"].(map[string]any)
 		if header["template"] != "orange" {
-			t.Errorf("high 级别应为 orange 配色，得到 %v", header["template"])
+			t.Errorf("high severity must use the orange template, got %v", header["template"])
 		}
 		// When a secret is configured, the signature parameters must be included; otherwise Feishu rejects with 19021.
 		if body["sign"] == nil || body["timestamp"] == nil {
-			t.Fatalf("缺少加签参数: %v", body)
+			t.Fatalf("signature parameters are missing: %v", body)
 		}
 		// The card elements should contain a button whose url points to the vulnerability details.
 		elements, _ := card["elements"].([]any)
@@ -182,23 +182,23 @@ func TestFeishuCardStructureAndSign(t *testing.T) {
 			}
 		}
 		if !foundButton {
-			t.Fatal("卡片里没有指向详情页的按钮")
+			t.Fatal("the card has no button pointing at the detail page")
 		}
 	})
 	cfg := map[string]any{"webhook": srv.URL, "secret": secret}
 	if _, err := (feishuChannel{}).Send(context.Background(), cfg, singleMsg()); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 }
 
 func TestFeishuWithoutSecretOmitsSign(t *testing.T) {
 	srv := capturePost(t, `{"code":0,"msg":"success"}`, func(t *testing.T, body map[string]any, _ *http.Request) {
 		if body["sign"] != nil || body["timestamp"] != nil {
-			t.Fatalf("未配置 secret 时不应带加签参数: %v", body)
+			t.Fatalf("without a secret no signature parameters may be sent: %v", body)
 		}
 	})
 	if _, err := (feishuChannel{}).Send(context.Background(), map[string]any{"webhook": srv.URL}, singleMsg()); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 }
 
@@ -207,7 +207,7 @@ func TestTelegramEscapesHTMLInUntrustedContent(t *testing.T) {
 	srv := capturePost(t, `{"ok":true}`, func(t *testing.T, body map[string]any, _ *http.Request) {
 		text, _ = body["text"].(string)
 		if body["parse_mode"] != "HTML" {
-			t.Fatalf("应使用 HTML 解析模式，得到 %v", body["parse_mode"])
+			t.Fatalf("must use HTML parse mode, got %v", body["parse_mode"])
 		}
 	})
 	m := Message{Items: []Item{{
@@ -218,16 +218,16 @@ func TestTelegramEscapesHTMLInUntrustedContent(t *testing.T) {
 	}}}
 	if _, err := (telegramChannel{}).Send(context.Background(),
 		map[string]any{"bot_token": "tok", "chat_id": "1", "base_url": srv.URL}, m); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 	if strings.Contains(text, "<script>") {
-		t.Fatalf("未转义 HTML，存在注入: %q", text)
+		t.Fatalf("HTML was not escaped; injection is possible: %q", text)
 	}
 	if !strings.Contains(text, "&lt;script&gt;") {
-		t.Fatalf("期望转义后的实体，得到 %q", text)
+		t.Fatalf("want the escaped entity, got %q", text)
 	}
 	if !strings.Contains(text, "a &amp; b") {
-		t.Fatalf("& 未转义，得到 %q", text)
+		t.Fatalf("& was not escaped, got %q", text)
 	}
 }
 
@@ -236,14 +236,14 @@ func TestTelegramErrorClassification(t *testing.T) {
 	_, err := (telegramChannel{}).Send(context.Background(),
 		map[string]any{"bot_token": "tok", "chat_id": "1", "base_url": rateLimited.URL}, singleMsg())
 	if err == nil || IsPermanent(err) {
-		t.Fatalf("429 应可重试，得到 %v", err)
+		t.Fatalf("429 must be retryable, got %v", err)
 	}
 
 	forbidden := capturePost(t, `{"ok":false,"error_code":403,"description":"bot was blocked by the user"}`, nil)
 	_, err = (telegramChannel{}).Send(context.Background(),
 		map[string]any{"bot_token": "tok", "chat_id": "1", "base_url": forbidden.URL}, singleMsg())
 	if err == nil || !IsPermanent(err) {
-		t.Fatalf("403 是配置问题，应为永久失败，得到 %v", err)
+		t.Fatalf("403 is a config problem and must be permanent, got %v", err)
 	}
 }
 
@@ -251,46 +251,46 @@ func TestWebhookDefaultTemplateProducesValidJSON(t *testing.T) {
 	// This is the point of the default template: when the title contains quotes and newlines, any naive
 	// `"title": "{{.Title}}"` form will produce invalid JSON. Only {{json .}} avoids it.
 	srv := capturePost(t, `{"ok":true}`, func(t *testing.T, body map[string]any, _ *http.Request) {
-		if body["title"] != `[🟠 High] 登录处 "SQL注入" 风险` {
-			t.Errorf("标题未正确还原: %v", body["title"])
+		if body["title"] != `[🟠 High] Login form "SQL injection" risk` {
+			t.Errorf("title was not restored correctly: %v", body["title"])
 		}
 		items, _ := body["items"].([]any)
 		if len(items) != 1 {
-			t.Fatalf("items 数量应为 1，得到 %d", len(items))
+			t.Fatalf("items count must be 1, got %d", len(items))
 		}
 		it, _ := items[0].(map[string]any)
-		if it["summary"] != "参数 id\n未过滤 导致注入" {
-			t.Errorf("摘要未正确还原: %v", it["summary"])
+		if it["summary"] != "parameter id\nunfiltered leading to injection" {
+			t.Errorf("summary was not restored correctly: %v", it["summary"])
 		}
 		// Numeric values must be JSON numbers, not strings (writings such as json:"...,string" fall into this trap).
 		if _, ok := it["finding_id"].(float64); !ok {
-			t.Errorf("finding_id 应为数字，得到 %T", it["finding_id"])
+			t.Errorf("finding_id must be a number, got %T", it["finding_id"])
 		}
 	})
 	if _, err := (webhookChannel{}).Send(context.Background(), map[string]any{"url": srv.URL}, singleMsg()); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 }
 
 func TestWebhookCustomTemplateAndHeaders(t *testing.T) {
 	srv := capturePost(t, `{"ok":true}`, func(t *testing.T, body map[string]any, r *http.Request) {
 		if r.Header.Get("X-Token") != "s3cret" {
-			t.Errorf("自定义头丢失: %v", r.Header)
+			t.Errorf("custom header lost: %v", r.Header)
 		}
-		if body["msg"] != "3 条" {
-			t.Errorf("自定义模板渲染有误: %v", body["msg"])
+		if body["msg"] != "3 messages" {
+			t.Errorf("custom template rendered incorrectly: %v", body["msg"])
 		}
-		if body["first"] != "漏洞1" {
-			t.Errorf("range 提取有误: %v", body["first"])
+		if body["first"] != "Vulnerability 1" {
+			t.Errorf("range extraction is wrong: %v", body["first"])
 		}
 	})
 	cfg := map[string]any{
 		"url":           srv.URL,
 		"headers":       map[string]any{"X-Token": "s3cret"},
-		"body_template": `{"msg": {{json (printf "%d 条" .Count)}}, "first": {{json (index .Items 0).Name}}}`,
+		"body_template": `{"msg": {{json (printf "%d messages" .Count)}}, "first": {{json (index .Items 0).Name}}}`,
 	}
 	if _, err := (webhookChannel{}).Send(context.Background(), cfg, batchMsg(3)); err != nil {
-		t.Fatalf("投递失败: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 }
 
@@ -298,7 +298,7 @@ func TestWebhookRejectsNonJSONRenderResult(t *testing.T) {
 	cfg := map[string]any{"url": "https://example.com/hook", "body_template": `not json at all`}
 	_, err := (webhookChannel{}).Send(context.Background(), cfg, singleMsg())
 	if err == nil || !IsPermanent(err) {
-		t.Fatalf("渲染结果非 JSON 应为永久失败（模板写错了，重试无用），得到 %v", err)
+		t.Fatalf("a non-JSON render result must be permanent (the template is wrong; retrying cannot help), got %v", err)
 	}
 }
 
@@ -311,7 +311,7 @@ func TestWebhookValidateCatchesBadConfigEarly(t *testing.T) {
 	}
 	for i, cfg := range bad {
 		if err := (webhookChannel{}).Validate(cfg); err == nil {
-			t.Errorf("第 %d 组配置应被拒绝: %v", i, cfg)
+			t.Errorf("config case %d must be rejected: %v", i, cfg)
 		}
 	}
 }
@@ -319,42 +319,42 @@ func TestWebhookValidateCatchesBadConfigEarly(t *testing.T) {
 func TestEmailMessageIsWellFormed(t *testing.T) {
 	msg, err := buildEmailMessage("artex@example.com", []string{"a@example.com", "b@example.com"}, singleMsg())
 	if err != nil {
-		t.Fatalf("组装邮件失败: %v", err)
+		t.Fatalf("failed to build the email: %v", err)
 	}
 	if !strings.HasPrefix(msg, "From: artex@example.com\r\n") {
-		t.Fatalf("From 头有误:\n%s", msg)
+		t.Fatalf("wrong From header:\n%s", msg)
 	}
 	if !strings.Contains(msg, "To: a@example.com, b@example.com\r\n") {
-		t.Fatalf("To 头有误:\n%s", msg)
+		t.Fatalf("wrong To header:\n%s", msg)
 	}
-	// Chinese subjects must be RFC 2047 encoded; otherwise clients display them as mojibake.
+	// Non-ASCII subjects must be RFC 2047 encoded; otherwise clients display them as mojibake.
 	if !strings.Contains(msg, "Subject: =?utf-8?") {
-		t.Fatalf("主题未做 RFC 2047 编码:\n%s", msg)
+		t.Fatalf("subject was not RFC 2047 encoded:\n%s", msg)
 	}
 	if dec, err := new(mime.WordDecoder).DecodeHeader(mustExtractHeader(t, msg, "Subject")); err != nil {
-		t.Fatalf("主题无法解码: %v", err)
-	} else if !strings.Contains(dec, "SQL注入") {
-		t.Fatalf("主题解码后内容有误: %q", dec)
+		t.Fatalf("cannot decode the subject: %v", err)
+	} else if !strings.Contains(dec, "SQL injection") {
+		t.Fatalf("decoded subject content is wrong: %q", dec)
 	}
 
 	// The body is base64; decoded it should be valid HTML.
 	parts := strings.SplitN(msg, "\r\n\r\n", 2)
 	if len(parts) != 2 {
-		t.Fatal("邮件缺少头/体分隔")
+		t.Fatal("email is missing the header/body separator")
 	}
 	decoded, err := base64.StdEncoding.DecodeString(strings.ReplaceAll(strings.TrimSpace(parts[1]), "\r\n", ""))
 	if err != nil {
-		t.Fatalf("正文 base64 解码失败: %v", err)
+		t.Fatalf("failed to base64-decode the body: %v", err)
 	}
 	html := string(decoded)
 	if !strings.HasPrefix(html, "<div") {
-		t.Fatalf("正文不是 HTML: %.80s", html)
+		t.Fatalf("body is not HTML: %.80s", html)
 	}
 	// The title appears as-is in a text position: double quotes in HTML text content are legal characters and need no escaping.
-	// The assertion of "preserved as-is" here prevents someone in the future from mistakenly adding a layer of quote escaping that turns Chinese quotes
+	// The assertion of "preserved as-is" here prevents someone in the future from mistakenly adding a layer of quote escaping that turns plain quotes
 	// into &quot;.
-	if !strings.Contains(html, `"SQL注入"`) {
-		t.Fatalf("标题中的引号在文本位置应原样保留: %.200s", html)
+	if !strings.Contains(html, `"SQL injection"`) {
+		t.Fatalf("quotes in the title must stay as-is in text positions: %.200s", html)
 	}
 }
 
@@ -372,21 +372,21 @@ func TestEmailEscapesStructuralInjection(t *testing.T) {
 	}
 	html := htmlBody(m, 0)
 	if strings.Contains(html, "<script>") {
-		t.Fatalf("标题未转义，可注入标签: %s", html)
+		t.Fatalf("title was not escaped; tags can be injected: %s", html)
 	}
 	if !strings.Contains(html, "&lt;script&gt;") {
-		t.Fatalf("期望转义后的实体: %s", html)
+		t.Fatalf("want the escaped entity: %s", html)
 	}
 	if !strings.Contains(html, "a &amp; b &gt; c") {
-		t.Fatalf("& 与 > 未转义: %s", html)
+		t.Fatalf("& and > were not escaped: %s", html)
 	}
 	// The backlink is the admin-configurable public_base_url and is relatively trustworthy, but attribute positions must still
 	// escape quotes - otherwise an address containing quotes would close href and inject an event handler.
 	if strings.Contains(html, `onmouseover=alert(1)">`) {
-		t.Fatalf("href 属性未正确转义: %s", html)
+		t.Fatalf("href attribute was not escaped correctly: %s", html)
 	}
 	if !strings.Contains(html, "&quot;") {
-		t.Fatalf("属性位置的引号应被转义: %s", html)
+		t.Fatalf("quotes in attribute positions must be escaped: %s", html)
 	}
 }
 
@@ -397,7 +397,7 @@ func mustExtractHeader(t *testing.T, msg, name string) string {
 			return strings.TrimPrefix(line, name+": ")
 		}
 	}
-	t.Fatalf("未找到 %s 头", name)
+	t.Fatalf("header %s not found", name)
 	return ""
 }
 
@@ -420,15 +420,15 @@ func TestChannelValidateReportsMissingFields(t *testing.T) {
 	for _, tc := range cases {
 		ch, ok := Get(tc.kind)
 		if !ok {
-			t.Fatalf("渠道 %s 未注册", tc.kind)
+			t.Fatalf("channel %s is not registered", tc.kind)
 		}
 		err := ch.Validate(tc.cfg)
 		if err == nil {
-			t.Errorf("%s 配置 %v 应校验失败", tc.kind, tc.cfg)
+			t.Errorf("%s config %v must fail validation", tc.kind, tc.cfg)
 			continue
 		}
 		if !strings.Contains(err.Error(), tc.substr) {
-			t.Errorf("%s 的错误信息应提到 %q，得到 %q", tc.kind, tc.substr, err.Error())
+			t.Errorf("the %s error must mention %q, got %q", tc.kind, tc.substr, err.Error())
 		}
 	}
 }
@@ -453,13 +453,13 @@ func TestEmailSMTPErrorClassification(t *testing.T) {
 		{"", false},
 	}
 	for _, tc := range cases {
-		err := smtpStageError("收件人被拒", errors.New(tc.reply))
+		err := smtpStageError("recipient rejected", errors.New(tc.reply))
 		if got := IsPermanent(err); got != tc.permanent {
-			t.Errorf("应答 %q: 期望 permanent=%v 得到 %v", tc.reply, tc.permanent, got)
+			t.Errorf("reply %q: want permanent=%v, got %v", tc.reply, tc.permanent, got)
 		}
 		// Regardless of classification, the original text must be preserved for users to troubleshoot.
 		if tc.reply != "" && !strings.Contains(err.Error(), tc.reply) {
-			t.Errorf("应答 %q 的原文被丢弃: %v", tc.reply, err)
+			t.Errorf("reply %q original text was dropped: %v", tc.reply, err)
 		}
 	}
 }
@@ -469,18 +469,18 @@ func TestRegistryCoversAllKinds(t *testing.T) {
 	want := []string{KindDingTalk, KindEmail, KindFeishu, KindTelegram, KindWebhook, KindWeCom}
 	got := Kinds()
 	if len(got) != len(want) {
-		t.Fatalf("渠道数量应为 %d，得到 %d: %v", len(want), len(got), got)
+		t.Fatalf("channel count must be %d, got %d: %v", len(want), len(got), got)
 	}
 	for _, k := range want {
 		if !ValidKind(k) {
-			t.Errorf("渠道 %s 未注册", k)
+			t.Errorf("channel %s is not registered", k)
 		}
 		if ch, ok := Get(k); !ok || ch.Kind() != k {
-			t.Errorf("渠道 %s 的 Kind() 与注册键不一致", k)
+			t.Errorf("channel %s Kind() does not match its registry key", k)
 		}
 	}
 	if ValidKind("nope") {
-		t.Error("未注册的类型不应通过校验")
+		t.Error("an unregistered type must not pass validation")
 	}
 }
 
@@ -488,16 +488,16 @@ func TestPermanentErrorUnwrap(t *testing.T) {
 	base := &permanentSentinel{}
 	err := Permanent(base)
 	if !IsPermanent(err) {
-		t.Fatal("应识别为永久失败")
+		t.Fatal("must be recognized as permanent")
 	}
 	if !strings.Contains(err.Error(), "sentinel") {
-		t.Fatalf("错误信息应透传底层: %v", err)
+		t.Fatalf("the error must wrap the underlying cause: %v", err)
 	}
 	if Permanent(nil) != nil {
-		t.Fatal("Permanent(nil) 必须返回 nil")
+		t.Fatal("Permanent(nil) must return nil")
 	}
 	if IsPermanent(nil) {
-		t.Fatal("nil 不是永久失败")
+		t.Fatal("nil is not a permanent failure")
 	}
 }
 

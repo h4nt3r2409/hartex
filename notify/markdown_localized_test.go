@@ -24,61 +24,55 @@ func hanFreeItems(n int) []Item {
 }
 
 // TestMarkdownTitleLocalized verifies that markdownTitle - shared by markdown-family channels (dingtalk, wecom)
-// and used together by feishu, html, telegram, and webhook - is Korean.
+// and used together by feishu, html, telegram, and webhook - is English-only.
 // If any one regresses to Chinese, the titles across all five channels become mixed-language.
 func TestMarkdownTitleLocalized(t *testing.T) {
-	// Batch (summary): "취약점 요약 · 총 N건"
+	// Batch (summary): "Vulnerability summary · N total"
 	got := markdownTitle(Message{Batch: true, Items: hanFreeItems(3)})
-	assertKorean(t, "markdownTitle(batch)", got)
+	assertEnglish(t, "markdownTitle(batch)", got)
 	if !strings.Contains(got, "Vulnerability summary") || !strings.Contains(got, "3 total") {
-		t.Errorf("다건 제목이 'Vulnerability summary · 3 total' 형태여야 합니다, 받은 값 %q", got)
+		t.Errorf("batch title must look like 'Vulnerability summary · 3 total', got %q", got)
 	}
 	// No items: "Vulnerability alert"
 	empty := markdownTitle(Message{})
-	assertKorean(t, "markdownTitle(empty)", empty)
+	assertEnglish(t, "markdownTitle(empty)", empty)
 	if empty != "Vulnerability alert" {
-		t.Errorf("빈 메시지 제목은 'Vulnerability alert' 이어야 합니다, 받은 값 %q", empty)
+		t.Errorf("empty message title must be 'Vulnerability alert', got %q", empty)
 	}
 }
 
 // TestMarkdownBatchIntroLocalized checks that the digest intro (time window, count, overflow notice) is
-// Korean. Since item data has zero Han characters, any Han characters in the output mean the intro
+// English-only. Since item data has zero Han characters, any Han characters in the output mean the intro
 // wording has regressed to Chinese.
 func TestMarkdownBatchIntroLocalized(t *testing.T) {
 	items := hanFreeItems(3)
 
-	// With time window: "최근 N분간 신규 취약점 N건"
+	// With time window: "New vulnerabilities in the last N minutes: N"
 	win := markdownBatchIntro(Message{Batch: true, WindowMinutes: 30}, items, 3)
-	if hasHan(win) {
-		t.Errorf("시간창 머리말에 중국어 한자가 남았습니다: %q", win)
-	}
+	assertEnglish(t, "markdownBatchIntro(window)", win)
 	if !strings.Contains(win, "New vulnerabilities in the last 30 minutes") || !strings.Contains(win, ": 3") {
-		t.Errorf("시간창 머리말이 'New vulnerabilities in the last 30 minutes: 3' 형태여야 합니다, 받은 값 %q", win)
+		t.Errorf("time-window intro must look like 'New vulnerabilities in the last 30 minutes: 3', got %q", win)
 	}
 
-	// No time window: "신규 취약점 N건" (no per-minute notation)
+	// No time window: "New vulnerabilities: N" (no per-minute notation)
 	noWin := markdownBatchIntro(Message{Batch: true}, items, 3)
-	if hasHan(noWin) {
-		t.Errorf("머리말에 중국어 한자가 남았습니다: %q", noWin)
-	}
+	assertEnglish(t, "markdownBatchIntro(no window)", noWin)
 	if !strings.Contains(noWin, "New vulnerabilities: 3") || strings.Contains(noWin, "minutes") {
-		t.Errorf("시간창 없는 머리말은 'New vulnerabilities: 3'(분간 표기 없음)이어야 합니다, 받은 값 %q", noWin)
+		t.Errorf("intro without a window must be 'New vulnerabilities: 3' (no minute notation), got %q", noWin)
 	}
 
-	// When only some fit: "(이 메시지에는 앞 N건만 ... 나머지 N건은 다음 메시지에서 ...)"
+	// When only some fit: "(this message shows only the first N items; the remaining N will be sent in the next message)"
 	trunc := markdownBatchIntro(Message{Batch: true, WindowMinutes: 30}, items, 5)
-	if hasHan(trunc) {
-		t.Errorf("초과 안내에 중국어 한자가 남았습니다: %q", trunc)
-	}
+	assertEnglish(t, "markdownBatchIntro(overflow)", trunc)
 	for _, want := range []string{"the first 3 items", "the remaining 2", "next message"} {
 		if !strings.Contains(trunc, want) {
-			t.Errorf("초과 안내에 %q 가 있어야 합니다, 받은 값 %q", want, trunc)
+			t.Errorf("overflow notice must contain %q, got %q", want, trunc)
 		}
 	}
 }
 
 // TestWriteItemLabelsLocalized checks that the field labels (status change, type, asset, summary) of the single-item detail render
-// (the shared markdown 3-channel path) and the detail link are Korean.
+// (the shared markdown 3-channel path) and the detail link are English-only.
 func TestWriteItemLabelsLocalized(t *testing.T) {
 	it := Item{
 		Name:       "login-flaw",
@@ -94,7 +88,7 @@ func TestWriteItemLabelsLocalized(t *testing.T) {
 	writeItem(&b, it, "", true)
 	got := b.String()
 
-	assertKorean(t, "writeItem(single)", got)
+	assertEnglish(t, "writeItem(single)", got)
 	for _, want := range []string{
 		"**Status change**: Pending → Fixed",
 		"**Type**: SQLi",
@@ -103,20 +97,20 @@ func TestWriteItemLabelsLocalized(t *testing.T) {
 		"[View details](https://platform.example/finding/1)",
 	} {
 		if !strings.Contains(got, want) {
-			t.Errorf("단건 렌더에 %q 가 있어야 합니다:\n%s", want, got)
+			t.Errorf("single-item render must contain %q:\n%s", want, got)
 		}
 	}
 }
 
 // TestMarkdownBodyFooterLocalized checks that the platform entry link at the end of the batch body
-// is Korean (it is appended only when HomeURL is present).
+// is English-only (it is appended only when HomeURL is present).
 func TestMarkdownBodyFooterLocalized(t *testing.T) {
 	m := Message{Batch: true, HomeURL: "https://platform.example", Items: hanFreeItems(2)}
 	body, kept := markdownBody(m, 0)
 	if kept != 2 {
-		t.Fatalf("한도 없음(0)이면 2건 모두 담겨야 합니다, 받은 값 %d", kept)
+		t.Fatalf("with no limit (0) both items must fit, got %d", kept)
 	}
 	if !strings.Contains(body, "[View all in the platform](https://platform.example)") {
-		t.Errorf("본문 끝에 '플랫폼에서 전체 보기' 링크가 있어야 합니다:\n%s", body)
+		t.Errorf("the body must end with the '[View all in the platform]' link:\n%s", body)
 	}
 }

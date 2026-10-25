@@ -29,18 +29,18 @@ func mustJSON(t *testing.T, v any) string {
 	t.Helper()
 	b, err := json.Marshal(v)
 	if err != nil {
-		t.Fatalf("카드 직렬화 실패: %v", err)
+		t.Fatalf("failed to serialize the card: %v", err)
 	}
 	return string(b)
 }
 
 // TestFeishuItemLinesLocalized checks that the field labels in a single-item Feishu card body (status change, type,
-// asset, summary) are Korean and identical character-for-character to markdown.go (F4②). feishu.go uses
+// asset, summary) are English-only and identical character-for-character to markdown.go (F4②). feishu.go uses
 // its own copy of these labels (not the shared markdown 3-channel function), so besides the shared-function regression,
 // this pin is needed to catch a regression where only the Feishu body reverts to Chinese.
 func TestFeishuItemLinesLocalized(t *testing.T) {
 	got := feishuItemLines(asciiStatusChangeItem())
-	assertKorean(t, "feishuItemLines", got)
+	assertEnglish(t, "feishuItemLines", got)
 	for _, want := range []string{
 		"**Status change**: Pending → Fixed",
 		"**Type**: SQLi",
@@ -48,37 +48,37 @@ func TestFeishuItemLinesLocalized(t *testing.T) {
 		"**Summary**: SQL injection via q param",
 	} {
 		if !strings.Contains(got, want) {
-			t.Errorf("飞书 단건 본문에 %q 가 있어야 합니다:\n%s", want, got)
+			t.Errorf("Feishu single-item body must contain %q:\n%s", want, got)
 		}
 	}
 }
 
 // TestFeishuCardButtonsLocalized checks that the Feishu card button labels (view details, view all on platform) are
-// Korean, and that the entire card contains no Chinese Han characters (with ASCII data).
+// English-only, and that the entire card contains no Chinese Han characters (with ASCII data).
 func TestFeishuCardButtonsLocalized(t *testing.T) {
-	// Single item: "상세 보기" button (when DetailURL is present)
+	// Single item: "View details" button (when DetailURL is present)
 	single, _ := feishuCard(Message{Items: []Item{asciiStatusChangeItem()}})
 	singleJSON := mustJSON(t, single)
 	if hasHan(singleJSON) {
-		t.Errorf("단건 飞书 카드에 중국어 한자가 남았습니다:\n%s", singleJSON)
+		t.Errorf("Han characters remain in the single-item Feishu card:\n%s", singleJSON)
 	}
 	if !strings.Contains(singleJSON, "View details") {
-		t.Errorf("단건 飞书 카드에 'View details' 버튼이 있어야 합니다:\n%s", singleJSON)
+		t.Errorf("the single-item Feishu card must have a 'View details' button:\n%s", singleJSON)
 	}
 
-	// Batch: "플랫폼에서 전체 보기" button (when HomeURL is present)
+	// Batch: "View all on the platform" button (when HomeURL is present)
 	batch, _ := feishuCard(Message{Batch: true, HomeURL: "https://platform.example", Items: hanFreeItems(2)})
 	batchJSON := mustJSON(t, batch)
 	if hasHan(batchJSON) {
-		t.Errorf("다건 飞书 카드에 중국어 한자가 남았습니다:\n%s", batchJSON)
+		t.Errorf("Han characters remain in the batch Feishu card:\n%s", batchJSON)
 	}
 	if !strings.Contains(batchJSON, "View all on the platform") {
-		t.Errorf("다건 飞书 카드에 'View all on the platform' 버튼이 있어야 합니다:\n%s", batchJSON)
+		t.Errorf("the batch Feishu card must have a 'View all on the platform' button:\n%s", batchJSON)
 	}
 }
 
-// TestDingTalkActionCardButtonLocalized checks via the real Send path (fake receiver) that the DingTalk ActionCard's "상세 보기" button (singleTitle)
-// is Korean.
+// TestDingTalkActionCardButtonLocalized checks via the real Send path (fake receiver) that the DingTalk ActionCard's "View details" button (singleTitle)
+// is English.
 func TestDingTalkActionCardButtonLocalized(t *testing.T) {
 	var singleTitle string
 	srv := capturePost(t, `{"errcode":0,"errmsg":"ok"}`, func(_ *testing.T, body map[string]any, _ *http.Request) {
@@ -87,47 +87,47 @@ func TestDingTalkActionCardButtonLocalized(t *testing.T) {
 	})
 	m := Message{Items: []Item{asciiStatusChangeItem()}}
 	if _, err := (dingTalkChannel{}).Send(context.Background(), map[string]any{"webhook": srv.URL}, m); err != nil {
-		t.Fatalf("투递 실패: %v", err)
+		t.Fatalf("send failed: %v", err)
 	}
 	if singleTitle != "View details" {
-		t.Errorf("钉钉 ActionCard singleTitle 은 'View details' 여야 합니다, 받은 값 %q", singleTitle)
+		t.Errorf("DingTalk ActionCard singleTitle must be 'View details', got %q", singleTitle)
 	}
 }
 
-// TestChinaPlatformValidateLocalized checks that DingTalk, Feishu, and WeCom configuration validation errors are Korean and
+// TestChinaPlatformValidateLocalized checks that DingTalk, Feishu, and WeCom configuration validation errors are English and
 // keep the "Webhook" wording (exposed to users by the notification settings save/test API).
 func TestChinaPlatformValidateLocalized(t *testing.T) {
 	for _, kind := range []string{KindDingTalk, KindFeishu, KindWeCom} {
 		ch, ok := Get(kind)
 		if !ok {
-			t.Fatalf("%s 채널이 등록되어 있지 않습니다", kind)
+			t.Fatalf("channel %s is not registered", kind)
 		}
 
-		// Empty config: "Webhook 주소가 없습니다"
+		// Empty config: "Webhook address is missing"
 		missing := ch.Validate(map[string]any{})
 		if missing == nil {
-			t.Fatalf("%s: 빈 설정은 검증에 실패해야 합니다", kind)
+			t.Fatalf("%s: an empty config must fail validation", kind)
 		}
-		assertKorean(t, kind+" missing", missing.Error())
+		assertEnglish(t, kind+" missing", missing.Error())
 		if !strings.Contains(missing.Error(), "Webhook") || !strings.Contains(missing.Error(), "missing") {
-			t.Errorf("%s: 누락 오류는 'Webhook address is missing' 여야 합니다, 받은 값 %q", kind, missing)
+			t.Errorf("%s: the missing-field error must be 'Webhook address is missing', got %q", kind, missing)
 		}
 
-		// Invalid address (ftp): "Webhook 주소가 올바르지 않습니다: ..."
+		// Invalid address (ftp): "invalid Webhook address: ..."
 		bad := ch.Validate(map[string]any{"webhook": "ftp://x"})
 		if bad == nil {
-			t.Fatalf("%s: ftp 주소는 검증에 실패해야 합니다", kind)
+			t.Fatalf("%s: an ftp address must fail validation", kind)
 		}
 		if hasHan(bad.Error()) {
-			t.Errorf("%s: 잘못된 주소 오류에 중국어 한자가 남았습니다: %q", kind, bad)
+			t.Errorf("%s: Han characters remain in the bad-address error: %q", kind, bad)
 		}
 		if !strings.Contains(bad.Error(), "invalid Webhook address") {
-			t.Errorf("%s: 잘못된 주소 오류는 'invalid Webhook address' 로 시작해야 합니다, 받은 값 %q", kind, bad)
+			t.Errorf("%s: the bad-address error must start with 'invalid Webhook address', got %q", kind, bad)
 		}
 	}
 }
 
-// TestChinaPlatformSendErrorsLocalized checks that send-failure reasons for DingTalk, Feishu, and WeCom are recorded in Korean
+// TestChinaPlatformSendErrorsLocalized checks that send-failure reasons for DingTalk, Feishu, and WeCom are recorded in English
 // in the delivery history (last_error). Platform names match the UI channel labels (DingTalk/Feishu/
 // WeCom). Server errmsg is ASCII, so if Han characters appear in an error, the skeleton wording has
 // regressed to Chinese.
@@ -147,23 +147,23 @@ func TestChinaPlatformSendErrorsLocalized(t *testing.T) {
 		srv := capturePost(t, tc.resp, nil)
 		ch, ok := Get(tc.kind)
 		if !ok {
-			t.Fatalf("%s 채널이 등록되어 있지 않습니다", tc.kind)
+			t.Fatalf("channel %s is not registered", tc.kind)
 		}
 		_, err := ch.Send(context.Background(), map[string]any{"webhook": srv.URL}, singleMsg())
 		if err == nil {
-			t.Fatalf("%s: %s 응답은 오류여야 합니다", tc.kind, tc.resp)
+			t.Fatalf("%s: response %s must be an error", tc.kind, tc.resp)
 		}
 		if hasHan(err.Error()) {
-			t.Errorf("%s: 발송 오류에 중국어 한자가 남았습니다: %q", tc.kind, err)
+			t.Errorf("%s: Han characters remain in the send error: %q", tc.kind, err)
 		}
 		for _, sub := range tc.wantSubs {
 			if !strings.Contains(err.Error(), sub) {
-				t.Errorf("%s: 발송 오류에 %q 가 있어야 합니다, 받은 값 %q", tc.kind, sub, err)
+				t.Errorf("%s: the send error must contain %q, got %q", tc.kind, sub, err)
 			}
 		}
 	}
 
-	// Parse-failure path when the response is not JSON: "<플랫폼> 응답을 해석하지 못했습니다"
+	// Parse-failure path when the response is not JSON: "failed to parse <platform> response"
 	parseCases := []struct {
 		kind     string
 		platform string
@@ -176,15 +176,15 @@ func TestChinaPlatformSendErrorsLocalized(t *testing.T) {
 		srv := capturePost(t, `not-json`, nil)
 		ch, ok := Get(pc.kind)
 		if !ok {
-			t.Fatalf("%s 채널이 등록되어 있지 않습니다", pc.kind)
+			t.Fatalf("channel %s is not registered", pc.kind)
 		}
 		_, err := ch.Send(context.Background(), map[string]any{"webhook": srv.URL}, singleMsg())
 		if err == nil {
-			t.Fatalf("%s: JSON 이 아닌 응답은 오류여야 합니다", pc.kind)
+			t.Fatalf("%s: a non-JSON response must be an error", pc.kind)
 		}
 		want := "failed to parse " + pc.platform + " response"
 		if !strings.Contains(err.Error(), want) {
-			t.Errorf("%s: 파싱 실패 오류에 %q 가 있어야 합니다, 받은 값 %q", pc.kind, want, err)
+			t.Errorf("%s: the parse-failure error must contain %q, got %q", pc.kind, want, err)
 		}
 	}
 }

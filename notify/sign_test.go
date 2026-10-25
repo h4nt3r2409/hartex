@@ -24,29 +24,29 @@ const (
 func TestDingTalkSignMatchesReference(t *testing.T) {
 	got, err := dingTalkSignedURL("https://oapi.dingtalk.com/robot/send?access_token=tok", signTestSecret, time.UnixMilli(signTestTSMillis))
 	if err != nil {
-		t.Fatalf("签名失败: %v", err)
+		t.Fatalf("signing failed: %v", err)
 	}
 	u, err := url.Parse(got)
 	if err != nil {
-		t.Fatalf("产出地址不可解析: %v", err)
+		t.Fatalf("the resulting address cannot be parsed: %v", err)
 	}
 	q := u.Query()
 	if q.Get("sign") != dingTalkExpected {
-		t.Errorf("签名不符\n期望 %s\n得到 %s", dingTalkExpected, q.Get("sign"))
+		t.Errorf("signature mismatch\nwant %s\ngot %s", dingTalkExpected, q.Get("sign"))
 	}
 	if q.Get("timestamp") != "1700000000000" {
-		t.Errorf("时间戳应为毫秒且原样带上，得到 %q", q.Get("timestamp"))
+		t.Errorf("the timestamp must be in milliseconds and passed through as-is, got %q", q.Get("timestamp"))
 	}
 	// Existing query parameters (access_token) must not be overwritten by the signature.
 	if q.Get("access_token") != "tok" {
-		t.Errorf("原有 query 参数丢失，得到 %q", q.Get("access_token"))
+		t.Errorf("an existing query parameter was lost, got %q", q.Get("access_token"))
 	}
 }
 
 func TestFeishuSignMatchesReference(t *testing.T) {
 	got := feishuSign("1700000000000", signTestSecret)
 	if got != feishuExpected {
-		t.Errorf("签名不符\n期望 %s\n得到 %s", feishuExpected, got)
+		t.Errorf("signature mismatch\nwant %s\ngot %s", feishuExpected, got)
 	}
 }
 
@@ -61,7 +61,7 @@ func TestSignAlgorithmsDiffer(t *testing.T) {
 	}
 	dq, _ := url.Parse(dingURL)
 	if dq.Query().Get("sign") == feishuSign(ts, signTestSecret) {
-		t.Fatal("钉钉与飞书签名相同，说明其中一家的算法实现错了")
+		t.Fatal("DingTalk and Feishu signatures are identical, so one algorithm is implemented incorrectly")
 	}
 }
 
@@ -73,7 +73,7 @@ func TestDingTalkNoSecretLeavesURLUntouched(t *testing.T) {
 		t.Fatal(err)
 	}
 	if got != hook {
-		t.Fatalf("未配置 secret 时地址不应改动，得到 %q", got)
+		t.Fatalf("without a secret the address must not change, got %q", got)
 	}
 }
 
@@ -81,14 +81,14 @@ func TestValidateHTTPURL(t *testing.T) {
 	ok := []string{"https://example.com/hook", "http://10.0.0.1:8080/x?y=1"}
 	for _, s := range ok {
 		if err := validateHTTPURL(s); err != nil {
-			t.Errorf("%q 应被接受: %v", s, err)
+			t.Errorf("%q must be accepted: %v", s, err)
 		}
 	}
 	// file:// and the like should not be allowed - http.Client's handling of them is outside the expected scope.
 	bad := []string{"", "file:///etc/passwd", "ftp://example.com", "https://", "gopher://x"}
 	for _, s := range bad {
 		if err := validateHTTPURL(s); err == nil {
-			t.Errorf("%q 应被拒绝", s)
+			t.Errorf("%q must be rejected", s)
 		}
 	}
 }

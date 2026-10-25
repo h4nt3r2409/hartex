@@ -40,14 +40,14 @@ func TestDialGuardRejectsLoopbackByDefault(t *testing.T) {
 	_, err := (dingTalkChannel{}).Send(context.Background(),
 		map[string]any{"webhook": srv.URL + "/robot/send"}, Message{Items: []Item{{Severity: "high"}}})
 	if err == nil {
-		t.Fatal("默认不应允许投递到环回地址")
+		t.Fatal("delivery to a loopback address must be blocked by default")
 	}
 	if hit {
-		t.Fatal("请求已经打到了本机服务——守卫没生效")
+		t.Fatal("the request reached the local service; the guard did not work")
 	}
 	// The error message must guide users on how to allow it (a local SMTP relay is a legitimate configuration).
 	if !strings.Contains(err.Error(), AllowLocalTargetsEnv) {
-		t.Errorf("拒绝信息应说明如何显式放开: %v", err)
+		t.Errorf("the rejection must explain how to allow it explicitly: %v", err)
 	}
 }
 
@@ -62,7 +62,7 @@ func TestDialGuardAllowsLoopbackWhenOptedIn(t *testing.T) {
 	t.Setenv(AllowLocalTargetsEnv, "1")
 	if _, err := (dingTalkChannel{}).Send(context.Background(),
 		map[string]any{"webhook": srv.URL + "/robot/send"}, Message{Items: []Item{{Severity: "high"}}}); err != nil {
-		t.Fatalf("显式放开后应可投递: %v", err)
+		t.Fatalf("after explicitly allowing it delivery must work: %v", err)
 	}
 }
 
@@ -78,7 +78,7 @@ func TestIsBlockedDialIP(t *testing.T) {
 	}
 	for _, s := range blocked {
 		if !isBlockedDialIP(net.ParseIP(s)) {
-			t.Errorf("%s 应被拒绝", s)
+			t.Errorf("%s must be rejected", s)
 		}
 	}
 	// RFC1918 private networks are **deliberately allowed**: self-hosted Mattermost / SMTP relays on the intranet are common legitimate uses.
@@ -87,7 +87,7 @@ func TestIsBlockedDialIP(t *testing.T) {
 	allowed := []string{"10.0.0.5", "172.16.3.4", "192.168.1.10", "8.8.8.8", "2606:4700::1111"}
 	for _, s := range allowed {
 		if isBlockedDialIP(net.ParseIP(s)) {
-			t.Errorf("%s 应被放行（私网是常见的合法投递目标）", s)
+			t.Errorf("%s must be allowed (private networks are common legitimate targets)", s)
 		}
 	}
 }
@@ -102,13 +102,13 @@ func TestValidateHTTPURLRejectsLiteralPrivateTargets(t *testing.T) {
 		"http://[::1]:8080/hook",
 	} {
 		if err := validateHTTPURL(raw); err == nil {
-			t.Errorf("%s 应在配置阶段被拒绝", raw)
+			t.Errorf("%s must be rejected at config time", raw)
 		}
 	}
 	// Public and private addresses pass as usual (private is left to the dial stage, which does not block it).
 	for _, raw := range []string{"https://oapi.dingtalk.com/robot/send", "http://10.0.0.9/hook"} {
 		if err := validateHTTPURL(raw); err != nil {
-			t.Errorf("%s 应通过校验: %v", raw, err)
+			t.Errorf("%s must pass validation: %v", raw, err)
 		}
 	}
 }
@@ -129,12 +129,12 @@ func TestValidateHTTPURLErrorNeverLeaksCredentials(t *testing.T) {
 		// First confirm this input **really** makes url.Parse fail. Without this step, the case could
 		// unknowingly take a different branch (that is exactly how last round's false guarantee arose).
 		if _, err := url.Parse(raw); err == nil {
-			t.Errorf("%q 本应解析失败，否则这条用例没有覆盖到目标分支", raw)
+			t.Errorf("%q should have failed to parse, otherwise this case does not cover the target branch", raw)
 			continue
 		}
 		err := validateHTTPURL(raw)
 		if err == nil {
-			t.Errorf("%q 应校验失败", raw)
+			t.Errorf("%q must fail validation", raw)
 			continue
 		}
 		assertNoSecret(t, err.Error(), leakProbeToken)
@@ -143,7 +143,7 @@ func TestValidateHTTPURLErrorNeverLeaksCredentials(t *testing.T) {
 	t.Setenv(AllowLocalTargetsEnv, "")
 	err := (dingTalkChannel{}).Validate(map[string]any{"webhook": cases[0]})
 	if err == nil {
-		t.Fatal("非法地址应校验失败")
+		t.Fatal("an invalid address must fail validation")
 	}
 	assertNoSecret(t, err.Error(), leakProbeToken)
 }
@@ -165,15 +165,15 @@ func TestEmailDialGuardRejectsLoopbackByDefault(t *testing.T) {
 	t.Setenv(AllowLocalTargetsEnv, "") // Disable the escape hatch = default behavior
 	_, err := (emailChannel{}).Send(context.Background(), cfg, singleMsg())
 	if err == nil {
-		t.Fatal("默认不应允许把邮件投递到环回地址")
+		t.Fatal("email delivery to a loopback address must be blocked by default")
 	}
 	// The connection should never be established: the guard intercepts in the Control hook, so EHLO is never sent.
 	if f.sawCommand("EHLO") || f.sawCommand("HELO") {
-		t.Fatal("SMTP 会话已经建立——守卫没生效")
+		t.Fatal("the SMTP session was established; the guard did not work")
 	}
 	// The error message must guide users on how to allow it (a local postfix relay is a legitimate configuration).
 	if !strings.Contains(err.Error(), AllowLocalTargetsEnv) {
-		t.Errorf("拒绝信息应说明如何显式放开: %v", err)
+		t.Errorf("the rejection must explain how to allow it explicitly: %v", err)
 	}
 }
 
@@ -185,9 +185,9 @@ func TestEmailDialGuardAllowsLoopbackWhenOptedIn(t *testing.T) {
 
 	t.Setenv(AllowLocalTargetsEnv, "1")
 	if _, err := (emailChannel{}).Send(context.Background(), cfg, singleMsg()); err != nil {
-		t.Fatalf("显式放开后本机 SMTP 应可投递: %v", err)
+		t.Fatalf("after explicitly allowing it local SMTP delivery must work: %v", err)
 	}
 	if !f.sawCommand("EHLO") {
-		t.Fatal("未看到 EHLO——会话没真正建立")
+		t.Fatal("no EHLO was seen; the session never really started")
 	}
 }

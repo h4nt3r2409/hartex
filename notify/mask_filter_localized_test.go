@@ -7,30 +7,30 @@ import (
 )
 
 // F4 ⑥: pins that the user-facing wording in notify/mask.go and filter.go (validation errors that
-// server/notify_api.go returns verbatim as writeErr(400) when saving or updating notification channel settings) is Korean
-// and contains no Han characters. channel.go has no user-facing wording (all comments), so it is not
-// a target. hasHan / hasHangul / assertKorean are defined in notify_localized_test.go.
+// server/notify_api.go returns verbatim as writeErr(400) when saving or updating notification channel settings) is English
+// and contains no Han or Hangul characters. channel.go has no user-facing wording (all comments), so it is not
+// a target. hasHan / hasHangul / assertEnglish are defined in notify_localized_test.go.
 
 // TestFilterValidateLocalized checks the validation error when min_severity is given an invalid value.
 // This error is exposed as 400 on the save/update paths (server/notify_api.go:264, 369).
 func TestFilterValidateLocalized(t *testing.T) {
 	err := Filter{MinSeverity: "hgih"}.Validate()
 	if err == nil {
-		t.Fatal("잘못된 최소 심각도인데 오류가 없습니다")
+		t.Fatal("an invalid minimum severity must return an error")
 	}
-	assertKorean(t, "Filter.Validate", err.Error())
+	assertEnglish(t, "Filter.Validate", err.Error())
 	// low/medium/high/critical are config enums and must remain verbatim.
 	for _, tok := range []string{"low", "medium", "high", "critical"} {
 		if !strings.Contains(err.Error(), tok) {
-			t.Errorf("심각도 토큰 %q 가 사라졌습니다: %q", tok, err.Error())
+			t.Errorf("severity token %q disappeared: %q", tok, err.Error())
 		}
 	}
 	// Valid values and empty values must pass.
 	if err := (Filter{MinSeverity: "high"}).Validate(); err != nil {
-		t.Errorf("high 는 유효한데 오류가 났습니다: %v", err)
+		t.Errorf("high is valid but returned an error: %v", err)
 	}
 	if err := (Filter{}).Validate(); err != nil {
-		t.Errorf("빈 최소 심각도는 유효한데 오류가 났습니다: %v", err)
+		t.Errorf("an empty minimum severity is valid but returned an error: %v", err)
 	}
 }
 
@@ -39,9 +39,9 @@ func TestFilterValidateLocalized(t *testing.T) {
 func TestPrepareConfigUpdateUnknownKindLocalized(t *testing.T) {
 	_, err := PrepareConfigUpdate("definitely-not-a-channel", map[string]any{}, map[string]any{})
 	if err == nil {
-		t.Fatal("미등록 채널 유형인데 오류가 없습니다")
+		t.Fatal("an unregistered channel type must return an error")
 	}
-	assertKorean(t, "PrepareConfigUpdate unknown kind", err.Error())
+	assertEnglish(t, "PrepareConfigUpdate unknown kind", err.Error())
 }
 
 // TestDestinationChangedErrorLocalized triggers ErrDestinationChangedWithoutCredentials through the real path:
@@ -56,16 +56,16 @@ func TestDestinationChangedErrorLocalized(t *testing.T) {
 		map[string]any{"url": "https://attacker.example.com/hook"},
 	)
 	if err == nil {
-		t.Fatal("대상 주소를 바꾸고 자격 증명을 표태하지 않았는데 오류가 없습니다")
+		t.Fatal("changing the destination without restating credentials must return an error")
 	}
 	var de *ErrDestinationChangedWithoutCredentials
 	if !errors.As(err, &de) {
-		t.Fatalf("예상한 오류 유형이 아닙니다: %T", err)
+		t.Fatalf("unexpected error type: %T", err)
 	}
-	assertKorean(t, "ErrDestinationChangedWithoutCredentials", err.Error())
+	assertEnglish(t, "ErrDestinationChangedWithoutCredentials", err.Error())
 	// The changed destination key and the missing credential key names are config field names and must appear verbatim in the message.
 	if !strings.Contains(err.Error(), "url") || !strings.Contains(err.Error(), "headers") {
-		t.Errorf("필드 키 이름이 누락됐습니다: %q", err.Error())
+		t.Errorf("field key names are missing: %q", err.Error())
 	}
 }
 
@@ -77,11 +77,11 @@ func TestRejectMaskedInContainersLocalized(t *testing.T) {
 		map[string]any{"headers": map[string]any{"Authorization": MaskedPrefix + ":…abc123"}},
 	)
 	if err == nil {
-		t.Fatal("구조체 내부에 마스킹 센티넬을 끼워 넣었는데 오류가 없습니다")
+		t.Fatal("a masking sentinel inside a struct must return an error")
 	}
-	assertKorean(t, "rejectMaskedInContainers", err.Error())
+	assertEnglish(t, "rejectMaskedInContainers", err.Error())
 	// The sentinel literal (__masked__) is shown in the message so operators can tell which value is the problem.
 	if !strings.Contains(err.Error(), MaskedPrefix) {
-		t.Errorf("마스킹 센티넬이 메시지에 없습니다: %q", err.Error())
+		t.Errorf("the masking sentinel is missing from the message: %q", err.Error())
 	}
 }

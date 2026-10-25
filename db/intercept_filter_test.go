@@ -38,6 +38,7 @@ func TestInterceptApprovalFilters(t *testing.T) {
 						ruleID = rule.ID
 					}
 					if source == "model" {
+						// Allowlist §7 item 1: [模型] is the persisted model-vs-rule decision sentinel.
 						reason = "[模型] fixture"
 					}
 					id, err := d.CreateDecidedIntercept(ruleID, 0, task, "test", "Bash", []byte(`{"command":"fixture"}`), status, reason)

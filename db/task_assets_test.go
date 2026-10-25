@@ -22,6 +22,7 @@ func TestRegisterTaskAssetScopesCreatesAssetsAndPersistsTextScope(t *testing.T) 
 	suffix := time.Now().UnixNano()
 	domain := fmt.Sprintf("manual-scope-%d.example.test", suffix)
 	ip := fmt.Sprintf("203.0.%d.%d", (suffix/250)%250, suffix%250+1)
+	// Allowlist §7 item 6: the Chinese ICP-filing form is functional detection input.
 	inputs := []ScopeInput{
 		{Kind: "domain", Value: domain},
 		{Kind: "ip", Value: ip},
@@ -104,7 +105,7 @@ func TestTaskAssetAttachDetachPreservesGlobalAssetAndAnchors(t *testing.T) {
 	}
 	t.Cleanup(func() { _, _ = d.Assets().DeleteByIDs([]int64{assetID}) })
 
-	mutation, err := d.Assets().AttachAssetsToTask(task.ID, []int64{assetID, assetID}, "授权资产清单第 3 项")
+	mutation, err := d.Assets().AttachAssetsToTask(task.ID, []int64{assetID, assetID}, "authorized asset list item 3")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -115,7 +116,7 @@ func TestTaskAssetAttachDetachPreservesGlobalAssetAndAnchors(t *testing.T) {
 	if err != nil || len(assets) != 1 {
 		t.Fatalf("task assets=%+v err=%v", assets, err)
 	}
-	if assets[0].TaskSource != "manual" || assets[0].TaskSourceSummary != "授权资产清单第 3 项" {
+	if assets[0].TaskSource != "manual" || assets[0].TaskSourceSummary != "authorized asset list item 3" {
 		t.Fatalf("unexpected provenance: %+v", assets[0])
 	}
 
@@ -171,7 +172,7 @@ func TestIntentAssetsIncludesDirectSourceProvenance(t *testing.T) {
 		t.Fatal(err)
 	}
 	nodeID := intentID
-	if err := d.Assets().SetTaskAssetSource(source.ID, assetID, "agent", "Worker 通过 insert_assets 登记", &nodeID); err != nil {
+	if err := d.Assets().SetTaskAssetSource(source.ID, assetID, "agent", "worker registered through insert_assets", &nodeID); err != nil {
 		t.Fatal(err)
 	}
 

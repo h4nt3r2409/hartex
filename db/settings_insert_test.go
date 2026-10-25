@@ -26,7 +26,7 @@ func TestInsertSettingIfAbsentDoesNotOverwrite(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !inserted {
-		t.Fatal("최초 쓰기는 inserted=true 여야 합니다")
+		t.Fatal("the first write must return inserted=true")
 	}
 
 	inserted, err = d.InsertSettingIfAbsent(key, "second")
@@ -34,7 +34,7 @@ func TestInsertSettingIfAbsentDoesNotOverwrite(t *testing.T) {
 		t.Fatal(err)
 	}
 	if inserted {
-		t.Fatal("키가 이미 있으면 inserted=false 여야 합니다")
+		t.Fatal("when the key already exists inserted must be false")
 	}
 
 	got, ok, err := d.GetSetting(key)
@@ -42,6 +42,6 @@ func TestInsertSettingIfAbsentDoesNotOverwrite(t *testing.T) {
 		t.Fatalf("GetSetting: ok=%v err=%v", ok, err)
 	}
 	if got != "first" {
-		t.Fatalf("값이 %q 로 덮였습니다. %q 를 유지해야 합니다", got, "first")
+		t.Fatalf("the value was overwritten with %q; %q must be preserved", got, "first")
 	}
 }

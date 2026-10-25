@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-// hasHan returns true if the string contains at least one CJK unified Han character.
-// If a translated label regresses to Chinese, this check catches it.
+// hasHan reports whether the string contains at least one CJK unified Han character.
+// English-only output must never contain one.
 func hasHan(s string) bool {
 	for _, r := range s {
 		if r >= 0x4E00 && r <= 0x9FFF {
@@ -16,7 +16,8 @@ func hasHan(s string) bool {
 	return false
 }
 
-// hasHangul returns true if the string contains at least one Hangul syllable.
+// hasHangul reports whether the string contains at least one Hangul syllable.
+// English-only output must never contain one.
 func hasHangul(s string) bool {
 	for _, r := range s {
 		if r >= 0xAC00 && r <= 0xD7A3 {
@@ -26,11 +27,15 @@ func hasHangul(s string) bool {
 	return false
 }
 
-// assertKorean asserts that the label contains Hangul and no Chinese Han characters.
-func assertKorean(t *testing.T, where, got string) {
+// assertEnglish fails unless the label is English-only: no Han or Hangul characters,
+// and at least one Latin letter.
+func assertEnglish(t *testing.T, where, got string) {
 	t.Helper()
 	if hasHan(got) {
-		t.Errorf("%s: 중국어 한자가 남아 있습니다: %q", where, got)
+		t.Errorf("%s: Han characters remain: %q", where, got)
+	}
+	if hasHangul(got) {
+		t.Errorf("%s: Hangul characters remain: %q", where, got)
 	}
 	latin := false
 	for _, r := range got {
@@ -39,38 +44,41 @@ func assertKorean(t *testing.T, where, got string) {
 			break
 		}
 	}
-	if !hasHangul(got) && !latin {
-		t.Errorf("%s: message is neither Korean nor English: %q", where, got)
+	if !latin {
+		t.Errorf("%s: message contains no English text: %q", where, got)
 	}
 }
 
-// TestItemTitlePlaceholderLocalized checks that the fallback title for an item with both name and type empty
-// is the Korean placeholder (이름 없는 취약점). It never emits an empty title.
+// TestItemTitlePlaceholderLocalized checks that the fallback title for an item with
+// both name and type empty is the English placeholder "(unnamed vulnerability)". It
+// never emits an empty title.
 func TestItemTitlePlaceholderLocalized(t *testing.T) {
 	got := Item{}.Title()
-	assertKorean(t, "Item{}.Title()", got)
+	assertEnglish(t, "Item{}.Title()", got)
+	if got != "(unnamed vulnerability)" {
+		t.Errorf("fallback title = %q, want %q", got, "(unnamed vulnerability)")
+	}
 	// If a name exists use it; if only a type exists prefer the type (confirming the fallback logic has not regressed).
-	if n := (Item{Name: "로그인 SQLi"}).Title(); n != "로그인 SQLi" {
-		t.Errorf("이름 우선 로직이 깨졌습니다, 받은 값 %q", n)
+	if n := (Item{Name: "login SQLi"}).Title(); n != "login SQLi" {
+		t.Errorf("name-first logic broke, got %q", n)
 	}
 	if v := (Item{VulnClass: "XSS"}).Title(); v != "XSS" {
-		t.Errorf("유형 대체 로직이 깨졌습니다, 받은 값 %q", v)
+		t.Errorf("type fallback logic broke, got %q", v)
 	}
 }
 
-// TestAssetLineLocalized checks that the asset-list wording's separator and total-count notation are Korean/ASCII.
-// If Chinese punctuation (、), 等, or 个 comes back, the notification body becomes mixed-language.
+// TestAssetLineLocalized checks that the asset-list wording's separator and total-count
+// notation are ASCII English. If non-ASCII punctuation or CJK count words come back,
+// the notification body becomes mixed-language.
 func TestAssetLineLocalized(t *testing.T) {
 	// At or below the limit: list everything, ASCII comma separator.
 	if got := assetLine([]string{"a.example.com", "b.example.com"}, 3); got != "a.example.com, b.example.com" {
-		t.Errorf("구분자가 ASCII 쉼표여야 합니다, 받은 값 %q", got)
+		t.Errorf("separator must be an ASCII comma, got %q", got)
 	}
-	// Above the limit: first limit items + Korean "등 N개" (N is the total count).
+	// Above the limit: first limit items + English "and N total" (N is the total count).
 	got := assetLine([]string{"a", "b", "c", "d", "e"}, 2)
-	if hasHan(got) {
-		t.Errorf("자산 나열에 중국어 한자가 남았습니다: %q", got)
-	}
+	assertEnglish(t, "assetLine(over limit)", got)
 	if !strings.Contains(got, "and 5 total") {
-		t.Errorf("전체 개수 5 를 'and 5 total'로 표기해야 합니다, 받은 값 %q", got)
+		t.Errorf("the total count 5 must be written as 'and 5 total', got %q", got)
 	}
 }

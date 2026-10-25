@@ -568,7 +568,7 @@ func TestDeleteByTaskID(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !slices.Contains(hosts, "solo-del.test") || !slices.Contains(hosts, "shared-del.test") {
-		t.Fatalf("HostsByTask 缺 host: %v", hosts)
+		t.Fatalf("HostsByTask is missing a host: %v", hosts)
 	}
 
 	n, err := av2.DeleteByTaskID(taskA)
@@ -576,19 +576,19 @@ func TestDeleteByTaskID(t *testing.T) {
 		t.Fatal(err)
 	}
 	if n != 1 {
-		t.Fatalf("DeleteByTaskID: 应删 1 个独有资产,实删 %d", n)
+		t.Fatalf("DeleteByTaskID: want 1 exclusive asset deleted, deleted %d", n)
 	}
 	// solo has been deleted
 	if a, _ := av2.GetByIDs([]int64{solo}); len(a) != 0 {
-		t.Fatalf("solo 资产应被删除")
+		t.Fatalf("the solo asset must be deleted")
 	}
 	// shared is preserved, and task_ids contains only taskB
 	sa, _ := av2.GetByIDs([]int64{shared})
 	if len(sa) != 1 {
-		t.Fatalf("shared 资产应保留")
+		t.Fatalf("the shared asset must be kept")
 	}
 	if slices.Contains(sa[0].TaskIDs, taskA) || !slices.Contains(sa[0].TaskIDs, taskB) {
-		t.Fatalf("shared task_ids 应解除 A 保留 B,得 %v", sa[0].TaskIDs)
+		t.Fatalf("shared task_ids must remove A and keep B, got %v", sa[0].TaskIDs)
 	}
 }
 

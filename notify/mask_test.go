@@ -10,17 +10,17 @@ func TestMaskedValueHidesBodyButKeepsTailHint(t *testing.T) {
 	const secret = "https://oapi.dingtalk.com/robot/send?access_token=abcdef123456"
 	got := MaskedValue(secret)
 	if strings.Contains(got, "abcdef123456") {
-		t.Fatalf("掩码值泄露了完整凭据: %q", got)
+		t.Fatalf("the masked value leaked the full credential: %q", got)
 	}
 	if strings.Contains(got, "oapi.dingtalk.com") {
-		t.Fatalf("掩码值不应暴露地址主体: %q", got)
+		t.Fatalf("the masked value must not expose the address body: %q", got)
 	}
 	// The last 6 characters must be preserved so users can recognize which bot it is.
 	if !strings.HasSuffix(got, "123456") {
-		t.Fatalf("应保留末 6 位作为辨识提示: %q", got)
+		t.Fatalf("the last 6 characters must be kept as a hint: %q", got)
 	}
 	if !IsMasked(got) {
-		t.Fatalf("掩码值必须能被 IsMasked 识别: %q", got)
+		t.Fatalf("the masked value must be recognized by IsMasked: %q", got)
 	}
 }
 
@@ -29,10 +29,10 @@ func TestMaskedValueShortSecretGivesNoHint(t *testing.T) {
 	for _, s := range []string{"abc", "abcdef", ""} {
 		got := MaskedValue(s)
 		if got != MaskedPrefix {
-			t.Fatalf("长度 %d 的凭据不应给出尾部提示，得到 %q", len(s), got)
+			t.Fatalf("a credential of length %d must not show a tail hint, got %q", len(s), got)
 		}
 		if s != "" && strings.Contains(got, s) {
-			t.Fatalf("掩码值包含了原值: %q", got)
+			t.Fatalf("the masked value contains the original value: %q", got)
 		}
 	}
 }
@@ -48,12 +48,12 @@ func TestMaskConfigMasksOnlySecrets(t *testing.T) {
 	for _, k := range []string{"webhook", "secret"} {
 		s, _ := masked[k].(string)
 		if !IsMasked(s) {
-			t.Errorf("%s 应被掩码，得到 %q", k, s)
+			t.Errorf("%s must be masked, got %q", k, s)
 		}
 	}
 	// Non-credential fields must be preserved as-is; otherwise the UI cannot display them.
 	if masked["port"] != float64(587) {
-		t.Errorf("非凭据字段 port 不应改动: %v", masked["port"])
+		t.Errorf("the non-credential field port must not change: %v", masked["port"])
 	}
 }
 
@@ -61,7 +61,7 @@ func TestMaskConfigUnknownKindReturnsEmpty(t *testing.T) {
 	// When the channel type is unrecognized, prefer showing an empty config in the UI over returning raw content that may contain credentials.
 	got := MaskConfig("nope", map[string]any{"webhook": "https://x/y?token=LEAK"})
 	if len(got) != 0 {
-		t.Fatalf("未知渠道类型应返回空配置，得到 %v", got)
+		t.Fatalf("an unknown channel kind must return an empty config, got %v", got)
 	}
 }
 
@@ -70,7 +70,7 @@ func TestMaskConfigDoesNotMutateInput(t *testing.T) {
 	cfg := map[string]any{"webhook": "https://example.com/hook", "secret": "SECtest123456"}
 	_ = MaskConfig(KindDingTalk, cfg)
 	if IsMasked(cfg["secret"].(string)) {
-		t.Fatal("MaskConfig 修改了入参，会导致真实凭据被掩码值覆盖")
+		t.Fatal("MaskConfig mutated its input, which would overwrite real credentials with masked values")
 	}
 }
 
@@ -84,10 +84,10 @@ func TestMergeConfigKeepsStoredOnMaskedIncoming(t *testing.T) {
 	}
 	got := MergeConfig(stored, incoming)
 	if got["webhook"] != "https://real/hook" || got["secret"] != "REALSECRET" {
-		t.Fatalf("掩码字段应保留库中原值，得到 %v", got)
+		t.Fatalf("masked fields must keep the stored value, got %v", got)
 	}
 	if got["method"] != "PUT" {
-		t.Fatalf("被修改的字段应生效，得到 %v", got["method"])
+		t.Fatalf("changed fields must take effect, got %v", got["method"])
 	}
 }
 
@@ -95,11 +95,11 @@ func TestMergeConfigEmptyStringClears(t *testing.T) {
 	stored := map[string]any{"webhook": "https://real/hook", "secret": "REALSECRET"}
 	got := MergeConfig(stored, map[string]any{"secret": ""})
 	if _, ok := got["secret"]; ok {
-		t.Fatalf("空串应清空该字段，得到 %v", got)
+		t.Fatalf("an empty string must clear the field, got %v", got)
 	}
 	// Fields not mentioned are preserved (partial-update semantics).
 	if got["webhook"] != "https://real/hook" {
-		t.Fatalf("未提及的字段应保留，得到 %v", got)
+		t.Fatalf("unmentioned fields must be preserved, got %v", got)
 	}
 }
 
@@ -107,10 +107,10 @@ func TestMergeConfigKeepsUnmentionedStoredKeys(t *testing.T) {
 	stored := map[string]any{"host": "smtp.example.com", "port": float64(587), "password": "pw"}
 	got := MergeConfig(stored, map[string]any{"port": float64(465)})
 	if got["host"] != "smtp.example.com" || got["password"] != "pw" {
-		t.Fatalf("未提及的字段应保留，得到 %v", got)
+		t.Fatalf("unmentioned fields must be preserved, got %v", got)
 	}
 	if got["port"] != float64(465) {
-		t.Fatalf("已提及的字段应更新，得到 %v", got["port"])
+		t.Fatalf("mentioned fields must be updated, got %v", got["port"])
 	}
 }
 
@@ -129,7 +129,7 @@ func TestPrepareConfigUpdateBlocksDestinationSwap(t *testing.T) {
 		wantMissing string
 	}{
 		{
-			name: "通用 Webhook 改地址想沿用 Authorization 头",
+			name: "generic Webhook changes the address and tries to reuse the Authorization header",
 			kind: KindWebhook,
 			stored: map[string]any{
 				"url":     "https://legit.example.com/hook",
@@ -139,21 +139,21 @@ func TestPrepareConfigUpdateBlocksDestinationSwap(t *testing.T) {
 			wantMissing: "headers",
 		},
 		{
-			name:        "Telegram 改 base_url 想把 Bot Token 发到自己的端点",
+			name:        "Telegram changes base_url and tries to send the Bot Token to its own endpoint",
 			kind:        KindTelegram,
 			stored:      map[string]any{"bot_token": "123456:REAL", "chat_id": "1", "base_url": "https://api.telegram.org"},
 			incoming:    map[string]any{"base_url": "https://attacker.tld"},
 			wantMissing: "bot_token",
 		},
 		{
-			name:        "邮件改 SMTP 主机想交出密码",
+			name:        "email changes the SMTP host and tries to hand over the password",
 			kind:        KindEmail,
 			stored:      map[string]any{"host": "smtp.corp.com", "port": 587, "password": "REALPW", "from": "a@b.c", "to": []any{"d@e.f"}},
 			incoming:    map[string]any{"host": "smtp.attacker.tld"},
 			wantMissing: "password",
 		},
 		{
-			name:        "邮件关掉 TLS 也必须重新表态密码",
+			name:        "email disables TLS and must still restate the password",
 			kind:        KindEmail,
 			stored:      map[string]any{"host": "smtp.corp.com", "port": 587, "tls": false, "password": "REALPW", "from": "a@b.c", "to": []any{"d@e.f"}},
 			incoming:    map[string]any{"tls": true},
@@ -161,14 +161,14 @@ func TestPrepareConfigUpdateBlocksDestinationSwap(t *testing.T) {
 		},
 		{
 			// A masked value = "reuse the old credential", which must likewise be rejected in the context of an address change.
-			name:        "回传掩码凭据 + 新地址",
+			name:        "echo masked credentials + new address",
 			kind:        KindTelegram,
 			stored:      map[string]any{"bot_token": "123456:REAL", "chat_id": "1", "base_url": "https://api.telegram.org"},
 			incoming:    map[string]any{"base_url": "https://attacker.tld", "bot_token": MaskedValue("123456:REAL")},
 			wantMissing: "bot_token",
 		},
 		{
-			name:        "钉钉改 Webhook 想沿用加签密钥",
+			name:        "DingTalk changes the Webhook and tries to reuse the signing secret",
 			kind:        KindDingTalk,
 			stored:      map[string]any{"webhook": "https://oapi.dingtalk.com/robot/send?access_token=OLD", "secret": "REALSEC"},
 			incoming:    map[string]any{"webhook": "https://attacker.tld/hook"},
@@ -179,11 +179,11 @@ func TestPrepareConfigUpdateBlocksDestinationSwap(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			merged, err := PrepareConfigUpdate(tc.kind, tc.stored, tc.incoming)
 			if err == nil {
-				t.Fatalf("改地址却未重新表态凭据，应当被拒绝；得到配置 %v", merged)
+				t.Fatalf("changing the address without restating credentials must be rejected; got config %v", merged)
 			}
 			var target *ErrDestinationChangedWithoutCredentials
 			if !errors.As(err, &target) {
-				t.Fatalf("应返回专门的错误类型以便接口给出可操作提示，得到 %T: %v", err, err)
+				t.Fatalf("want the dedicated error type so the API can give an actionable message, got %T: %v", err, err)
 			}
 			found := false
 			for _, m := range target.Missing {
@@ -192,11 +192,11 @@ func TestPrepareConfigUpdateBlocksDestinationSwap(t *testing.T) {
 				}
 			}
 			if !found {
-				t.Fatalf("应点名缺失的凭据键 %q，得到 %v", tc.wantMissing, target.Missing)
+				t.Fatalf("the error must name the missing credential key %q, got %v", tc.wantMissing, target.Missing)
 			}
 			// The error message must guide the operator on how to fix it.
 			if !strings.Contains(err.Error(), tc.wantMissing) {
-				t.Errorf("错误信息应提到 %q: %v", tc.wantMissing, err)
+				t.Errorf("the error message must mention %q: %v", tc.wantMissing, err)
 			}
 		})
 	}
@@ -212,37 +212,37 @@ func TestPrepareConfigUpdateAllowsLegitimateEdits(t *testing.T) {
 		incoming map[string]any
 	}{
 		{
-			name:     "只改名字（配置原样回传）",
+			name:     "only rename (config echoed as-is)",
 			kind:     KindWebhook,
 			stored:   map[string]any{"url": "https://legit.example.com/hook", "headers": map[string]any{"Authorization": "Bearer REAL"}},
 			incoming: map[string]any{"url": MaskedValue("https://legit.example.com/hook")},
 		},
 		{
-			name:     "只改请求方法，地址与凭据都不动",
+			name:     "only change the method; address and credentials stay",
 			kind:     KindWebhook,
 			stored:   map[string]any{"url": "https://legit.example.com/hook", "method": "POST"},
 			incoming: map[string]any{"method": "PUT"},
 		},
 		{
-			name:     "换地址并**同时**给新凭据",
+			name:     "change the address and **also** provide new credentials",
 			kind:     KindWebhook,
 			stored:   map[string]any{"url": "https://old.example.com/hook", "headers": map[string]any{"Authorization": "Bearer OLD"}},
 			incoming: map[string]any{"url": "https://new.example.com/hook", "headers": map[string]any{"Authorization": "Bearer NEW"}},
 		},
 		{
-			name:     "换地址并显式声明不再需要凭据",
+			name:     "change the address and explicitly declare no credentials are needed",
 			kind:     KindWebhook,
 			stored:   map[string]any{"url": "https://old.example.com/hook", "headers": map[string]any{"Authorization": "Bearer OLD"}},
 			incoming: map[string]any{"url": "https://new.example.com/hook", "headers": ""},
 		},
 		{
-			name:     "Telegram 改 chat_id（不是目的地）",
+			name:     "Telegram changes chat_id (not a destination)",
 			kind:     KindTelegram,
 			stored:   map[string]any{"bot_token": "t", "chat_id": "1", "base_url": "https://api.telegram.org"},
 			incoming: map[string]any{"chat_id": "-100200"},
 		},
 		{
-			name:     "邮件改收件人（不是目的地）",
+			name:     "email changes the recipient (not a destination)",
 			kind:     KindEmail,
 			stored:   map[string]any{"host": "smtp.corp.com", "port": 587, "password": "PW", "from": "a@b.c", "to": []any{"x@y.z"}},
 			incoming: map[string]any{"to": []any{"new@y.z"}},
@@ -252,10 +252,10 @@ func TestPrepareConfigUpdateAllowsLegitimateEdits(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			merged, err := PrepareConfigUpdate(tc.kind, tc.stored, tc.incoming)
 			if err != nil {
-				t.Fatalf("合法编辑被误拦: %v", err)
+				t.Fatalf("a valid edit was wrongly blocked: %v", err)
 			}
 			if merged == nil {
-				t.Fatal("应返回合并结果")
+				t.Fatal("want the merged result")
 			}
 		})
 	}
@@ -269,11 +269,11 @@ func TestPrepareConfigUpdatePortTypeTolerance(t *testing.T) {
 	stored := map[string]any{"host": "smtp.corp.com", "port": float64(587), "password": "PW"}
 	// The same port, submitted as an int.
 	if _, err := PrepareConfigUpdate(KindEmail, stored, map[string]any{"port": 587}); err != nil {
-		t.Fatalf("端口值相同（仅类型不同）不应被判为地址变更: %v", err)
+		t.Fatalf("an equal port value (only a type difference) must not count as an address change: %v", err)
 	}
 	// An actual port change must be blocked.
 	if _, err := PrepareConfigUpdate(KindEmail, stored, map[string]any{"port": 25}); err == nil {
-		t.Fatal("端口变更应被拦下")
+		t.Fatal("a port change must be blocked")
 	}
 }
 
@@ -285,7 +285,7 @@ func TestPrepareConfigUpdatePortTypeTolerance(t *testing.T) {
 //	on creation the database stores base_url:"" (the creation path stores the frontend-submitted config directly, bypassing MergeConfig)
 //	-> first save: MergeConfig treats the empty string as an explicit clear and deletes the key
 //	-> second save: incoming is still "" while stored no longer has the key, so it is judged "address changed"
-//	-> bot_token is a masked echo value -> 400 "目标地址已变更，请同时重新填写凭据字段"
+//	-> bot_token is a masked echo value -> 400 "the target address changed; re-enter the credential fields too"
 //
 // The user changed nothing yet can never save again unless they re-paste the Bot Token.
 func TestPrepareConfigUpdateSurvivesRepeatedSaveWithBlankDestination(t *testing.T) {
@@ -304,24 +304,24 @@ func TestPrepareConfigUpdateSurvivesRepeatedSaveWithBlankDestination(t *testing.
 	// First save: only the channel name changed, config is returned as-is.
 	merged, err := PrepareConfigUpdate(KindTelegram, stored, submit())
 	if err != nil {
-		t.Fatalf("第一次保存被误拦: %v", err)
+		t.Fatalf("the first save was wrongly blocked: %v", err)
 	}
 	if _, ok := merged["base_url"]; ok {
-		t.Fatal("前提已变：空串应被 MergeConfig 删除——本用例要覆盖的正是「键消失之后」那一步")
+		t.Fatal("the precondition changed: the empty string must be deleted by MergeConfig; this case covers the step after the key disappears")
 	}
 
 	// Second save: the submitted content is exactly the same as last time; the user changed nothing.
 	merged2, err := PrepareConfigUpdate(KindTelegram, merged, submit())
 	if err != nil {
-		t.Fatalf("第二次保存被误拦（用户什么都没改）: %v", err)
+		t.Fatalf("the second save was wrongly blocked (the user changed nothing): %v", err)
 	}
 	// Third time, confirming it is not "fails only once" but stably saveable.
 	if _, err := PrepareConfigUpdate(KindTelegram, merged2, submit()); err != nil {
-		t.Fatalf("第三次保存被误拦: %v", err)
+		t.Fatalf("the third save was wrongly blocked: %v", err)
 	}
 	// Credentials must be preserved throughout and not swept away by the empty-string logic.
 	if got := merged2["bot_token"]; got != "123:ABC" {
-		t.Fatalf("Bot Token 应沿用原值，得到 %v", got)
+		t.Fatalf("the Bot Token must keep its original value, got %v", got)
 	}
 }
 
@@ -336,7 +336,7 @@ func TestPrepareConfigUpdateStillGuardsBlankDestinationChanges(t *testing.T) {
 		"bot_token": MaskedValue("123:ABC"),
 		"base_url":  "https://tg-proxy.attacker.tld",
 	}); err == nil {
-		t.Fatal("从官方地址换到自建地址必须要求重新填写 Token")
+		t.Fatal("changing from the official address to a self-hosted one must require re-entering the Token")
 	}
 
 	// Direction two: clearing the self-hosted address (= switching back to the official API) is also an address change.
@@ -345,7 +345,7 @@ func TestPrepareConfigUpdateStillGuardsBlankDestinationChanges(t *testing.T) {
 		"bot_token": MaskedValue("123:ABC"),
 		"base_url":  "",
 	}); err == nil {
-		t.Fatal("清空自建地址（换回官方 API）同样是地址变更，必须要求重新填写 Token")
+		t.Fatal("clearing the self-hosted address (back to the official API) is also an address change and must require re-entering the Token")
 	}
 }
 
@@ -353,10 +353,10 @@ func TestDestinationKeysDeclaredForEveryKind(t *testing.T) {
 	// Same as with SecretKeys: if a channel forgets to declare its destination keys, PrepareConfigUpdate cannot protect it.
 	for kind, ch := range registry {
 		if len(ch.DestinationKeys()) == 0 {
-			t.Errorf("渠道 %s 未声明目的地键，改地址带出凭据的防护对它无效", kind)
+			t.Errorf("channel %s declares no destination key, so the address-change credential guard does not apply to it", kind)
 		}
 		if len(ch.SecretKeys()) == 0 {
-			t.Errorf("渠道 %s 未声明凭据键", kind)
+			t.Errorf("channel %s declares no credential keys", kind)
 		}
 	}
 }
@@ -370,11 +370,11 @@ func TestSecretKeysDeclaredForEveryKind(t *testing.T) {
 	}
 	for kind, ch := range registry {
 		if !expect[kind] {
-			t.Errorf("渠道 %s 未在测试中登记掩码预期", kind)
+			t.Errorf("channel %s has no masking expectation registered in the test", kind)
 			continue
 		}
 		if len(ch.SecretKeys()) == 0 {
-			t.Errorf("渠道 %s 未声明任何凭据字段，其配置会明文回显", kind)
+			t.Errorf("channel %s declares no credential fields, so its config would be echoed in plain text", kind)
 		}
 	}
 }
@@ -393,11 +393,11 @@ func TestPrepareConfigUpdateRejectsMaskedInContainer(t *testing.T) {
 		"headers": map[string]any{"Authorization": MaskedPrefix},
 	}
 	if _, err := PrepareConfigUpdate(KindWebhook, stored, incoming); err == nil {
-		t.Fatal("结构体内部夹带掩码哨兵应被拒绝（否则会把字面量存进库）")
+		t.Fatal("a masking sentinel inside a struct must be rejected (otherwise the literal would be stored)")
 	}
 	// Submitting the object as a whole (real new values) is still accepted as usual.
 	ok := map[string]any{"headers": map[string]any{"Authorization": "Bearer NEW"}}
 	if _, err := PrepareConfigUpdate(KindWebhook, stored, ok); err != nil {
-		t.Fatalf("正常提交新请求头不应被拦: %v", err)
+		t.Fatalf("a normal submission of new headers must not be blocked: %v", err)
 	}
 }

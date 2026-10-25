@@ -15,7 +15,7 @@ func TestTaskLifecycleAndDeleteCascade(t *testing.T) {
 	}
 	defer d.Close()
 
-	tk, err := d.CreateTask("迁移测试", "目标X", nil, 0, 0)
+	tk, err := d.CreateTask("migration test", "target X", nil, 0, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -89,11 +89,11 @@ func TestTaskDeleteCascadeAssets(t *testing.T) {
 	}
 	defer d.Close()
 
-	first, err := d.CreateTask("级联删除测试", "目标A", nil, 0, 0)
+	first, err := d.CreateTask("cascade delete test", "target A", nil, 0, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
-	second, err := d.CreateTask("共享资产保留测试", "目标B", nil, 0, 0)
+	second, err := d.CreateTask("shared asset retention test", "target B", nil, 0, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -304,6 +304,7 @@ func TestTaskRelationsAndLLMFailoverChain(t *testing.T) {
 	if _, err := d.MarkTaskLLMProfileQuotaExhausted(child.ID, profileIDs[1], "quota_exceeded"); err != nil {
 		t.Fatal(err)
 	}
+	// Allowlist §7 item 4: 余额不足 is literal upstream provider quota text.
 	last, err := d.MarkTaskLLMProfileQuotaExhausted(child.ID, profileIDs[2], "余额不足")
 	if err != nil {
 		t.Fatal(err)
