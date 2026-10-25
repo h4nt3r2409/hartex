@@ -96,7 +96,7 @@ func TestWriteItemLabelsLocalized(t *testing.T) {
 
 	assertKorean(t, "writeItem(single)", got)
 	for _, want := range []string{
-		"**Status change**: 처리 대기 → 수정됨",
+		"**Status change**: Pending → Fixed",
 		"**Type**: SQLi",
 		"**Asset**: a.example.com",
 		"**Summary**: SQL injection via q param",

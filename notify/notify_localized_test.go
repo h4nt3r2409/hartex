@@ -44,57 +44,6 @@ func assertKorean(t *testing.T, where, got string) {
 	}
 }
 
-// TestSeverityLabelLocalized checks that every severity enum renders with a Korean label.
-// The labels are shared by all notification channels (telegram, email, html, markdown, webhook, feishu, dingtalk, wecom),
-// so if any one regresses to Chinese, messages across all channels become mixed-language.
-func TestSeverityLabelLocalized(t *testing.T) {
-	// Chinese labels (严重/高危/中危/低危) -> Korean (심각/높음/중간/낮음), consistent with UI status.severity.
-	want := map[string]string{
-		"critical": "심각",
-		"high":     "높음",
-		"medium":   "중간",
-		"low":      "낮음",
-	}
-	for sev, label := range want {
-		got := SeverityLabel(sev)
-		assertKorean(t, "SeverityLabel("+sev+")", got)
-		if !strings.Contains(got, label) {
-			t.Errorf("SeverityLabel(%q)=%q, %q 를 포함해야 합니다", sev, got, label)
-		}
-	}
-	// An unknown severity returns the original text unchanged (it does not invent values that do not exist).
-	if got := SeverityLabel("made_up"); got != "made_up" {
-		t.Errorf("알 수 없는 심각도는 원문 유지여야 합니다, 받은 값 %q", got)
-	}
-}
-
-// TestStatusLabelLocalized checks that all nine disposition statuses render in Korean.
-// The wording must match the UI status.finding namespace (B4a) so status-change notifications and the screen do not diverge.
-func TestStatusLabelLocalized(t *testing.T) {
-	want := map[string]string{
-		"pending":        "처리 대기",
-		"in_progress":    "처리 중",
-		"confirmed":      "확인됨",
-		"resolved":       "처리됨",
-		"fixed":          "수정됨",
-		"false_positive": "오탐",
-		"ignored":        "무시",
-		"duplicate":      "중복",
-		"risk_accepted":  "위험 수용",
-	}
-	for status, label := range want {
-		got := StatusLabel(status)
-		assertKorean(t, "StatusLabel("+status+")", got)
-		if got != label {
-			t.Errorf("StatusLabel(%q)=%q, %q 를 기대했습니다", status, got, label)
-		}
-	}
-	// An unknown status is returned as-is (it does not invent a label that does not exist).
-	if got := StatusLabel("weird_status"); got != "weird_status" {
-		t.Errorf("알 수 없는 상태는 원문 유지여야 합니다, 받은 값 %q", got)
-	}
-}
-
 // TestItemTitlePlaceholderLocalized checks that the fallback title for an item with both name and type empty
 // is the Korean placeholder (이름 없는 취약점). It never emits an empty title.
 func TestItemTitlePlaceholderLocalized(t *testing.T) {

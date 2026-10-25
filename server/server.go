@@ -26,7 +26,6 @@ import (
 	"github.com/Autumn-27/artex/intercept"
 	"github.com/Autumn-27/artex/llmpool"
 	"github.com/Autumn-27/artex/llmrec"
-	"github.com/Autumn-27/artex/notify"
 	"github.com/Autumn-27/artex/report"
 	"github.com/Autumn-27/artex/traffic"
 	"github.com/Autumn-27/norma/llm"
@@ -97,9 +96,7 @@ const (
 
 // Rule-mode chat (fallbackChat, where a human directly steers when no LLM is configured) user responses.
 // reply is exposed verbatim to the user through both writeJSON and the conversation log. The input trigger keywords
-// additionally accept Korean aliases (의도/힌트) in the same way as the existing English aliases (intent/hint) —
-// this is pure input parsing, not a wire format, so the Chinese and English triggers are kept and these are merely added.
-// Terminology matches web i18n and GLOSSARY: intent→의도, hint→힌트, finding→취약점, planner→플래너. (F34 d)
+// are the English intent/hint prefixes — pure input parsing, not a wire format. (F34 d)
 const (
 	fallbackIntentInjected = "Injected one high-priority intent: "
 	fallbackHintRecorded   = "The hint has been recorded. The planner will read it next: "
@@ -312,13 +309,12 @@ func New(ctx context.Context, m *Manager, skillDir string, dataDir string, keyDi
 		// language change in the UI applies to the next agent turn without a
 		// restart. Both agent.OutputLanguage (langDirective + wrap-up
 		// language tail for LLM-generated text) and config.CurrentLanguage (backend
-		// enum labels such as severity/status) resolve through the same closure, so
-		// generated text and fixed backend strings share one chosen language.
+		// message catalog) resolve through the same closure, so generated text and
+		// fixed backend strings share one chosen language.
 		s.outputLang.Store(s.loadOutputLanguage())
 		resolveLang := s.outputLanguage
 		agent.OutputLanguage = resolveLang
 		config.CurrentLanguage = resolveLang
-		notify.Lang = resolveLang                       // severity·status labels in push·email notifications follow the same language
 		wireAgentAugment(m.pg, s.skillDir, s.hostTools) // assemble visible skills/MCP + traffic/orchestration host tools into the agent toolset
 		domainReg := buildDomainReg(m.Assets())
 		wireTools(m.pg, domainReg) // built-in tool table: filter by agent + override description/schema + inject defaults
@@ -3944,21 +3940,33 @@ func (s *Server) stopChat(w http.ResponseWriter, r *http.Request) {
 }
 
 // fallbackCommand classifies a rule-mode chat message into an intent/hint command
-// plus the trimmed argument. The trigger keywords accept Chinese (意图/提示), English
-// (intent/hint) and Korean (의도/힌트) prefixes — pure input parsing, not a wire
-// format, so the Korean aliases are additive and backward compatible. cmd is
+// plus the trimmed argument. The trigger keywords accept the English
+// (intent/hint) prefixes — pure input parsing, not a wire format. cmd is
 // "intent", "hint" or "" (status summary). (F34 d)
 func fallbackCommand(msg string) (cmd, text string) {
 	m := strings.TrimSpace(msg)
-	lower := strings.ToLower(m)
-	switch {
-	case strings.HasPrefix(m, "意图") || strings.HasPrefix(m, "의도") || strings.HasPrefix(lower, "intent"):
-		return "intent", strings.TrimSpace(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(m, "意图"), "의도"), "intent"))
-	case strings.HasPrefix(m, "提示") || strings.HasPrefix(m, "힌트") || strings.HasPrefix(lower, "hint"):
-		return "hint", strings.TrimSpace(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(m, "提示"), "힌트"), "hint"))
-	default:
-		return "", m
+	if rest, ok := cutCommandPrefix(m, "intent"); ok {
+		return "intent", commandArgument(rest)
 	}
+	if rest, ok := cutCommandPrefix(m, "hint"); ok {
+		return "hint", commandArgument(rest)
+	}
+	return "", m
+}
+
+// cutCommandPrefix reports whether s starts with prefix, ignoring ASCII case, and
+// returns the remainder.
+func cutCommandPrefix(s, prefix string) (string, bool) {
+	if len(s) < len(prefix) || !strings.EqualFold(s[:len(prefix)], prefix) {
+		return "", false
+	}
+	return s[len(prefix):], true
+}
+
+// commandArgument trims the optional ":" separator and surrounding spaces from a
+// trigger keyword's argument.
+func commandArgument(s string) string {
+	return strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(s), ":"))
 }
 
 // fallbackChat is the no-LLM human-steering handler: simple commands + situation summary.

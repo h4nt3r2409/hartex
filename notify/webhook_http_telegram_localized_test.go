@@ -27,7 +27,7 @@ func TestTelegramItemLabelsLocalized(t *testing.T) {
 		Items: []Item{{
 			Name:       "sqli-login", // Title() = Name
 			VulnClass:  "injection",  // Must differ from Title() for the type line to render
-			Severity:   "high",       // SeverityLabel -> 높음 (Hangul)
+			Severity:   "high",       // SeverityLabel -> High (English)
 			Summary:    "login form is injectable",
 			Assets:     []string{"host-a.example.com"},
 			DetailURL:  "https://example.com/f/1",

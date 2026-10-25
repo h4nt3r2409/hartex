@@ -15,7 +15,7 @@ import (
 // sites that validateTaskProfileIDs exposes through writeErr; (2) F34: the 5 user-facing
 // sites that bypass writeErr (the 3 return values of chatUnavailableReason + the 2 writeJSON
 // errors of the testLLM and web-search probes); (3) F34(d): the 3 rule-mode chat fallbackChat
-// responses (2 confirmations + status summary) and recognition of the Korean trigger aliases
+// responses (2 confirmations + status summary) and recognition of the English trigger aliases
 // (intent/hint). Prompts, tool descriptions, seed intent summaries, the default title
 // (未命名任务), and logs handed to the agent are preserved verbatim, so they are not in scope
 // for this test.
@@ -272,21 +272,17 @@ func TestChatUnavailableReasonLocalized(t *testing.T) {
 }
 
 // TestFallbackCommandParsing confirms that rule-mode chat's trigger keyword parsing (fallbackCommand)
-// recognizes the Korean aliases (intent/hint) while still accepting the existing Chinese and
-// English triggers, and returns the argument with only the keyword stripped. It is pure input
-// parsing that never touches the Store or DB, so it runs without a DB. Removing the Korean
-// aliases breaks the korean-* cases; removing Chinese/English breaks those cases (non-vacuity).
+// recognizes the English intent/hint prefixes, returns the argument with only the keyword
+// stripped, and falls through to the status summary for non-alias messages. It is pure input
+// parsing that never touches the Store or DB, so it runs without a DB.
 func TestFallbackCommandParsing(t *testing.T) {
 	cases := []struct {
 		name, in, cmd, text string
 	}{
-		{"korean-intent", "의도 SQLi 주입점 먼저 확인", "intent", "SQLi 주입점 먼저 확인"},
-		{"korean-hint", "힌트 로그인 폼부터 보라", "hint", "로그인 폼부터 보라"},
-		{"chinese-intent", "意图 扫描端口", "intent", "扫描端口"}, // kept for backward compatibility
-		{"chinese-hint", "提示 看登录", "hint", "看登录"},       // kept for backward compatibility
 		{"english-intent", "intent scan ports", "intent", "scan ports"},
 		{"english-hint", "hint try admin:admin", "hint", "try admin:admin"},
-		{"status-korean", "지금 상황 알려줘", "", "지금 상황 알려줘"},
+		{"english-intent-colon", "intent: scan ports", "intent", "scan ports"},
+		{"status-non-alias", "지금 상황 알려줘", "", "지금 상황 알려줘"},
 		{"status-empty", "   ", "", ""},
 	}
 	for _, c := range cases {

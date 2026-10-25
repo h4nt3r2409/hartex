@@ -42,7 +42,7 @@ func TestFeishuItemLinesLocalized(t *testing.T) {
 	got := feishuItemLines(asciiStatusChangeItem())
 	assertKorean(t, "feishuItemLines", got)
 	for _, want := range []string{
-		"**Status change**: 처리 대기 → 수정됨",
+		"**Status change**: Pending → Fixed",
 		"**Type**: SQLi",
 		"**Assets**: a.example.com",
 		"**Summary**: SQL injection via q param",

@@ -64,11 +64,6 @@ func newNotifyFixture(t *testing.T) *notifyFixture {
 	// trafficEvidenceServer brings up the server for it to take effect.
 	t.Setenv(notifyBackgroundDisabledEnv, "1")
 	s, _, request := trafficEvidenceServer(t)
-	// Pin the notification label language so severity/status/detail labels are
-	// deterministic under the English-first default, independent of global wiring.
-	prevLang := notify.Lang
-	notify.Lang = func() string { return "en" }
-	t.Cleanup(func() { notify.Lang = prevLang })
 	pg := s.m.pg
 
 	// Create a dedicated task: the task created by the shared trafficEvidenceServer

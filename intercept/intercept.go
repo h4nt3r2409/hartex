@@ -510,10 +510,7 @@ func (i *Interceptor) Judge(ctx context.Context, tool string, arguments json.Raw
 }
 
 func judgeActionLabel(action string) string {
-	if v, ok := judgeActionLabels[judgeActionLang()][action]; ok {
-		return v
-	}
-	if v, ok := judgeActionLabels["ko"][action]; ok {
+	if v, ok := judgeActionLabels[action]; ok {
 		return v
 	}
 	return action

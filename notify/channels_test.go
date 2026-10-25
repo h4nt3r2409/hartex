@@ -251,7 +251,7 @@ func TestWebhookDefaultTemplateProducesValidJSON(t *testing.T) {
 	// This is the point of the default template: when the title contains quotes and newlines, any naive
 	// `"title": "{{.Title}}"` form will produce invalid JSON. Only {{json .}} avoids it.
 	srv := capturePost(t, `{"ok":true}`, func(t *testing.T, body map[string]any, _ *http.Request) {
-		if body["title"] != `[🟠 높음] 登录处 "SQL注入" 风险` {
+		if body["title"] != `[🟠 High] 登录处 "SQL注入" 风险` {
 			t.Errorf("标题未正确还原: %v", body["title"])
 		}
 		items, _ := body["items"].([]any)

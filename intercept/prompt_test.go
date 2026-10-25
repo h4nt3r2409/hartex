@@ -6,6 +6,20 @@ import (
 	"testing"
 )
 
+func TestJudgeActionLabelIsEnglish(t *testing.T) {
+	if got := judgeActionLabel("deny"); got != "deny" {
+		t.Fatalf("judgeActionLabel(deny) = %q", got)
+	}
+	for _, action := range []string{"allow", "ask"} {
+		if got := judgeActionLabel(action); got != action {
+			t.Fatalf("judgeActionLabel(%s) = %q", action, got)
+		}
+	}
+	if got := judgeActionLabel("weird"); got != "weird" {
+		t.Fatalf("judgeActionLabel(weird) = %q, want passthrough", got)
+	}
+}
+
 func TestJudgePromptRequiresEnglishComment(t *testing.T) {
 	if !strings.Contains(DefaultJudgePrompt, "Write the comment value in English") {
 		t.Fatalf("judge prompt must require an English comment")

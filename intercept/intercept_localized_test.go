@@ -65,18 +65,6 @@ func TestInterceptMessagesLocalized(t *testing.T) {
 	}
 }
 
-// TestJudgeActionLabelLocalized checks the three judge verdict labels are Korean
-// (허용 / 차단 / 확인 요청, per the glossary) and that an unknown action still
-// passes through untranslated.
-func TestJudgeActionLabelLocalized(t *testing.T) {
-	for _, action := range []string{"allow", "deny", "ask"} {
-		assertKorean(t, "judgeActionLabel("+action+")", judgeActionLabel(action))
-	}
-	if got := judgeActionLabel("weird"); got != "weird" {
-		t.Errorf("judgeActionLabel(weird) = %q, want passthrough", got)
-	}
-}
-
 // TestDefaultMessageLocalized checks the rule-derived deny/ask messages are Korean
 // and still embed the rule name, while allow stays empty.
 func TestDefaultMessageLocalized(t *testing.T) {
