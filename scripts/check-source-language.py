@@ -49,39 +49,115 @@ SCAN_EXTENSIONS = (
 # removed. Do not add any other directory-level exemption.
 SKIP_PREFIXES = ("graphify-out/", "docs/superpowers/")
 
+
+def _u(*codepoints: int) -> str:
+    """Return these Unicode code points as a string (keeps this file ASCII-only)."""
+    return "".join(chr(cp) for cp in codepoints)
+
+
 # Line-level exceptions for the functional allowlist in §7 of the English-only design.
-# Each entry is (regex, reason).
+# Non-English tokens are built from code points so this guard file is itself
+# English-only. §7 of docs/superpowers/specs/2026-10-25-english-only-design.md lists the
+# exact tokens. Each entry is (regex, reason) and is anchored to its functional site.
+_CHAT_LABELS = "|".join([
+    _u(0x6F0F, 0x6D1E),          # finding
+    _u(0x8D44, 0x4EA7),          # asset
+    _u(0x4F01, 0x4E1A),          # company
+    _u(0x63A5, 0x53E3),          # endpoint
+    "IP",                        # ip
+    _u(0x5E94, 0x7528),          # app
+    _u(0x57DF, 0x540D),          # root_domain
+    _u(0x5B50, 0x57DF, 0x540D),  # subdomain
+    _u(0x670D, 0x52A1),          # service
+])
+_MODEL = _u(0x6A21, 0x578B)
+_COMMA = _u(0xFF0C)
+
 ALLOWED_PATTERNS = [
-    # §7 item 1: persisted model-vs-rule decision sentinel, matched by SQL LIKE and
-    # strings.HasPrefix.
-    (re.compile(r"模型"), "[模型] model-vs-rule decision sentinel"),
-    # §7 item 2: persisted @[kind#id label] conversation wire format.
-    (re.compile(r"漏洞|资产|企业|接口|应用|域名|子域名|服务"), "chat-mention wire labels"),
+    # §7 item 1: persisted model-vs-rule decision sentinel, plain in strings and
+    # escaped in TypeScript regex literals; matched by SQL LIKE/strings.HasPrefix.
+    (re.compile(r"\[" + _MODEL + r"\]|\\\[" + _MODEL + r"\\\]"), "model-vs-rule decision sentinel"),
+    # §7 item 2: persisted @[kind#id label] chat-mention wire token.
+    (re.compile(r"@\[(?:" + _CHAT_LABELS + r")#"), "persisted chat-mention wire token"),
+    # §7 item 2: the Go/TypeScript regex that defines the wire token.
+    (re.compile(r"chatMentionPattern = regexp\.MustCompile|matchAll\(/@\\\["), "chat-mention wire-token regex"),
+    # §7 item 2: server-side kind -> wire-label table.
+    (re.compile(r'"(?:' + _CHAT_LABELS + r')":\s*"'), "chat-mention label table"),
+    # §7 item 2: web-side kind -> wire-label table.
+    (re.compile(r'label: "(?:' + _CHAT_LABELS + r')"'), "chat-mention label table"),
+    # §7 item 2: wire-label fallback and struct-literal fixtures.
+    (re.compile(r'\?\? "' + _u(0x8D44, 0x4EA7) + r'"'), "chat-mention wire-label fallback"),
+    (re.compile(r'chatMentionRef\{[^}]*(?:' + _CHAT_LABELS + r')"'), "chat-mention wire-label fixture"),
+    # §7 item 2: fixtures that exercise wire-label search and @-trigger parsing.
+    (re.compile(r'mentionSearch\("(?:' + _CHAT_LABELS + r')'), "chat-mention search fixture"),
+    (re.compile(r'activeMention\("[^"]*@(?:' + _CHAT_LABELS + r')'), "chat-mention trigger fixture"),
     # §7 item 3: legacy Chinese verdict markers accepted from older prompts.
-    (re.compile(r"实际操作：|；成功后的后果：|；命中规则："), "legacy Chinese verdict markers"),
+    (
+        re.compile(
+            _u(0x5B9E, 0x9645, 0x64CD, 0x4F5C, 0xFF1A)
+            + "|"
+            + _u(0xFF1B, 0x6210, 0x529F, 0x540E, 0x7684, 0x540E, 0x679C, 0xFF1A)
+            + "|"
+            + _u(0xFF1B, 0x547D, 0x4E2D, 0x89C4, 0x5219, 0xFF1A)
+        ),
+        "legacy Chinese verdict markers",
+    ),
     # §7 item 4: literal upstream LLM-provider quota error text.
-    (re.compile(r"余额不足|额度不足|额度已用尽|欠费"), "provider quota error markers"),
-    # §7 item 5: classifies log lines emitted by upstream tools.
-    (re.compile(r"失败|丢弃|拒绝|禁用|重试|不可达"), "functional log-classification keywords"),
+    (
+        re.compile(
+            _u(0x4F59, 0x989D, 0x4E0D, 0x8DB3)
+            + "|"
+            + _u(0x989D, 0x5EA6, 0x4E0D, 0x8DB3)
+            + "|"
+            + _u(0x989D, 0x5EA6, 0x5DF2, 0x7528, 0x5C3D)
+            + "|"
+            + _u(0x6B20, 0x8D39)
+        ),
+        "provider quota error markers",
+    ),
+    # §7 item 5: the exact keyword tables in server/logsink.go that classify logs
+    # emitted by upstream tools.
+    (re.compile(r'"unreachable", "' + _u(0x5931, 0x8D25) + r'"'), "log-classification status keywords"),
+    (re.compile(r'"retrying", "' + _u(0x7981, 0x7528) + r'"'), "log-classification warning keywords"),
     # §7 item 6: functional ICP-filing detection in target/company data, including
     # the full-width and ideographic domain separators accepted by its normalizer.
-    (re.compile(r"备案|\.．。"), "functional ICP detection"),
+    (re.compile(_u(0x5907, 0x6848) + r"|\." + _u(0xFF0E, 0x3002)), "functional ICP detection"),
     # §7 item 7: byte-exact legacy traffic_search description migration sentinel.
-    (re.compile(r"查询记录代理已抓取的目标流量"), "legacy traffic_search description sentinel"),
+    (
+        re.compile(
+            _u(
+                0x67E5, 0x8BE2, 0x8BB0, 0x5F55, 0x4EE3, 0x7406, 0x5DF2,
+                0x6293, 0x53D6, 0x7684, 0x76EE, 0x6807, 0x6D41, 0x91CF,
+            )
+        ),
+        "legacy traffic_search description sentinel",
+    ),
     # §7 item 8: lets defenders match audit logs from older ARTEX builds.
-    (re.compile(r"【ARTEX 平台管控·非目标防御】"), "legacy guard detection marker"),
+    (
+        re.compile(
+            _u(0x3010)
+            + "ARTEX "
+            + _u(0x5E73, 0x53F0, 0x7BA1, 0x63A7, 0x00B7, 0x975E, 0x76EE, 0x6807, 0x9632, 0x5FA1)
+            + _u(0x3011)
+        ),
+        "legacy guard detection marker",
+    ),
     # §7 item 9: GBK zip-name decoding fixture (Chinese entry names are the data the
     # decoder exists to support).
-    (re.compile(r"中文技能|参考资料"), "GBK zip-name fixture"),
-    # §7 item 10: detection recipe for Chinese login/authorization pages on targets.
-    (re.compile(r"未登录|未授权|登录失效|授权"), "Chinese login/authorization matching regex"),
+    (re.compile(_u(0x4E2D, 0x6587, 0x6280, 0x80FD) + "|" + _u(0x53C2, 0x8003, 0x8D44, 0x6599)), "GBK zip-name fixture"),
+    # §7 item 10: detection recipes for Chinese login/authorization pages.
+    (re.compile(r"const NEGATIVE_RE = /"), "Chinese login/authorization regex (preload.js)"),
+    (re.compile(r"grep -rhoaE"), "Chinese login/authorization grep example (reference.md)"),
     # §7 item 11: the guards cannot work without their CJK detector ranges.
     (re.compile(r"가-힣|㐀-鿿|豈-﫿"), "CJK range in a check script"),
-    # §7 item 12: full-width comma accepted as an input separator (paste tolerance).
-    (re.compile(r"，"), "full-width comma accepted as an input separator"),
+    # §7 item 12: full-width comma accepted as an input separator (paste tolerance)
+    # at its two call sites, plus the §7 table row that documents it.
+    (re.compile(r'comma "' + _COMMA + r'"'), "full-width comma call-site comments"),
+    (re.compile(r"\.split\(/\[[^\]]*" + _COMMA + r"[^\]]*\]\+/\)"), "full-width comma input separator"),
+    (re.compile("Full-width comma `" + _COMMA + "`"), "full-width comma in the documentation table"),
     # §7 item 2: full-width brackets escape `[`/`]` inside a persisted chat-mention
     # wire label so they cannot terminate the label.
-    (re.compile(r'"（" : "）"'), "chat-mention wire-label bracket escaping"),
+    (re.compile(r'"' + _u(0xFF08) + r'" : "' + _u(0xFF09) + r'"'), "chat-mention wire-label bracket escaping"),
 ]
 
 

@@ -6,9 +6,9 @@ import test from "node:test";
 
 test("mention trigger supports Chinese and cursor placement without hijacking email", () => {
   assert.equal(activeMention("user@example.com", 16), null);
-  assert.equal(activeMention("已选 @[漏洞#1 X]", 12), null);
-  assert.deepEqual(activeMention("查看@漏洞 后面的文字", 5), { start: 2, end: 5, query: "漏洞" });
-  assert.equal(activeMention("@漏洞\n下一行", 8), null);
+  assert.equal(activeMention("selected @[漏洞#1 X]", 18), null);
+  assert.deepEqual(activeMention(". @漏洞 following text", 5), { start: 2, end: 5, query: "漏洞" });
+  assert.equal(activeMention("@漏洞\nnext line", 8), null);
 });
 
 test("categories, Chinese aliases, IP and keyword search", () => {
@@ -16,7 +16,7 @@ test("categories, Chinese aliases, IP and keyword search", () => {
   // 0x6f0f is the first character of the finding wire label (allowlist §7 #2).
   assert.equal(mentionSearch(String.fromCharCode(0x6f0f)).categories[0].kind, "finding");
   assert.equal(mentionSearch("漏洞").kind, "finding");
-  assert.equal(mentionSearch("漏洞SQL注入").query, "SQL注入");
+  assert.equal(mentionSearch("漏洞 SQL injection").query, "SQL injection");
   assert.equal(mentionSearch("ip 192.0.2.1").kind, "ip");
   assert.equal(mentionSearch("接口 GET /api").query, "GET /api");
   assert.equal(mentionSearch("acme.com").kind, "");
