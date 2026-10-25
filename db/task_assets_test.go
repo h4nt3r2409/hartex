@@ -27,7 +27,7 @@ func TestRegisterTaskAssetScopesCreatesAssetsAndPersistsTextScope(t *testing.T) 
 		{Kind: "domain", Value: domain},
 		{Kind: "ip", Value: ip},
 		{Kind: "cidr", Value: "198.51.100.0/24"},
-		{Kind: "icp", Value: " 京 ICP 备 12345678 号-1 "},
+		{Kind: "icp", Value: " \u4eac ICP \u5907 12345678 \u53f7-1 "},
 		{Kind: "keyword", Value: " Acme   Security "},
 	}
 

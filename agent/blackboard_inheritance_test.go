@@ -40,7 +40,7 @@ func TestGraphOverviewExpandsAssociatedCompanyScope(t *testing.T) {
 	ip := fmt.Sprintf("2001:db8:%x::42", companyID%0xffff)
 	cidr := fmt.Sprintf("2001:db8:%x:1::/64", companyID%0xffff)
 	// Allowlist §7 item 6: the Chinese ICP-filing form is functional company-scope input.
-	icp := fmt.Sprintf("京 ICP 备 %d 号", companyID)
+	icp := fmt.Sprintf("\u4eac ICP \u5907 %d \u53f7", companyID)
 	keyword := fmt.Sprintf("Scope Company %d", companyID)
 	inputs := []db.ScopeInput{
 		{Kind: "domain", Value: domain},

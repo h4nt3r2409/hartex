@@ -8,7 +8,9 @@ import (
 
 func TestTruncateUTF8PreservesValidEncoding(t *testing.T) {
 	t.Parallel()
-	input := strings.Repeat("π", 400)
+	// 400 snowmen are 1200 bytes: the 1000-byte cut lands mid-rune, so the
+	// truncation boundary is actually exercised (400 two-byte runes would only be 800).
+	input := strings.Repeat("☃", 400)
 	got := truncateUTF8(input, 1000)
 	if len(got) > 1000 {
 		t.Fatalf("truncated value has %d bytes, want at most 1000", len(got))
