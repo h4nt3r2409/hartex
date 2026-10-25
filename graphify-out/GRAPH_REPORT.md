@@ -1,17 +1,17 @@
 # Graph Report - artex-global  (2026-10-25)
 
 ## Corpus Check
-- 712 files · ~821,015 words
+- 712 files · ~821,361 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 20 file(s) not represented in the graph (top: (none) 10, .css 5, .example 1)
 
 ## Summary
-- 7766 nodes · 40121 edges · 384 communities (229 shown, 155 thin omitted)
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 2889 edges (avg confidence: 0.85)
+- 7769 nodes · 40138 edges · 373 communities (224 shown, 149 thin omitted)
+- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 2899 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4215d82a`
+- Built from commit: `06ccd29c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,25 +21,25 @@
 - Task API & HTTP Server
 - assertNonEmpty
 - Search Dialog & Grouping
-- approval-records.tsx
-- Button
+- findings/page.tsx
+- sessions-tab.tsx
 - Task
-- react
+- next-intl
 - encoding/json.RawMessage
 - Channel
 - Open
 - LLM Engine & Prompt Seeds
 - redact_test.go
 - Chat Agent & Provider
-- function/assets/page.tsx
-- mention-textarea.tsx
+- Button
+- react
 - Guarded Tool Execution
 - Finding & Asset Models
 - Agent Context Items
 - Frontend Visualization Libraries
 - Asset Store & Ports
 - ARTEX Indicator CSV (artex_indicators.csv)
-- testing.T
+- NewEngine
 - ChatAgent Streaming Core
 - time.Duration
 - Company Scope Tests
@@ -51,7 +51,7 @@
 - ExplorationStore
 - context.Context
 - assertEnglish
-- Activity
+- preferences-provider.tsx
 - API Recon Configuration
 - Interceptor
 - Finding Recorder
@@ -59,10 +59,10 @@
 - coverage-graph-tab.tsx
 - trafficEvidenceServer
 - auth.go
-- State & Font Registry
+- preferences-config.ts
 - Side-Question Context Budget
 - Finding Store
-- WithTrace
+- InterceptAudit
 - Frontend Mock Handlers
 - Config
 - Host Triage Script
@@ -76,15 +76,15 @@
 - Frontend Build Tooling
 - External Link Checker
 - Capture
-- intent
+- notifyTestDB
 - Activity & LLM Call Tracking
 - Health Registry
 - .DeleteAll
 - Asset Query DSL
-- taskDTO
+- traffic/page.tsx
 - i18n Key Checker
 - traffic_store_test.go
-- contextBuilder
+- .runHTTPTool
 - utils.ts
 - Config Masking
 - Webhook Notifications
@@ -93,16 +93,16 @@
 - Sigma Host/Log/SIEM Rule Layer
 - Bootstrap & Staging
 - update.go
-- .relatedTaskOverviews
+- trigger_merge_test.go
 - Web CI Workflow
 - MCP Client
 - LLMProfile
 - Agent Triggers
 - ATT&CK Check Script
 - LLM Retry Logic
-- .updateLifecycle
+- Task
 - Sigma Test Helpers
-- .buildFindingAssetTree
+- addToolAliases
 - Vulnerability Findings
 - Maintainer Guide (English)
 - channels_test.go
@@ -115,12 +115,12 @@
 - Destructive Command Sigma Rule
 - Font Registry
 - asset-dsl-search.tsx
-- Task
+- logSinkT
 - assetRow
 - skill_zip.go
 - Detections CI Workflow
 - engine_emptyturn_test.go
-- Task
+- Tool
 - Dashboard KPI Screen
 - Mock Asset DSL
 - Enrich Fanout Correlation
@@ -132,7 +132,7 @@
 - File Structure
 - Prettier Config
 - TypeScript Config
-- Run Trace Capture
+- captureRunSession
 - .updateApply
 - TaskTemplate
 - Scan Velocity Correlation
@@ -140,11 +140,11 @@
 - Feature Request Template (EN)
 - TestTaskArchivePackageFilesRoundTrip
 - Docs Links Workflow
-- selfupdate_localized_test.go
-- transcript.tsx
+- intercept_archive_validation_test.go
+- FindingRetest
 - TaskArchive
 - Conversation Store
-- .AddAgentScope
+- assertEnglish
 - User-Agent Correlation Rule
 - Recording Proxy CA Rule
 - Self-Update Egress Rule
@@ -152,30 +152,26 @@
 - Conversation Context
 - Filter Validation
 - Sigma Rule artex_enrich_user_agent.yml
-- intl-runtime-provider.tsx
+- app/layout.tsx
 - Self-Update Tests
 - Preload Runtime Hook
 - Company Scope Rules
 - Static Endpoint Harvesting
 - Guard Audit Framing Rule
 - Marker Then Destructive Rule
-- LLMRecord
-- defaultPort
-- .DirectSourceStores
+- ValidateProxyURL
+- archiveJSONTestRows
+- .takeTokens
 - createDeleteFixture
-- HostDeleteStage
-- AssetInterceptRule
-- Task Clock & Deadlines
+- mockHandle
+- assetInputItem
 - next.config.mjs
 - MCP Server Store
 - Traffic Evidence Binding
 - ATT&CK Navigator Coverage Layer
 - Lint Rules
 - Admin Dashboard Template
-- .taskLLMResolutionHandler
 - Defense Design Concepts
-- .DeleteTaskCascadePrepared
-- Attempt Capture
 - Package Scripts
 - Doc Link Checker
 - newReq
@@ -183,9 +179,7 @@
 - Benchmark Compose
 - ScopeSentry MCP Tools
 - Biome Config
-- Intercept Queries
 - External Links Allowlist
-- CommandRecord
 - Build Script
 - Skill Statistics
 - Defense Template Checker
@@ -202,7 +196,7 @@
 - Release Workflow
 - Build Environment Vars
 - traffic_test.go
-- Agent
+- .agentByKey
 - utf8Clean
 - Detection Test Scripts
 - PCAP Generator
@@ -238,14 +232,12 @@
 - Asset Key Helpers
 - Sigma Rule Check
 - Sigma Lint Check
-- .chatUpload
 - Accessibility Lint Rules
 - Next Linter Config
 - ARTEX App Icon
 - Mock Asset Tree
 - Task Coverage
 - reclaim_test.go
-- .Execute
 - VCS Settings
 - Auth Proxy Config
 - Untested Assets
@@ -290,9 +282,6 @@
 - meterTool
 - github.com/lqqyt2423/go-mitmproxy/proxy.Flow
 - .pgCreateTaskTemplate
-- InterceptRule
-- .Blob
-- requestHeaderLines
 - update_test.go
 
 ## God Nodes (most connected - your core abstractions)
@@ -308,16 +297,16 @@
 10. `Planner` - 193 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `4.2 Builder calls (recorded; override only with a reason)` --references--> `intent()`  [INFERRED]
-  docs/superpowers/specs/2026-10-25-english-only-design.md → agent/coldgraph_test.go
-- `7. Functional allowlist (must stay non-English)` --references--> `intent()`  [INFERRED]
-  docs/superpowers/specs/2026-10-25-english-only-design.md → agent/coldgraph_test.go
-- `8.1 Go backend` --references--> `intent()`  [INFERRED]
-  docs/superpowers/specs/2026-10-25-english-only-design.md → agent/coldgraph_test.go
+- `Task 1: Fixed English output directive` --references--> `outputDirective()`  [INFERRED]
+  docs/superpowers/plans/2026-10-25-english-only.md → agent/prompt.go
 - `12. What is left to the builder` --references--> `getDateLocale()`  [INFERRED]
   docs/superpowers/specs/2026-10-25-english-only-design.md → web/src/i18n/datetime.ts
 - `6.1 The single English catalog` --references--> `getDateLocale()`  [INFERRED]
   docs/superpowers/specs/2026-10-25-english-only-design.md → web/src/i18n/datetime.ts
+- `Task 2: Remove label localization and non-English input aliases` --references--> `intent()`  [INFERRED]
+  docs/superpowers/plans/2026-10-25-english-only.md → agent/coldgraph_test.go
+- `4.2 Builder calls (recorded; override only with a reason)` --references--> `intent()`  [INFERRED]
+  docs/superpowers/specs/2026-10-25-english-only-design.md → agent/coldgraph_test.go
 
 ## Import Cycles
 - None detected.
@@ -353,7 +342,7 @@
 - **Studio Admin Prebuilt Screen Set** — web_media_dashboard_overview_metrics, web_media_dashboard_auth_screens, web_media_dashboard_invoice_table, web_media_dashboard_top_products, web_media_dashboard_expense_summary [INFERRED 0.85]
 - **ARTEX App Icon Brand Composition** — web_src_app_icon_infinityloopmark, web_src_app_icon_integratedlettera, web_src_app_icon_artexwordmark, web_src_app_icon_violetindigogradient [INFERRED 0.85]
 
-## Communities (384 total, 155 thin omitted)
+## Communities (373 total, 149 thin omitted)
 
 ### Community 0 - "Agent Capture Runtime"
 Cohesion: 0.16
@@ -361,195 +350,195 @@ Nodes (49): chatVars, coldGraph, GoalsVars, MainAgent, MainVars, Planner, Planne
 
 ### Community 1 - "Dashboard UI Components"
 Cohesion: 0.01
-Nodes (233): Self-Review, Task 5: Pin locale-sensitive formatting to English, ASSET_COLORS, DashboardPage(), fmtRel(), fmtTokens(), LiveDot(), SectionTitle() (+225 more)
+Nodes (256): AgentGroup, ASSET_COLORS, DashboardPage(), fmtRel(), fmtTokens(), LiveDot(), SectionTitle(), statusBg() (+248 more)
 
 ### Community 2 - "Task API & HTTP Server"
 Cohesion: 0.04
-Nodes (43): WrapupDefault(), WrapupTurnsDefault(), PromptVar, jsonStrMap(), decodeCompanyMutationRequest(), TestAssetResponsesLocalized(), TestCompanyScopeHTTPErrorClassificationAndBounds(), commandTaskFilter() (+35 more)
+Nodes (27): decodeCompanyMutationRequest(), TestCompanyScopeHTTPErrorClassificationAndBounds(), uniqueUploadPath(), commandTaskFilter(), normalizeConstraintKind(), decodeConversationRequest(), notifyChannelLookupErr(), cleanStrs() (+19 more)
 
 ### Community 3 - "assertNonEmpty"
 Cohesion: 0.03
-Nodes (73): TestAssetErrorConstantsLocalized(), TestTaskAssetProvenanceLocalized(), TestAuthErrorConstantsLocalized(), TestRequireAuthMessagesLocalized(), TestChatUploadErrorConstantsLocalized(), TestChatUploadHandlerResponsesLocalized(), TestConstraintErrorConstantsLocalized(), TestConstraintHandlersResponsesLocalized() (+65 more)
+Nodes (77): fakeRT, newReq(), TestSessionHeaderInjectedFromContext(), TestSessionHeaderSkippedWhenKeyEmpty(), TestSessionHeaderSkippedWhenNoSessionID(), TestAssetErrorConstantsLocalized(), TestAssetResponsesLocalized(), TestTaskAssetProvenanceLocalized() (+69 more)
 
 ### Community 4 - "Search Dialog & Grouping"
 Cohesion: 0.02
-Nodes (174): GROUP_MESSAGE_KEY, groupBy(), groupHeadingKey(), recommendations, SearchDialog(), SearchItem, searchItems, MethodBadge() (+166 more)
+Nodes (169): 8.2 Next.js frontend, GROUP_MESSAGE_KEY, groupBy(), groupHeadingKey(), recommendations, SearchDialog(), SearchItem, searchItems (+161 more)
 
-### Community 5 - "approval-records.tsx"
-Cohesion: 0.08
-Nodes (39): InterceptTab(), ApprovalsPage(), approvalBreakpoints, ApprovalDetail(), load(), ApprovalOrigin(), ApprovalRecords(), ApprovalTable() (+31 more)
+### Community 5 - "findings/page.tsx"
+Cohesion: 0.05
+Nodes (64): class-variance-authority, assetPathOf(), AssetTree(), AssetTreeProps, AssetTreeRow(), buildAssetTree(), collectKeys(), filterTree() (+56 more)
 
-### Community 6 - "Button"
+### Community 6 - "sessions-tab.tsx"
 Cohesion: 0.03
-Nodes (173): react-day-picker, AgentGroupHeader(), ChatPage(), poll(), ChatView(), conversationIsPinned(), ConversationItem, fmtTokens() (+165 more)
+Nodes (129): AgentGroupHeader(), ChatPage(), poll(), ChatView(), Composer(), onKeyDown(), conversationIsPinned(), ConversationItem (+121 more)
 
 ### Community 7 - "Task"
-Cohesion: 0.05
-Nodes (20): AbortCause, cause(), Causef(), chatAttachment, composeAgentMessage(), humanBytes(), userActivityWithAttachments(), goalDTO() (+12 more)
+Cohesion: 0.10
+Nodes (9): applyTaskArchiveBlocker(), tokenTotalDTO(), FindingSeverityDTO, restoreRerunIntent(), taskActivityDetail(), sameOptionalID(), TestApplyTaskArchiveBlocker(), TaskDTO (+1 more)
 
-### Community 8 - "react"
-Cohesion: 0.03
-Nodes (166): class-variance-authority, next-intl, react, simple-icons, sonner, SetupPage(), SidebarSupportCard(), FindingLineageView() (+158 more)
+### Community 8 - "next-intl"
+Cohesion: 0.06
+Nodes (80): Self-Review, Task 5: Pin locale-sensitive formatting to English, next, next-intl, simple-icons, vitest, vitest@^5.0.3, SidebarSupportCard() (+72 more)
 
 ### Community 9 - "encoding/json.RawMessage"
-Cohesion: 0.06
-Nodes (24): factItem, guardedTool, intentItem, injectDefaults(), isEmptyJSON(), scalarDefaults(), NotificationEvent, encodeArchiveRows() (+16 more)
+Cohesion: 0.07
+Nodes (23): factItem, guardedTool, intentItem, injectDefaults(), isEmptyJSON(), scalarDefaults(), pidList(), encodeArchiveRows() (+15 more)
 
 ### Community 10 - "Channel"
 Cohesion: 0.03
-Nodes (93): Task 2: Remove label localization and non-English input aliases, cfgBool(), cfgInt(), cfgMap(), cfgString(), cfgStrings(), Channel, Permanent() (+85 more)
+Nodes (89): Task 2: Remove label localization and non-English input aliases, cfgBool(), cfgInt(), cfgMap(), cfgString(), cfgStrings(), Channel, Permanent() (+81 more)
 
 ### Community 11 - "Open"
-Cohesion: 0.03
-Nodes (121): TestActivityPageSessions(), TestListByKindPage(), archiveJSONTestRows, cleanupCompany(), TestCompanyScope(), TestCompanyScopeInvalid(), TestCompanyUpsertAndGet(), TestCreateCompanyWithScopeRejectsNormalizedDuplicate() (+113 more)
+Cohesion: 0.02
+Nodes (228): TestUnlockGatingFlow(), TestConfigFromOpenAIResponses(), TestAbortCausesAreWellFormed(), TestReasonHintCoversEveryTerminalReason(), TestWrapupPromptsAreEnglish(), printBanner(), captureStdout(), TestPrintBannerLocalized() (+220 more)
 
 ### Community 12 - "LLM Engine & Prompt Seeds"
-Cohesion: 0.03
-Nodes (32): BuiltinPromptSeeds(), TestCORSAllowedOriginsEnv(), TestCORSAllowlist(), TestChatMentionWorkerReceivesServerDetails(), firstLine(), transcriptErrorSummary(), detectPython(), timeoutOr() (+24 more)
+Cohesion: 0.02
+Nodes (49): BuiltinPromptSeeds(), seedPrompts(), TestChatMentionWorkerReceivesServerDetails(), chatAttachment, composeAgentMessage(), humanBytes(), userActivityWithAttachments(), firstLine() (+41 more)
 
 ### Community 13 - "redact_test.go"
 Cohesion: 0.14
 Nodes (19): dingTalkSignedURL(), feishuSign(), redactRequestTarget(), redactTransportError(), redactURLsInText(), assertNoSecret(), TestChannelErrorsNeverLeakCredentials(), TestChannelErrorsNeverLeakCredentialsInPermanentPath() (+11 more)
 
 ### Community 14 - "Chat Agent & Provider"
-Cohesion: 0.03
-Nodes (37): ChatAgent, NewChatAgent(), NewCompactor(), NewMainAgent(), NewPlanner(), clipBody(), ConfigFrom(), FromEnv() (+29 more)
-
-### Community 15 - "function/assets/page.tsx"
 Cohesion: 0.04
-Nodes (147): LoginPage(), DraftChat(), ChangePasswordDialog(), AppendScopeDialog(), AssetCard(), Chips(), CompanyDialog(), EditScopeDialog() (+139 more)
+Nodes (34): ChatAgent, NewChatAgent(), NewCompactor(), NewMainAgent(), NewPlanner(), clipBody(), ConfigFrom(), Config (+26 more)
 
-### Community 16 - "mention-textarea.tsx"
-Cohesion: 0.16
-Nodes (16): MentionTextarea(), choose(), keyDown(), loadMore(), replaceActive(), Props, PopoverAnchor(), mergeActivities() (+8 more)
+### Community 15 - "Button"
+Cohesion: 0.03
+Nodes (227): sonner, LoginPage(), SetupPage(), DraftChat(), ChangePasswordDialog(), AppendScopeDialog(), AssetCard(), AssetsPage() (+219 more)
+
+### Community 16 - "react"
+Cohesion: 0.05
+Nodes (62): react, react-day-picker, LLMProfileRow(), isFullBleed(), MainContent(), LayoutControls(), THEME_CYCLE, ThemeSwitcher() (+54 more)
 
 ### Community 17 - "Guarded Tool Execution"
-Cohesion: 0.08
-Nodes (37): coordinateWithSchemaMigration(), AddFindingTrafficTx(), ArchiveEvidenceSnapshots(), normalizeArchivedFindingVersions(), restoreFindingTrafficTx(), bumpEvidenceVersionTx(), TestSideArchiveRowsWithoutNewFields(), archiveAssetIDsQuery() (+29 more)
+Cohesion: 0.09
+Nodes (31): coordinateWithSchemaMigration(), ArchiveEvidenceSnapshots(), normalizeArchivedFindingVersions(), restoreFindingTrafficTx(), archiveAssetIDsQuery(), archiveAssetMetadata(), IsTaskArchiveFormatSupported(), jsonInt64() (+23 more)
 
 ### Community 18 - "Finding & Asset Models"
 Cohesion: 0.04
-Nodes (46): Asset, ActivitySessionFilter, Edge, FindingMeta, ValidFindingStatus(), ValidSeverity(), ActivityDTO, TestDeleteCompanyRefreshesLiveTaskCompanyIDs() (+38 more)
+Nodes (56): Asset, Edge, FindingMeta, ValidFindingStatus(), ValidSeverity(), ActivityDTO, TestDeleteCompanyRefreshesLiveTaskCompanyIDs(), TestDeleteCompanyRejectsBadJSONAndReportsMissing() (+48 more)
 
 ### Community 19 - "Agent Context Items"
-Cohesion: 0.08
-Nodes (23): assetInputItem, firstLine(), constraintItem, findingTrafficBindingEnabled(), goalItem, TestFirstLineCapsByRuneNotByte(), compactFinding(), ToolSet (+15 more)
+Cohesion: 0.09
+Nodes (17): firstLine(), constraintItem, findingTrafficBindingEnabled(), goalItem, TestFirstLineCapsByRuneNotByte(), compactFinding(), ToolSet, idp() (+9 more)
 
 ### Community 20 - "Frontend Visualization Libraries"
 Cohesion: 0.04
 Nodes (76): @antv/graphin, @base-ui/react, clsx, cmdk, d3-geo, date-fns, @dnd-kit/core, @dnd-kit/modifiers (+68 more)
 
 ### Community 21 - "Asset Store & Ports"
-Cohesion: 0.14
-Nodes (21): calcCSegment(), PortService, marshalJSONBArray(), marshalPortServices(), marshalStringArray(), normalizeURL(), nullableInt(), parseURL() (+13 more)
+Cohesion: 0.07
+Nodes (31): calcCSegment(), AssetStore, PortService, marshalJSONBArray(), marshalPortServices(), marshalStringArray(), normalizeURL(), nullableInt() (+23 more)
 
 ### Community 22 - "ARTEX Indicator CSV (artex_indicators.csv)"
 Cohesion: 0.14
 Nodes (23): Default Listen Ports (cmd/artex/main.go), Exploration Graph Schema (db/schema.sql), PostgreSQL Exploration Graph Schema Fingerprint, Indicator CSV Column Schema, Indicator Source-of-Truth Verification, CSV-to-MISP Type Mapping, Target vs Forensic Perspective, ARTEX Detection Rules Set (+15 more)
 
-### Community 23 - "testing.T"
-Cohesion: 0.02
-Nodes (170): AbortReason(), TestUnlockGatingFlow(), TestConfigFromOpenAIResponses(), TestAbortCausesAreWellFormed(), TestAbortReasonFallbacks(), TestReasonHintCoversEveryTerminalReason(), TestWrapupPromptsAreEnglish(), deleteAsset() (+162 more)
+### Community 23 - "NewEngine"
+Cohesion: 0.06
+Nodes (32): AbortReason(), TestAbortCausePropagatesThroughRunContextChain(), TestAbortReasonFallbacks(), TestControlWorkCarriesUserActionCause(), TestControlWorkRejectsConcurrentController(), TestControlWorkReturnsSettlementError(), TestControlWorkWaitHonorsContextAndReleasesReservation(), TestDeleteCancellationReturnsRunningIntentToFrontier() (+24 more)
 
 ### Community 24 - "ChatAgent Streaming Core"
 Cohesion: 0.05
-Nodes (43): constraintBlock(), deferredSystem(), seedUnlockFromHistory(), TestDeferredSystem_GatedNotInBlock(), TestDeferredSystem_NoGlobal(), TestDeferredSystem_WithGlobal(), TestSeedUnlockFromHistory(), DeferredInfo (+35 more)
+Nodes (39): constraintBlock(), deferredSystem(), seedUnlockFromHistory(), TestDeferredSystem_GatedNotInBlock(), TestDeferredSystem_NoGlobal(), TestDeferredSystem_WithGlobal(), TestSeedUnlockFromHistory(), DeferredInfo (+31 more)
 
 ### Community 25 - "time.Duration"
-Cohesion: 0.06
-Nodes (20): clampMaxDuration(), claimQuery, assetDisplayName(), NotificationDelivery, isUTF8Start(), loadDeliveriesTx(), placeholders(), scanNotificationDelivery() (+12 more)
+Cohesion: 0.05
+Nodes (24): clampMaxDuration(), claimQuery, assetDisplayName(), NotificationDelivery, isUTF8Start(), loadDeliveriesTx(), placeholders(), scanNotificationDelivery() (+16 more)
 
 ### Community 26 - "Company Scope Tests"
-Cohesion: 0.07
-Nodes (59): New(), TestCompanyScopeSystemFailureIsHTTP500(), TestCreateCompanyRejectsNormalizedDuplicateWithoutChangingScope(), TestListAssetsClassifiesValidationAndDatabaseErrors(), TestAuthInitFailsClosedWhenDataSourceUnavailable(), TestAuthInitRejectsTooLongPasswordDB(), TestAuthStatusFailsClosedWhenDataSourceUnavailable(), TestBootstrapAdminPasswordEnvDoesNotOverwriteDB() (+51 more)
+Cohesion: 0.06
+Nodes (67): AbortCause, cause(), Causef(), FromEnv(), isFalsy(), TestCompanyScopeSystemFailureIsHTTP500(), TestCreateCompanyRejectsNormalizedDuplicateWithoutChangingScope(), TestListAssetsClassifiesValidationAndDatabaseErrors() (+59 more)
 
 ### Community 27 - "tasks/page.tsx"
-Cohesion: 0.04
-Nodes (92): lucide-react, appendUploads(), ARCHIVABLE_STATUSES, ARCHIVE_FAILED_STATES, ARCHIVE_PROCESSING_STATES, archiveCompressionLabel(), archiveDataTotal(), ArchiveStateBadge() (+84 more)
+Cohesion: 0.06
+Nodes (49): appendUploads(), ARCHIVABLE_STATUSES, ARCHIVE_FAILED_STATES, ARCHIVE_PROCESSING_STATES, archiveBlockReason(), archiveCompressionLabel(), archiveDataTotal(), archiveDate() (+41 more)
 
 ### Community 28 - "NewToolSet"
 Cohesion: 0.08
-Nodes (38): callReadJSON(), companiesName(), TestBlackboardToolsReadDirectSources(), TestGetWorkerTraceStepIDsDegradeGracefully(), TestGraphOverviewExpandsAssociatedCompanyScope(), TestCaptureApprovalLifecycle(), TestReportFindingAtomicContract(), TestReportFindingOptionalTrafficWithoutCapture() (+30 more)
+Nodes (40): callReadJSON(), companiesName(), TestBlackboardToolsReadDirectSources(), TestGetWorkerTraceStepIDsDegradeGracefully(), TestGraphOverviewExpandsAssociatedCompanyScope(), TestCaptureApprovalLifecycle(), TestReportFindingAtomicContract(), TestReportFindingOptionalTrafficWithoutCapture() (+32 more)
 
 ### Community 29 - "Usage Capture Providers"
-Cohesion: 0.09
-Nodes (28): captureUsageProvider, sideAgentProvider, ParseExpID(), completeProvider, parseSession(), TaskIDFrom(), TestCompleteForwardsAtomicResponse(), TestParseSessionFallbackIsExplorationScoped() (+20 more)
+Cohesion: 0.10
+Nodes (24): captureUsageProvider, sideAgentProvider, ParseExpID(), completeProvider, parseSession(), TaskIDFrom(), TestCompleteForwardsAtomicResponse(), TestParseSessionFallbackIsExplorationScoped() (+16 more)
 
 ### Community 30 - "Broadcast Tab & Vitest"
-Cohesion: 0.06
-Nodes (58): AssetList(), BroadcastRow(), clockFmt, dayFmt, FILTER_KINDS, KIND_META, KindChip(), kindKeyOf() (+50 more)
+Cohesion: 0.05
+Nodes (65): AssetList(), BroadcastRow(), clockFmt, dayFmt, FILTER_KINDS, KIND_META, KindChip(), kindKeyOf() (+57 more)
 
 ### Community 31 - "ARTEX Global Edition README (English)"
 Cohesion: 0.13
 Nodes (21): Code of Conduct (English), Special rule on using an offensive-security tool in community spaces, AGPL-3.0 licensing and network-source obligation, Authorized use and legal responsibility for contributors, Detection-rule contribution contract, Detection test suites runnable via run-all.sh, Contributing Guide (English), Defense and detection material bundle (+13 more)
 
 ### Community 32 - "ExplorationStore"
-Cohesion: 0.05
-Nodes (8): factIDsYielded(), intentSummary(), renderTriggers(), truncOutput(), workerOutput(), ExplorationStore, MainSession, SessionTokenUsage
+Cohesion: 0.04
+Nodes (21): DecomposeGoals(), DecomposeGoalsWithProvider(), GoalSpec, factIDsYielded(), intentSummary(), renderTriggers(), truncOutput(), workerOutput() (+13 more)
 
 ### Community 33 - "context.Context"
 Cohesion: 0.04
-Nodes (28): ActiveFindingRetest, ValidChatMentionKind(), ChatMention, ChatMentionPage, lockProfileReferenceRows(), applySchemaWithRetry(), isPostgresDeadlock(), TestApplySchemaRetriesOnlyDeadlocks() (+20 more)
+Nodes (36): ActiveFindingRetest, ValidChatMentionKind(), ChatMention, ChatMentionPage, lockProfileReferenceRows(), applySchemaWithRetry(), isPostgresDeadlock(), TestApplySchemaRetriesOnlyDeadlocks() (+28 more)
 
 ### Community 34 - "assertEnglish"
-Cohesion: 0.10
-Nodes (29): asciiStatusChangeItem(), mustJSON(), TestChinaPlatformValidateLocalized(), TestDingTalkActionCardButtonLocalized(), TestFeishuCardButtonsLocalized(), TestFeishuItemLinesLocalized(), TestEmailValidateLocalized(), TestHTMLBatchIntroLocalized() (+21 more)
+Cohesion: 0.08
+Nodes (34): asciiStatusChangeItem(), mustJSON(), TestChinaPlatformSendErrorsLocalized(), TestChinaPlatformValidateLocalized(), TestDingTalkActionCardButtonLocalized(), TestFeishuCardButtonsLocalized(), TestFeishuItemLinesLocalized(), TestEmailValidateLocalized() (+26 more)
 
-### Community 35 - "Activity"
-Cohesion: 0.10
-Nodes (14): captureRun(), assertCapturedResultUsage(), TestCaptureRunPersistsUsageOnCancellation(), TestCaptureRunPersistsUsageOnProviderFailure(), DecomposeGoals(), DecomposeGoalsWithProvider(), GoalSpec, Activity (+6 more)
+### Community 35 - "preferences-provider.tsx"
+Cohesion: 0.17
+Nodes (19): zustand, zustand@^5.0.14, ResolvedThemeMode, THEME_MODE_OPTIONS, THEME_MODE_VALUES, THEME_PRESET_OPTIONS, THEME_PRESET_VALUES, ThemeMode (+11 more)
 
 ### Community 36 - "API Recon Configuration"
 Cohesion: 0.06
 Nodes (46): Parameter confidence rules (high/medium/low/pending), config.json runtime template, Content gate - where menus and permissions come from, Endpoint extraction regex fallback, preload / runtime hook capabilities, Interceptor gate - what triggers redirect to /login, Parameter reverse engineering (anchor-window, binding, diff), Permission tree reconstruction deep dive (+38 more)
 
 ### Community 37 - "Interceptor"
-Cohesion: 0.09
-Nodes (12): compiledRule, Decision, Interceptor, judgeActionLabel(), newPendingManager(), ruleMatches(), taskEmitFromCtx(), taskInfoFromCtx() (+4 more)
+Cohesion: 0.06
+Nodes (42): InterceptContextEntry, InterceptRule, scanInterceptRule(), compiledRule, Decision, Interceptor, judgeActionLabel(), newPendingManager() (+34 more)
 
 ### Community 38 - "Finding Recorder"
-Cohesion: 0.09
-Nodes (21): failingFindingRecorder, FindingRecorder, hintItem, FindingTrafficTx(), FindingTraffic, FindingTrafficBinding, PreparedTrafficEvidence, RecordedFinding (+13 more)
+Cohesion: 0.08
+Nodes (29): failingFindingRecorder, FindingRecorder, hintItem, AddFindingTrafficTx(), bumpEvidenceVersionTx(), FindingTrafficTx(), FindingTraffic, FindingTrafficBinding (+21 more)
 
 ### Community 39 - "Hint Traffic & Tools"
-Cohesion: 0.12
-Nodes (16): HintTrafficSchema(), hasSchemaProps(), customToolToolInput, trafficSummary(), objectProperty(), mcpToolInput, jsonResult(), objSchema() (+8 more)
+Cohesion: 0.14
+Nodes (15): HintTrafficSchema(), hasSkillTool(), hasSchemaProps(), trafficSummary(), objectProperty(), jsonResult(), objSchema(), parseProfileID() (+7 more)
 
 ### Community 40 - "coverage-graph-tab.tsx"
-Cohesion: 0.11
-Nodes (24): @antv/g6, AssetRenderNode, AssetSheet(), computeVisible(), DetailRow(), FOLD_ICON, FoldNode, G6NodeDatum (+16 more)
+Cohesion: 0.06
+Nodes (44): @antv/g6, AssetRenderNode, AssetSheet(), computeVisible(), CoverageGraphTab(), DetailRow(), FOLD_ICON, FoldNode (+36 more)
 
 ### Community 41 - "trafficEvidenceServer"
-Cohesion: 0.11
-Nodes (24): AugmentTools(), guardPanic(), contains(), keys(), TestAddToolAliasesDelegates(), TestAddToolAliasesSkipsTaken(), TestAugmentToolsRegistersAliases(), TestCamelToSnake() (+16 more)
+Cohesion: 0.20
+Nodes (15): AugmentTools(), guardPanic(), TestAugmentToolsRegistersAliases(), TestGuardPanicConvertsPanicToToolError(), TestAssembleVisibleSkill(), seedServerEvidenceFlow(), TestFindingTrafficAPIAndExport(), TestFindingTrafficArchiveV3RoundTripAndRetry() (+7 more)
 
 ### Community 42 - "auth.go"
-Cohesion: 0.10
-Nodes (16): clientKey(), clientLogID(), extractToken(), isLoopbackAddr(), loadOrCreateJWTKey(), newAuthLimiter(), randomToken(), TestAuthLimiterCooldown() (+8 more)
+Cohesion: 0.13
+Nodes (11): clientKey(), clientLogID(), extractToken(), loadOrCreateJWTKey(), newAuthLimiter(), randomToken(), TestClientKeyIgnoresForwardedFor(), TestSetupTokenFromEnvAndRandom() (+3 more)
 
-### Community 43 - "State & Font Registry"
-Cohesion: 0.08
-Nodes (40): zustand, zustand@^5.0.14, FontKey, CONTENT_LAYOUT_OPTIONS, CONTENT_LAYOUT_VALUES, ContentLayout, NAVBAR_STYLE_OPTIONS, NAVBAR_STYLE_VALUES (+32 more)
+### Community 43 - "preferences-config.ts"
+Cohesion: 0.09
+Nodes (30): Layout(), readPref(), SidebarInset(), deleteClientCookie(), getClientCookie(), setClientCookie(), writeClientCookie(), FontKey (+22 more)
 
 ### Community 44 - "Side-Question Context Budget"
 Cohesion: 0.13
 Nodes (24): Long Side-question Conversations and the Context Budget (English), Grok CLI Side-question Implementation, norma (v0.3.6 / v0.3.7), OpenCode Session Compaction, /btw Side Question, capture.go Snapshot Capture Layer, ARTEX /btw Side Questions (English README), Side-question HTTP Contract (+16 more)
 
 ### Community 45 - "Finding Store"
-Cohesion: 0.08
-Nodes (31): Constraint, DBLog, DBFinding, scanFindings(), PromptVersion, SkillCall, FindingFilename(), FindingsCSV() (+23 more)
+Cohesion: 0.06
+Nodes (35): CommandRecord, commandFilter(), nullIfEmpty(), Constraint, DBLog, DBFinding, scanFindings(), LLMRecord (+27 more)
 
-### Community 46 - "WithTrace"
-Cohesion: 0.10
-Nodes (33): InterceptAudit, InterceptContextEntry, InterceptDetail, completion, EffectiveJudgePrompt(), BuildReviewInput(), ReviewInput, TestAutomaticAllowRetainsActualReviewContext() (+25 more)
+### Community 46 - "InterceptAudit"
+Cohesion: 0.29
+Nodes (4): InterceptAudit, InterceptDetail, completion, tracedCall
 
 ### Community 47 - "Frontend Mock Handlers"
 Cohesion: 0.05
-Nodes (46): advanceMockRetests(), delay(), mockActivity, mockAssets, MockAssetTreeNode, MockBindingSeed, mockCompanies, mockConversations (+38 more)
+Nodes (40): mockActivity, mockAssets, MockAssetTreeNode, MockBindingSeed, mockCompanies, mockConversations, mockEvidenceBodies, mockExchangeById (+32 more)
 
 ### Community 48 - "Config"
-Cohesion: 0.14
-Nodes (20): main(), printBanner(), run(), shutdownContext(), captureStdout(), TestPrintBannerLocalized(), TestShutdownContextPreservesNamedCause(), Config (+12 more)
+Cohesion: 0.13
+Nodes (20): main(), run(), shutdownContext(), TestShutdownContextPreservesNamedCause(), Config, BaseDir(), isGoRunDir(), Load() (+12 more)
 
 ### Community 49 - "Host Triage Script"
 Cohesion: 0.10
@@ -560,20 +549,20 @@ Cohesion: 0.08
 Nodes (32): companyNKey(), ensureCompanyExistsTx(), CompanyStore, insertScopeRulesTx(), insertScopeRuleTx(), lockCompanyScopeMutation(), logAttributionWarning(), malformedIPAssetWarning() (+24 more)
 
 ### Community 51 - "Node"
-Cohesion: 0.15
-Nodes (10): buildCompressionInput(), nodeConfidence(), nodeSummary(), Node, scanNode(), scanNodes(), inheritedIntentTerminal(), markInheritedNode() (+2 more)
+Cohesion: 0.09
+Nodes (19): overviewTextBudget, compactFact(), compactIntents(), compactNode(), coldDigestsRecent(), hiddenMembersFor(), inheritedIntentSummaryState(), TestOverviewTextBudgetIsFairAndUTF8Safe() (+11 more)
 
 ### Community 52 - "Docker Compose Stack"
 Cohesion: 0.06
 Nodes (35): depends_on, environment, image, ports, restart, volumes, postgres, ANTHROPIC_API_KEY (+27 more)
 
 ### Community 53 - "Block Folding Logic"
-Cohesion: 0.11
-Nodes (18): block, blockSignature(), computeStampOps(), foldableKind(), newUnionFind(), TestSignature_StableAndVersionSensitive(), TestStampOps(), coldParams (+10 more)
+Cohesion: 0.10
+Nodes (22): block, blockSignature(), computeStampOps(), foldableKind(), isLiveIntent(), newUnionFind(), TestSignature_StableAndVersionSensitive(), TestStampOps() (+14 more)
 
 ### Community 54 - "newSideHTTPFixture"
-Cohesion: 0.26
-Nodes (13): TestSendWorkerMessageInputValidationLocalized(), decodeSide(), newSideHTTPFixture(), TestSideCheckpointPersistsBeforeAdmissionAndRestart(), TestSideHTTPBusyIsolationClearAndReconnect(), TestSideHTTPGlobalLimitTaskWorkerAndDeletion(), TestSideHTTPPreparationCancellationAndClear(), TestSideRejectsDeletedOrChangedCachedProfile() (+5 more)
+Cohesion: 0.17
+Nodes (16): TestAuthLimiterCooldown(), TestCORSAllowedOriginsEnv(), TestCORSAllowlist(), TestSigningKeyBoundToPasswordHash(), verifyJWT(), decodeSide(), newSideHTTPFixture(), TestSideCheckpointPersistsBeforeAdmissionAndRestart() (+8 more)
 
 ### Community 55 - "CI Workflow"
 Cohesion: 0.06
@@ -585,39 +574,39 @@ Nodes (31): fakeProv, NewRegistry(), TestSetPolicyDisablesSoftTrip(), TestSetPol
 
 ### Community 57 - "Frontend Build Tooling"
 Cohesion: 0.05
-Nodes (38): babel-plugin-react-compiler, @biomejs/biome, husky, jsdom, lint-staged, postcss, tailwindcss, @tailwindcss/postcss (+30 more)
+Nodes (37): babel-plugin-react-compiler, @biomejs/biome, husky, jsdom, lint-staged, postcss, tailwindcss, @tailwindcss/postcss (+29 more)
 
 ### Community 58 - "External Link Checker"
 Cohesion: 0.09
 Nodes (10): extract(), is_checkable(), load_allowlist(), main(), probe(), strip_code(), Strict Mode Exit Code, fetch() (+2 more)
 
 ### Community 59 - "Capture"
-Cohesion: 0.14
-Nodes (29): TestSideActualChatCheckpointToolResultAndTranscriptIsolation(), attemptKey, boundProvider, Capture, Attach(), Bind(), Model, WithPublisher() (+21 more)
+Cohesion: 0.12
+Nodes (32): TestSideActualChatCheckpointToolResultAndTranscriptIsolation(), attemptKey, Capture, Attach(), Bind(), CloneRequest(), Finish(), WithPublisher() (+24 more)
 
-### Community 60 - "intent"
-Cohesion: 0.37
-Nodes (15): cgEdge, cgNode, defaultColdParams(), isLiveIntent(), newColdGraph(), derived(), fact(), intent() (+7 more)
+### Community 60 - "notifyTestDB"
+Cohesion: 0.21
+Nodes (19): addTestEvent(), newTestChannel(), notifyTestDB(), TestClaimDigestBatchHonorsCallerLimit(), TestClaimExpiredLeaseRecovers(), TestClaimRealtimeDeliveriesHonorsLeaseAndMode(), TestClaimSkipsDisabledChannel(), TestDeleteChannelCascadesDeliveries() (+11 more)
 
 ### Community 61 - "Activity & LLM Call Tracking"
 Cohesion: 0.08
-Nodes (8): TestAbortCausePropagatesThroughRunContextChain(), isThinkingOnlyTurn(), resetPlannerTimer(), runTaskRoutine(), transitionIntentState(), TestStopTaskCancelsRuntimeAndClearsLifecycleState(), taskRuntime, workExecution
+Nodes (10): WithTaskClock(), WithTaskContext(), dropReason(), isFKViolation(), plannerHeartbeatInterval(), preview(), runTaskRoutine(), sleepCtx() (+2 more)
 
 ### Community 62 - "Health Registry"
 Cohesion: 0.13
 Nodes (14): Registry, blocksLen(), estimateTokens(), Member, Pool, isHardFailure(), rotateGroups(), shouldFailover() (+6 more)
 
 ### Community 63 - ".DeleteAll"
-Cohesion: 0.20
-Nodes (3): stagedTrafficPath, pathWithin(), restoreTrees()
+Cohesion: 0.16
+Nodes (5): TestTrafficArchiveRoundTripAndCurrentRowWins(), stagedTrafficPath, HostDeleteStage, pathWithin(), restoreTrees()
 
 ### Community 64 - "Asset Query DSL"
 Cohesion: 0.15
 Nodes (18): andNode(), buildDSLWhere(), buildDSLWhereBase(), isIdentChar(), isIdentStart(), isKnownField(), leafNode(), orNode() (+10 more)
 
-### Community 65 - "taskDTO"
-Cohesion: 0.11
-Nodes (13): ConstraintDTO, constraintDTOs(), applyTaskArchiveBlocker(), completedRFC(), rfc3339(), taskDTO(), tokenTotalDTO(), trafficDTOs() (+5 more)
+### Community 65 - "traffic/page.tsx"
+Cohesion: 0.12
+Nodes (17): fmtBytes(), fmtTime(), HostCountSortDirection, METHODS, PAGE_SIZES, requestWithHost(), SORT_FIELDS, SortField (+9 more)
 
 ### Community 66 - "i18n Key Checker"
 Cohesion: 0.13
@@ -627,17 +616,17 @@ Nodes (10): defaultDarkPrimaryMatch, defaultLightPrimaryMatch, defaultPrimary, f
 Cohesion: 0.21
 Nodes (20): flowOpt, assembleRaw(), clip(), normalizeSearchHost(), nullIfEmpty(), newFlow(), onlyExchangeID(), openTraffic() (+12 more)
 
-### Community 68 - "contextBuilder"
-Cohesion: 0.18
-Nodes (12): Answer, isContextOverflow(), messageGroups(), snapshotSummaryMessages(), contextBuilder, ContextInfo, ContextOptions, BuildRequest() (+4 more)
+### Community 68 - ".runHTTPTool"
+Cohesion: 0.19
+Nodes (4): detectPython(), TestDetectPython(), timeoutOr(), httpExec
 
 ### Community 69 - "utils.ts"
-Cohesion: 0.03
-Nodes (135): 8.2 Next.js frontend, next, radix-ui, vitest, AgentGroup, Composer(), onKeyDown(), fmtBytes() (+127 more)
+Cohesion: 0.04
+Nodes (109): lucide-react, radix-ui, AccountSwitcher(), AppSidebar(), NavDocuments(), CollapsedIconFallback(), GROUP_MESSAGE_KEY, hasSubItems() (+101 more)
 
 ### Community 70 - "Config Masking"
-Cohesion: 0.12
-Nodes (29): ErrDestinationChangedWithoutCredentials, TestDestinationChangedErrorLocalized(), TestFilterValidateLocalized(), TestPrepareConfigUpdateUnknownKindLocalized(), TestRejectMaskedInContainersLocalized(), isBlankConfigValue(), IsMasked(), MaskConfig() (+21 more)
+Cohesion: 0.15
+Nodes (25): ErrDestinationChangedWithoutCredentials, isBlankConfigValue(), IsMasked(), MaskConfig(), MaskedValue(), MergeConfig(), PrepareConfigUpdate(), rejectMaskedInContainers() (+17 more)
 
 ### Community 71 - "Webhook Notifications"
 Cohesion: 0.24
@@ -645,7 +634,7 @@ Nodes (19): fakeWebhook, markdownText(), newFakeWebhook(), newNotifyFixture(), T
 
 ### Community 72 - "English-only ARTEX global edition — design"
 Cohesion: 0.07
-Nodes (27): 10. Verification, 11. Risks and mitigations, 12. What is left to the builder, 13. Owner confirmations still worth recording, 1. Summary, 2. Why, 3. Goals, non-goals, anti-goals, 4.1 Owner decisions (already made) (+19 more)
+Nodes (47): cgEdge, cgNode, defaultColdParams(), newColdGraph(), derived(), fact(), intent(), ptr() (+39 more)
 
 ### Community 73 - "Hook Registry"
 Cohesion: 0.17
@@ -656,16 +645,16 @@ Cohesion: 0.17
 Nodes (18): Sigma Backend Portability Matrix, Sigma Atomic Rules, sigma-cli / pySigma, Sigma Correlation Rules (Behaviour Layer), SigmaHQ Validator Baseline, Sigma Host/Log/SIEM Rule Layer, ATT&CK Layer Consistency Suite, ARTEX Detection Test Suites (+10 more)
 
 ### Community 75 - "Bootstrap & Staging"
-Cohesion: 0.18
-Nodes (24): Action, applyStaged(), Bootstrap(), confirmOrRollback(), fileSHA256(), State, HasBackup(), orUnknown() (+16 more)
+Cohesion: 0.19
+Nodes (25): Action, applyStaged(), Bootstrap(), confirmOrRollback(), fileSHA256(), State, HasBackup(), orUnknown() (+17 more)
 
 ### Community 76 - "update.go"
-Cohesion: 0.13
-Nodes (14): Asset, AssetName(), checkURL(), FetchLatest(), Release, NewClient(), TestCheckURLErrorsLocalized(), mustParse() (+6 more)
+Cohesion: 0.18
+Nodes (16): Asset, AssetName(), checkURL(), FetchLatest(), NewClient(), rtFunc, assertEnglishError(), hasHangul() (+8 more)
 
-### Community 77 - ".relatedTaskOverviews"
-Cohesion: 0.19
-Nodes (10): overviewTextBudget, compactFact(), compactIntents(), compactNode(), coldDigestsRecent(), hiddenMembersFor(), inheritedIntentSummaryState(), TestOverviewTextBudgetIsFairAndUTF8Safe() (+2 more)
+### Community 77 - "trigger_merge_test.go"
+Cohesion: 0.32
+Nodes (12): finalTriggerMessage(), mergeAllRuns(), mergeTriggeredRuns(), taskContextHeader(), sameTaskFires(), TestFinalTriggerMessageSingleFirePrependsHeaderOnce(), TestMergeAllRunsGroupsInterleavedTasks(), TestMergeAllRunsWritesTaskGoalOnce() (+4 more)
 
 ### Community 78 - "Web CI Workflow"
 Cohesion: 0.08
@@ -680,28 +669,28 @@ Cohesion: 0.15
 Nodes (8): LLMProfile, RetryOverride, scanProfile(), LLMRetryPolicy, RetryRule, llmProfileDTO(), llmProfileDTOs(), LLMProfileDTO
 
 ### Community 81 - "Agent Triggers"
-Cohesion: 0.11
-Nodes (19): AgentTrigger, marshalToolNames(), scanTrigger(), finalTriggerMessage(), mergeAllRuns(), mergeTriggeredRuns(), taskContextHeader(), TestFindingTrafficFailedReportDoesNotTrigger() (+11 more)
+Cohesion: 0.16
+Nodes (6): AgentTrigger, marshalToolNames(), scanTrigger(), TestFindingTrafficFailedReportDoesNotTrigger(), containsFold(), trunc()
 
 ### Community 82 - "ATT&CK Check Script"
 Cohesion: 0.16
 Nodes (14): bad(), note(), ok(), rule_tags(), build_tree(), make_node(), find_auth_file(), flat_codes() (+6 more)
 
 ### Community 83 - "LLM Retry Logic"
-Cohesion: 0.16
-Nodes (21): retryableWorkerModelError(), isQuotaExhaustedError(), isRetryableStreamError(), isTaskLLMChainExhausted(), isTaskLLMRuntimeError(), streamEventCommitsOutput(), streamTaskLLM(), collectTaskLLMStream() (+13 more)
-
-### Community 84 - ".updateLifecycle"
 Cohesion: 0.11
-Nodes (6): normalizeTaskCategoryName(), scanTaskCategory(), taskCategoryUniqueViolation(), TaskCategory, cloneInt64Ptr(), taskLifecycleState
+Nodes (28): RetryConfig, retryableWorkerModelError(), resolveRetry(), TestResolveRetryFromGlobal(), TestResolveRetryProfileOverridesPerField(), TestResolveRetryUnconfigured(), TestRetryRuleClamp(), TestSameProviderRetryDisabled() (+20 more)
+
+### Community 84 - "Task"
+Cohesion: 0.06
+Nodes (16): TriggerEvent, normalizeTaskCategoryName(), scanTaskCategory(), taskCategoryUniqueViolation(), TaskCategory, TaskPatch, Task, IsTerminal() (+8 more)
 
 ### Community 85 - "Sigma Test Helpers"
 Cohesion: 0.15
 Nodes (15): bad(), correlation_fires(), evaluate(), field_match(), group_key(), keyword_match(), load_atomic_rules(), load_correlation_rules() (+7 more)
 
-### Community 86 - ".buildFindingAssetTree"
-Cohesion: 0.18
-Nodes (10): assetIDContainments(), countFinding(), sortFindingAssetNodes(), truncateFindingAssetTree(), findingAssetHit, FindingAssetNode, FindingAssetTree, FindingGroup (+2 more)
+### Community 86 - "addToolAliases"
+Cohesion: 0.20
+Nodes (10): aliasTool, contains(), keys(), TestAddToolAliasesDelegates(), TestAddToolAliasesSkipsTaken(), TestCamelToSnake(), TestToolAliasNames(), addToolAliases() (+2 more)
 
 ### Community 87 - "Vulnerability Findings"
 Cohesion: 0.14
@@ -712,20 +701,20 @@ Cohesion: 0.17
 Nodes (12): Backend message catalogs re-keyed from Korean to English, English-first codebase migration, Source-language regression gate (scripts/check-source-language.py), Static-export CJK gate (scripts/check-web-cjk.py), langDirective() output-language enforcement, Specify the repository when checking CI with gh, Maintainer Guide (English), Browser-like external-link checking (GET, browser UA, redirects) (+4 more)
 
 ### Community 89 - "channels_test.go"
-Cohesion: 0.07
+Cohesion: 0.06
 Nodes (44): IsPermanent(), capturePost(), mustExtractHeader(), singleMsg(), TestChannelValidateReportsMissingFields(), TestDingTalkBusinessErrorIsPermanent(), TestDingTalkFallsBackToMarkdownForBatch(), TestDingTalkSendsActionCardWhenLinkPresent() (+36 more)
 
 ### Community 90 - "Agent System Prompts"
 Cohesion: 0.17
-Nodes (19): chatSystem(), chatWorkDirSpec(), goalsSystem(), mainAgentSystem(), plannerSystem(), TestChatDataDirVarRenders(), TestChatNowVarRenders(), TestChatUnknownVarFallsBack() (+11 more)
+Nodes (21): chatSystem(), chatWorkDirSpec(), goalsSystem(), mainAgentSystem(), plannerSystem(), TestChatDataDirVarRenders(), TestChatNowVarRenders(), TestChatUnknownVarFallsBack() (+13 more)
 
 ### Community 91 - "Asset Intercept Gate"
 Cohesion: 0.13
 Nodes (13): AssetInterceptKindLabel(), EvaluateAssetGate(), hasEnabledRule(), MatchAssetInterceptRules(), matchOne(), rule(), TestAssetInterceptCandidates(), TestEvaluateAssetGate() (+5 more)
 
 ### Community 92 - "Site Probe & DNS"
-Cohesion: 0.09
-Nodes (15): buildClient(), extractTitle(), Engine, hostOf(), id0(), itoa(), New(), uniq() (+7 more)
+Cohesion: 0.14
+Nodes (10): buildClient(), extractTitle(), Engine, hostOf(), id0(), itoa(), New(), uniq() (+2 more)
 
 ### Community 93 - "Docker Build Cache"
 Cohesion: 0.09
@@ -744,20 +733,20 @@ Cohesion: 0.10
 Nodes (20): author, date, description, detection, condition, selection_availability, selection_database, selection_filesystem (+12 more)
 
 ### Community 97 - "Font Registry"
-Cohesion: 0.07
-Nodes (29): geist, geist@^1.7.2, metadata, RootLayout(), Toaster(), APP_CONFIG, currentYear, dmSans (+21 more)
+Cohesion: 0.09
+Nodes (21): geist, geist@^1.7.2, dmSans, figtree, fontOptions, fontRegistry, geist, geistMono (+13 more)
 
 ### Community 98 - "asset-dsl-search.tsx"
 Cohesion: 0.20
 Nodes (11): applyDslSuggestion(), AssetDslSearch(), DSL_FIELDS, DslSuggestion, EQ_OPS, EXACT_OPS, getDslSuggestions(), KIND_STYLE (+3 more)
 
-### Community 99 - "Task"
-Cohesion: 0.13
-Nodes (8): TriggerEvent, TaskPatch, IsTerminal(), taskFromPG(), unixNanoOrZero(), unixOrZero(), Task, taskLLMState
+### Community 99 - "logSinkT"
+Cohesion: 0.31
+Nodes (5): dbWriteReq, LogLine, levelOf(), parseLog(), logSinkT
 
 ### Community 100 - "assetRow"
-Cohesion: 0.18
-Nodes (12): assetRow, CoverageGraphData, CoverageGraphEdge, CoverageGraphNode, isIPLiteral(), keysOf(), missingParents(), scanAssetRows() (+4 more)
+Cohesion: 0.10
+Nodes (21): assetRow, CoverageGraphData, CoverageGraphEdge, CoverageGraphNode, assetIDContainments(), countFinding(), isIPLiteral(), keysOf() (+13 more)
 
 ### Community 101 - "skill_zip.go"
 Cohesion: 0.16
@@ -771,9 +760,9 @@ Nodes (19): concurrency, cancel-in-progress, group, runs-on, steps, timeout-minu
 Cohesion: 0.36
 Nodes (4): assistantThinking(), TestIsThinkingOnlyTurn(), TestSteerHooksStopNudgesEmptyTurn(), fakeHooks
 
-### Community 104 - "Task"
-Cohesion: 0.21
-Nodes (7): TestNormalizeTaskCompanyIDs(), Task, insertTaskLLMProfiles(), insertTaskRelations(), normalizeHeartbeat(), NormalizeTaskCompanyIDs(), scanTask()
+### Community 104 - "Tool"
+Cohesion: 0.31
+Nodes (4): Tool, scanTool(), customToolToolInput, toDBTool()
 
 ### Community 105 - "Dashboard KPI Screen"
 Cohesion: 0.13
@@ -804,12 +793,12 @@ Cohesion: 0.13
 Nodes (18): All Agents Filter Dropdown, Approvals Nav Item with Pending Badge, ARTEX Console Chat Screenshot (English), Asset Sync Nav Item, Chat View Page, Message Composer, Conversation List Panel, Conversation Thread Transcript (+10 more)
 
 ### Community 112 - "Asset Naming & Progress"
-Cohesion: 0.23
-Nodes (14): Progress, progressWriter, TestExtractBinaryMissingEntry(), TestParseSums(), checkWritable(), download(), extractBinary(), fetchSums() (+6 more)
+Cohesion: 0.18
+Nodes (16): Release, Progress, progressWriter, TestExtractBinaryMissingEntry(), TestParseSums(), checkWritable(), download(), extractBinary() (+8 more)
 
 ### Community 113 - "File Structure"
-Cohesion: 0.13
-Nodes (14): English-only ARTEX Global Edition Implementation Plan, File Structure, Global Constraints, Review Focus, Task 10: Rewrite core English docs, Task 11: Rewrite detection, side-question, and PR docs, Task 12: Update the detection harness and rule links, Task 13: Tighten guards, CI, hooks, and external links (+6 more)
+Cohesion: 0.12
+Nodes (16): English-only ARTEX Global Edition Implementation Plan, File Structure, Global Constraints, Review Focus, Task 10: Rewrite core English docs, Task 11: Rewrite detection, side-question, and PR docs, Task 12: Update the detection harness and rule links, Task 13: Tighten guards, CI, hooks, and external links (+8 more)
 
 ### Community 114 - "Prettier Config"
 Cohesion: 0.12
@@ -819,17 +808,17 @@ Nodes (19): formatter, arrowParentheses, attributePosition, bracketSameLine, bra
 Cohesion: 0.11
 Nodes (18): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+10 more)
 
-### Community 116 - "Run Trace Capture"
-Cohesion: 0.17
-Nodes (13): activityWithUsage(), approvalHistory(), blocksText(), captureRunSession(), runTrace, progressSuffix(), roundDur(), terminalText() (+5 more)
+### Community 116 - "captureRunSession"
+Cohesion: 0.08
+Nodes (21): activityWithUsage(), approvalHistory(), blocksText(), captureRun(), captureRunSession(), assertCapturedResultUsage(), TestCaptureRunPersistsUsageOnCancellation(), TestCaptureRunPersistsUsageOnProviderFailure() (+13 more)
 
 ### Community 117 - ".updateApply"
-Cohesion: 0.29
+Cohesion: 0.23
 Nodes (5): Phase, TestUpdateProgressMessagesLocalized(), requestRestart(), updateHub, updateProgress
 
 ### Community 118 - "TaskTemplate"
-Cohesion: 0.22
-Nodes (13): TaskInterceptRuleInput, insertTaskInterceptRules(), marshalTemplateRules(), normalizeTaskTemplateInput(), normalizeTaskTemplatePatch(), scanTaskTemplate(), taskTemplateName(), taskTemplateNKey() (+5 more)
+Cohesion: 0.10
+Nodes (21): TaskInterceptRuleInput, insertTaskInterceptRules(), normalizeRuleAction(), scanTaskInterceptRule(), TestNormalizeTaskCompanyIDs(), marshalTemplateRules(), normalizeTaskTemplateInput(), normalizeTaskTemplatePatch() (+13 more)
 
 ### Community 119 - "Scan Velocity Correlation"
 Cohesion: 0.11
@@ -851,13 +840,9 @@ Nodes (9): extractTaskArchivePackage(), TestTaskArchiveStagedAndOriginalCoexistE
 Cohesion: 0.11
 Nodes (17): concurrency, cancel-in-progress, group, jobs, links, runs-on, steps, name (+9 more)
 
-### Community 124 - "selfupdate_localized_test.go"
-Cohesion: 0.46
-Nodes (7): rtFunc, assertEnglishError(), hasHangul(), hasHanzi(), stubClient(), TestFetchLatestErrorsLocalized(), TestStageMissingAssetLocalized()
-
-### Community 125 - "transcript.tsx"
-Cohesion: 0.18
-Nodes (18): ActivityTime(), AnswerBlock(), chip(), ExecView(), fmtBytes(), Group, groupSteps(), kindKey() (+10 more)
+### Community 124 - "intercept_archive_validation_test.go"
+Cohesion: 0.25
+Nodes (7): TestInterceptFilterParamValidation(), TestInterceptRuleValidation(), TestNormalizeArchiveIDs(), TestValidateArchivePath(), validateInterceptRuleReq(), interceptRuleReq, normalizeArchiveIDs()
 
 ### Community 126 - "TaskArchive"
 Cohesion: 0.36
@@ -867,9 +852,9 @@ Nodes (3): scanTaskArchive(), TaskArchive, TaskArchivePage
 Cohesion: 0.20
 Nodes (3): lockLLMProfileForReference(), scanConv(), ConversationPatch
 
-### Community 128 - ".AddAgentScope"
-Cohesion: 0.28
-Nodes (4): ipToHostCIDR(), stripHostPort(), TestStripHostPort(), TaskScope
+### Community 128 - "assertEnglish"
+Cohesion: 0.29
+Nodes (7): defaultMessage(), assertEnglish(), hasHan(), hasHangul(), TestDefaultMessageLocalized(), TestInterceptMessagesLocalized(), TestToolApprovalSummaryLocalized()
 
 ### Community 129 - "User-Agent Correlation Rule"
 Cohesion: 0.12
@@ -884,36 +869,36 @@ Cohesion: 0.12
 Nodes (16): author, date, description, detection, condition, selection, falsepositives, id (+8 more)
 
 ### Community 132 - "Process Exec & Templates"
-Cohesion: 0.14
-Nodes (15): ensureSchema(), execPython(), renderTemplate(), scalarStr(), shellQuote(), TestDetectPython(), TestEnsureSchema(), TestExecPython() (+7 more)
+Cohesion: 0.15
+Nodes (14): ensureSchema(), execPython(), renderTemplate(), scalarStr(), shellQuote(), TestEnsureSchema(), TestExecPython(), TestHTTPToolTruncatesLargeBody() (+6 more)
 
 ### Community 133 - "Conversation Context"
 Cohesion: 0.15
 Nodes (22): WithConvID(), boundChatMentionValue(), composeChatMentionMessage(), loadChatMention(), TestChatMentionErrorsLocalized(), parseChatMentions(), TestChatMentionBoundedJSON(), TestChatMentionCatalogAndContext() (+14 more)
 
 ### Community 134 - "Filter Validation"
-Cohesion: 0.16
-Nodes (15): listEnabledNotificationChannelsTx(), TestFilterValidateIsWriteTimeOnly(), containsAnyFold(), Filter, intersectsInt(), Match(), ParseFilter(), TestMatchScopeRestrictions() (+7 more)
+Cohesion: 0.18
+Nodes (14): TestFilterValidateIsWriteTimeOnly(), containsAnyFold(), Filter, intersectsInt(), Match(), ParseFilter(), TestMatchScopeRestrictions(), TestMatchSeverityThreshold() (+6 more)
 
 ### Community 135 - "Sigma Rule artex_enrich_user_agent.yml"
 Cohesion: 0.47
 Nodes (6): ATT&CK T1592 Gather Victim Host Information, ATT&CK T1595 Active Scanning, Correlation Rule artex_enrich_fanout.yml, Correlation Rule artex_enrich_scan_velocity.yml, Sigma Rule artex_enrich_user_agent.yml, Suricata sid 1000002 High-Rate Enumeration
 
-### Community 136 - "intl-runtime-provider.tsx"
-Cohesion: 0.18
-Nodes (10): Task 4: Single English UI catalog and remove locale switching, 5.1 Go backend, 5.2 Next.js frontend, 5.3 Tests and fixtures, 5.4 Documentation and metadata, 5.5 Scripts, CI, hooks, detection harness, 5. Current-state inventory, Locale (+2 more)
+### Community 136 - "app/layout.tsx"
+Cohesion: 0.16
+Nodes (11): 5.2 Next.js frontend, metadata, RootLayout(), Toaster(), APP_CONFIG, currentYear, Locale, collectStrings() (+3 more)
 
 ### Community 137 - "Self-Update Tests"
-Cohesion: 0.39
-Nodes (17): settle(), readMarker(), fakeBin(), readAll(), requireUnix(), stage(), TestApplyStagedHappyPath(), TestApplyStagedKeepsCurrentWhenVerifyFails() (+9 more)
+Cohesion: 0.37
+Nodes (17): fakeBin(), itoa(), readAll(), requireUnix(), stage(), TestApplyStagedHappyPath(), TestApplyStagedKeepsCurrentWhenVerifyFails(), TestConfirmCountsAttemptsThenRollsBack() (+9 more)
 
 ### Community 138 - "Preload Runtime Hook"
 Cohesion: 0.20
 Nodes (13): blocked(), extractApiUrlsFromText(), fallbackBody(), lookupPrecise(), matchMock(), neutralizeVueRouter(), wrapNav(), patchJsonBody() (+5 more)
 
 ### Community 139 - "Company Scope Rules"
-Cohesion: 0.20
-Nodes (17): classifyCompanyScopeLine(), COMPANY_SCOPE_KINDS, CompanyScopeErrorCode, companyScopeErrorText(), companyScopeRuleError(), CompanyScopeTextIssue, domainHostname(), ipVersion() (+9 more)
+Cohesion: 0.21
+Nodes (16): classifyCompanyScopeLine(), COMPANY_SCOPE_KINDS, CompanyScopeErrorCode, companyScopeErrorText(), companyScopeRuleError(), CompanyScopeTextIssue, domainHostname(), ipVersion() (+8 more)
 
 ### Community 140 - "Static Endpoint Harvesting"
 Cohesion: 0.21
@@ -927,25 +912,29 @@ Nodes (15): author, date, description, detection, condition, keywords, falseposi
 Cohesion: 0.12
 Nodes (15): author, correlation, group-by, rules, timespan, type, date, description (+7 more)
 
-### Community 144 - "defaultPort"
-Cohesion: 0.67
-Nodes (3): defaultPort(), SplitURL(), TemplatePath()
+### Community 143 - "ValidateProxyURL"
+Cohesion: 0.40
+Nodes (3): TestSetUpstreamProxyStoreClear(), TestValidateProxyURL(), ValidateProxyURL()
 
-### Community 145 - ".DirectSourceStores"
-Cohesion: 0.16
-Nodes (4): DirectSourceStore, AssetRef, markInheritedActivities(), TaskSource
+### Community 145 - ".takeTokens"
+Cohesion: 0.50
+Nodes (3): minF(), TestNotifyRateLimitDoesNotConsumeRetryBudget(), TestNotifyTakeTokensKeepsUnusedTokens()
 
 ### Community 146 - "createDeleteFixture"
 Cohesion: 0.22
 Nodes (14): assertPathExists(), assertPathMissing(), createDeleteFixture(), TestDeleteTaskFilesMissingTargetsIsIdempotent(), TestDeleteTaskFilesRemovesOnlyOwnedWorkspaceAndTranscripts(), TestDeleteTaskFilesReportsTranscriptOnlyDeletion(), TestManagerDeleteTaskRestoresFilesAndTrafficWhenPostgresDeleteFails(), TestStageTaskFilesRollbackReportsRestoreFailure() (+6 more)
 
-### Community 147 - "HostDeleteStage"
-Cohesion: 0.30
-Nodes (7): insertArchiveRecoveryExchange(), simulateTrafficStageProcessExit(), TestRecoverArchiveHostDeleteStageCompletesAfterPostgresCommit(), TestRecoverArchiveHostDeleteStageRollsBackBeforePostgresCommit(), TestTrafficArchiveRoundTripAndCurrentRowWins(), HostDeleteStage, sanitize()
+### Community 147 - "mockHandle"
+Cohesion: 0.50
+Nodes (4): advanceMockRetests(), delay(), mockHandle(), parseBody()
+
+### Community 148 - "assetInputItem"
+Cohesion: 0.67
+Nodes (3): assetInputItem, assetInputLabel(), assetInterceptCandidates()
 
 ### Community 151 - "MCP Server Store"
-Cohesion: 0.27
-Nodes (3): MCPServer, mcpClient, connectMCP()
+Cohesion: 0.19
+Nodes (5): MCPServer, jsonStrMap(), mcpClient, connectMCP(), envHasValue()
 
 ### Community 152 - "Traffic Evidence Binding"
 Cohesion: 0.21
@@ -967,10 +956,6 @@ Nodes (15): arhamkhnz, Prebuilt Auth Screens, Modern Admin Dashboard Template, E
 Cohesion: 0.19
 Nodes (14): artex-selfupdate User-Agent, ARTEX Audit Log Control Framing, Automatic Blocking First, DB-Backed Regex Approval Rules, :8787 Management UI Listening Port, Destructive-Command Hunting Indicators, Host Triage Script (artex_host_triage.py), Incident Response for Autonomous Attacks (+6 more)
 
-### Community 159 - "Attempt Capture"
-Cohesion: 0.18
-Nodes (5): Attempt, attempt, Capture, captureContextKey, teeBody
-
 ### Community 161 - "Package Scripts"
 Cohesion: 0.17
 Nodes (12): scripts, build, build:static, check, check:fix, dev, format, generate:presets (+4 more)
@@ -980,12 +965,12 @@ Cohesion: 0.15
 Nodes (8): heading_slugs(), is_external(), _is_word_char(), main(), slugs_of(), slugify(), main(), _u()
 
 ### Community 163 - "newReq"
-Cohesion: 0.08
-Nodes (23): fakeRT, TestCapturePropagatesThroughNormaProvider(), TestRoundTripCaptures429BodyAlongsideQuotaRewrite(), TestRoundTripCapturesRawBodies(), TestRoundTripWithoutCaptureIsUnchanged(), IsQuotaExhaustedMessage(), TestIsQuotaExhaustedMessage(), TestProviderDoesNotRetryExplicitQuota429() (+15 more)
+Cohesion: 0.06
+Nodes (23): TestCapturePropagatesThroughNormaProvider(), TestRoundTripCaptures429BodyAlongsideQuotaRewrite(), TestRoundTripCapturesRawBodies(), TestRoundTripWithoutCaptureIsUnchanged(), IsQuotaExhaustedMessage(), TestIsQuotaExhaustedMessage(), TestProviderDoesNotRetryExplicitQuota429(), TestQuotaAwareTransportOnlyNormalizesExplicitQuota429() (+15 more)
 
 ### Community 164 - "wireTools"
-Cohesion: 0.10
-Nodes (19): aliasTool, findingWorkflowTools(), stripTrafficParameters(), TestFindingWorkflowSharedAssemblyAndSwitch(), overriddenTool, RunInfoFrom(), builtinToolsByAgent(), BuiltinToolSeeds() (+11 more)
+Cohesion: 0.11
+Nodes (18): findingWorkflowTools(), stripTrafficParameters(), TestFindingWorkflowSharedAssemblyAndSwitch(), overriddenTool, RunInfoFrom(), builtinToolsByAgent(), BuiltinToolSeeds(), DecorateTool() (+10 more)
 
 ### Community 165 - "Benchmark Compose"
 Cohesion: 0.15
@@ -999,17 +984,9 @@ Nodes (12): ScopeSentry API Key authentication, ScopeSentry asset types (asset_t
 Cohesion: 0.15
 Nodes (12): css, parser, files, ignoreUnknown, includes, indentScriptAndStyle, selfCloseVoidElements, html (+4 more)
 
-### Community 170 - "Intercept Queries"
-Cohesion: 0.30
-Nodes (5): InterceptApprovalFilter, scanInterceptApprovalRow(), scanInterceptPending(), InterceptApprovalRow, InterceptPending
-
 ### Community 172 - "External Links Allowlist"
 Cohesion: 0.29
 Nodes (11): External Links Allowlist (Known DOWN), AGPL-3.0 Attribution Requirement, begininvoke GitHub Profile, CHANGELOG.zh.md, ARTEX Release Compare Links (v0.3.1 through HEAD), Curated Documents (README, CONTRIBUTING, MAINTAINING, SECURITY, docs/defense), Autumn-27/norma Repository, ARTEX Online Demo (Vercel) (+3 more)
-
-### Community 173 - "CommandRecord"
-Cohesion: 0.40
-Nodes (3): CommandRecord, commandFilter(), ToolStat
 
 ### Community 174 - "Build Script"
 Cohesion: 0.51
@@ -1072,12 +1049,12 @@ Cohesion: 0.22
 Nodes (9): ARTEX_BUILD_VERSION, ARTEX_COMPRESS, ARTEX_PACKAGE, ARTEX_PACKAGE_DIR, ARTEX_SKIP_FRONTEND, ARTEX_SKIP_NPM_CI, ARTEX_TARGET_ARCH, ARTEX_TARGET_OS (+1 more)
 
 ### Community 192 - "traffic_test.go"
-Cohesion: 0.10
-Nodes (24): New(), evidenceFixture(), seedExchange(), TestEvidenceAtomicFailuresAndLegacy(), TestEvidenceBindingLifecycle(), TestEvidenceConcurrentBindAndDelete(), TestHostOnly(), TestMaybePassthroughFlagsHostOnce() (+16 more)
+Cohesion: 0.13
+Nodes (16): withSchemaMigrationLock(), headerLines(), Open(), requestHeaderLines(), TestDeleteHost(), TestDeleteHostGCBlobs(), TestDeleteHostsExact(), TestDeleteHostsExactReportsTreeRemovalFailure() (+8 more)
 
-### Community 193 - "Agent"
-Cohesion: 0.43
-Nodes (5): Agent, scanAgent(), AgentDTO, agentDTO(), agentDTOs()
+### Community 193 - ".agentByKey"
+Cohesion: 0.14
+Nodes (12): TaskTimeoutWrapupDefault(), TestWrapupDefaultsRouting(), WrapupDefault(), WrapupTurnsDefault(), Agent, PromptVar, scanAgent(), AgentDTO (+4 more)
 
 ### Community 195 - "Detection Test Scripts"
 Cohesion: 0.25
@@ -1100,8 +1077,8 @@ Cohesion: 0.39
 Nodes (8): steps, steps, steps, if, name, run, uses, working-directory
 
 ### Community 200 - ".add"
-Cohesion: 0.15
-Nodes (6): TokenUsage, intentTokenRollup(), FindingSeverityCounts, GoalCounts, TaskListMetrics, tokenUsageBucket
+Cohesion: 0.11
+Nodes (11): TokenUsage, intentTokenRollup(), FindingSeverityCounts, GoalCounts, InterceptApprovalFilter, scanInterceptApprovalRow(), scanInterceptPending(), InterceptApprovalRow (+3 more)
 
 ### Community 202 - "Harvest Script Deps"
 Cohesion: 0.29
@@ -1120,12 +1097,12 @@ Cohesion: 0.43
 Nodes (7): Authorized-Use Confirmation, Change Type Taxonomy, Contribution and Localization Policy (CONTRIBUTING.md), Language / Localization Checklist, web/messages/ Message Catalogs (five files), Pull Request Template (artex-global), Verification Commands Checklist
 
 ### Community 206 - "skill_upload_test.go"
-Cohesion: 0.25
+Cohesion: 0.23
 Nodes (13): nopWriteCloser, skillNameFromFrontmatter(), buildZip(), TestSkillNameFromFrontmatterQuoted(), TestSkillRelPath(), TestUploadSkillEncrypted(), TestUploadSkillGBKNames(), TestUploadSkillRejectsTraversal() (+5 more)
 
 ### Community 208 - "AssetStore"
-Cohesion: 0.11
-Nodes (7): AssetStore, hostsForTaskDeletion(), pageClause(), scanAssets(), scanTypeCounts(), rowsQuerier, buildDomainReg()
+Cohesion: 0.14
+Nodes (7): hostsForTaskDeletion(), pageClause(), scanAssets(), scanTypeCounts(), rowsQuerier, TaskDeletePreparation, TaskDeleteResult
 
 ### Community 209 - "Suricata Test Runner"
 Cohesion: 0.52
@@ -1176,8 +1153,8 @@ Cohesion: 0.33
 Nodes (6): runs-on, jobs, frontend, release, needs, runs-on
 
 ### Community 223 - ".Close"
-Cohesion: 0.12
-Nodes (8): HostCount, hostDeleteStageJournal, hostDeleteStageMove, PageQuery, ftsQuote(), ExchangeMeta, statusFilter(), writeHostDeleteStageJournal()
+Cohesion: 0.10
+Nodes (9): uniqueArchiveHosts(), HostCount, hostDeleteStageJournal, hostDeleteStageMove, PageQuery, ftsQuote(), ExchangeMeta, statusFilter() (+1 more)
 
 ### Community 225 - "LLM Pool Status"
 Cohesion: 0.47
@@ -1224,12 +1201,8 @@ Cohesion: 0.40
 Nodes (5): mockApplyAssetScope(), mockAssetHost(), mockAssetLabel(), mockAssetScopeIds(), mockBuildAssetTree()
 
 ### Community 242 - "reclaim_test.go"
-Cohesion: 0.36
-Nodes (7): bulkRecord(), TestDeleteAllConvertsLegacyIndex(), TestDeleteAllPurgesAndCompacts(), TestDeleteReclaimsIndexSpace(), TestNewIndexEnablesIncrementalVacuum(), TestReclaimMergesFTSTombstones(), TestReclaimOnLegacyIndexIsHarmless()
-
-### Community 243 - ".Execute"
-Cohesion: 0.18
-Nodes (4): EnrichTrigger, terminalReasonHint(), terminalReasonLabel(), WriteCounts
+Cohesion: 0.22
+Nodes (12): insertArchiveRecoveryExchange(), simulateTrafficStageProcessExit(), TestRecoverArchiveHostDeleteStageCompletesAfterPostgresCommit(), TestRecoverArchiveHostDeleteStageRollsBackBeforePostgresCommit(), bulkRecord(), TestDeleteAllConvertsLegacyIndex(), TestDeleteAllPurgesAndCompacts(), TestDeleteReclaimsIndexSpace() (+4 more)
 
 ### Community 244 - "VCS Settings"
 Cohesion: 0.50
@@ -1240,8 +1213,8 @@ Cohesion: 0.67
 Nodes (3): C-TAS Cyber Threat Analysis and Sharing System, KISA / Boho Nara / KrCERT/CC, Network Act 24-Hour Security Incident Reporting
 
 ### Community 390 - ".queueTaskArchiveActionBatch"
-Cohesion: 0.11
-Nodes (16): archiveFileMove, archiveRestoreJournal, archiveStageJournal, restoredArchivePath, installTaskArchiveFiles(), recoverTaskArchiveDeletePackages(), recoverTaskArchiveRestoreStages(), recoverTaskArchiveStages() (+8 more)
+Cohesion: 0.14
+Nodes (15): archiveFileMove, archiveRestoreJournal, archiveStageJournal, restoredArchivePath, installTaskArchiveFiles(), recoverTaskArchiveDeletePackages(), recoverTaskArchiveRestoreStages(), recoverTaskArchiveStages() (+7 more)
 
 ### Community 391 - ".Tools"
 Cohesion: 0.33
@@ -1260,12 +1233,8 @@ Cohesion: 0.32
 Nodes (3): TestProxyCausedErr(), sink, proxyCausedErr()
 
 ### Community 398 - ".pgCreateTaskTemplate"
-Cohesion: 0.32
-Nodes (7): TestAssetInterceptErrorsLocalized(), validateAssetInterceptRuleReq(), assetInterceptRuleReq, createTaskReq, buildTaskInterceptRules(), validateTaskInterceptRuleReq(), taskInterceptRuleReq
-
-### Community 405 - "requestHeaderLines"
-Cohesion: 0.50
-Nodes (3): headerLines(), requestHeaderLines(), TestRequestHeaderLinesIncludesHost()
+Cohesion: 0.22
+Nodes (12): TestAssetInterceptErrorsLocalized(), validateAssetInterceptRuleReq(), assetInterceptRuleReq, createTaskReq, buildTaskInterceptRules(), validateTaskInterceptRuleReq(), decodeTaskTemplateRequest(), TestTaskTemplateResponsesLocalized() (+4 more)
 
 ### Community 408 - "update_test.go"
 Cohesion: 0.52
@@ -1274,22 +1243,22 @@ Nodes (6): newTestCache(), TestReleaseCacheDoesNotPoisonOnCallerCancel(), TestRe
 ## Knowledge Gaps
 - **100 isolated node(s):** `github.com/Autumn-27/artex`, `ARTEX_RESET_NEWPASS`, `./tsconfig.json`, `Activity Event Type Legend (tool_use / tool_result / text / thinking)`, `Pending Approvals Badge (4)` (+95 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1636 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **155 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **149 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Self-Review` connect `Dashboard UI Components` to `intl-runtime-provider.tsx`, `File Structure`, `Agent System Prompts`, `function/assets/page.tsx`?**
-  _High betweenness centrality (0.278) - this node is a cross-community bridge._
+- **Why does `Self-Review` connect `next-intl` to `app/layout.tsx`, `File Structure`, `Agent System Prompts`?**
+  _High betweenness centrality (0.287) - this node is a cross-community bridge._
 - **What connects `github.com/Autumn-27/artex`, `ARTEX_RESET_NEWPASS`, `./tsconfig.json` to the rest of the system?**
   _100 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Dashboard UI Components` be split into smaller, more focused modules?**
-  _Cohesion score 0.013586796345417035 - nodes in this community are weakly interconnected._
-- **Why does `outputDirective()` connect `Agent System Prompts` to `Agent Capture Runtime`, `ChatAgent Streaming Core`, `Dashboard UI Components`?**
-  _High betweenness centrality (0.276) - this node is a cross-community bridge._
+  _Cohesion score 0.011849390919158362 - nodes in this community are weakly interconnected._
+- **Why does `outputDirective()` connect `Agent System Prompts` to `Agent Capture Runtime`, `next-intl`, `File Structure`?**
+  _High betweenness centrality (0.284) - this node is a cross-community bridge._
 - **Should `Task API & HTTP Server` be split into smaller, more focused modules?**
-  _Cohesion score 0.039998398462524024 - nodes in this community are weakly interconnected._
-- **Why does `getDateLocale()` connect `function/assets/page.tsx` to `Dashboard UI Components`, `utils.ts`, `Button`, `approval-records.tsx`, `English-only ARTEX global edition — design`, `react`, `tasks/page.tsx`, `transcript.tsx`, `Broadcast Tab & Vitest`?**
-  _High betweenness centrality (0.187) - this node is a cross-community bridge._
+  _Cohesion score 0.04375696767001115 - nodes in this community are weakly interconnected._
+- **Why does `getDateLocale()` connect `next-intl` to `Dashboard UI Components`, `traffic/page.tsx`, `Search Dialog & Grouping`, `utils.ts`, `sessions-tab.tsx`, `English-only ARTEX global edition — design`, `coverage-graph-tab.tsx`, `Button`, `tasks/page.tsx`, `Broadcast Tab & Vitest`?**
+  _High betweenness centrality (0.182) - this node is a cross-community bridge._
 - **Should `assertNonEmpty` be split into smaller, more focused modules?**
-  _Cohesion score 0.029453015427769985 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.029339305711086228 - nodes in this community are weakly interconnected._
