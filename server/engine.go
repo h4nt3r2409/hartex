@@ -80,7 +80,7 @@ var errWorkControlConflict = errors.New("work control conflict")
 // to the user verbatim via writeErr. ControlWork's returned errors flow through
 // applyIntentControl (task_control.go) → controlIntent (server.go:1236) → writeErr 409, and
 // runDetachedIntent's returned errors flow through intent_intervention.go:147 → writeErr to the user's screen.
-// Neither path reaches agent tool (actool) input, so they are localized. Conversely,
+// Neither path reaches agent tool (actool) input, so they are written in English. Conversely,
 // SteerWork·KillWork (steer_work·kill_work tool results) and transitionIntentState in the same file
 // (internal state-transition logs) are brain input·logs, so to prevent performance drift the original text is preserved
 // (see the comments at each site). The resume-conflict message saying an intent is no longer paused reuses
@@ -665,7 +665,7 @@ func (e *Engine) Broadcaster() *Broadcaster { return e.bc }
 // Display-only activity summaries (task-scoped, no node_id). Exposed only in the dashboard transcript and never read back
 // into any agent's context — the feedback path (planner.workerOutput ·
 // get_worker_output tool) selects only 'result'/'text' activities by intent scope (node_id), and
-// these summaries carry no node_id. So localizing them does not touch brain input (BRIEF boundary #1).
+// these summaries carry no node_id. So writing them in English does not touch brain input (BRIEF boundary #1).
 // Format arguments (%d) are preserved verbatim. [[G132]]
 const (
 	goallessTaskDoneSummary = "All goals have been met and the intents directly injected have finished executing, so the task is being ended"

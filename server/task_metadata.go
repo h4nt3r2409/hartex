@@ -16,7 +16,7 @@ const (
 )
 
 // Error response messages that the task metadata update API returns to the user. JSON field names
-// (name, pinned) are kept as-is, and only human-readable messages are localized.
+// (name, pinned) are kept as-is, and only human-readable messages are written in English.
 const (
 	errTaskMetaRequestTooLarge = "The request body is too large"
 	errTaskMetaNoFields        = "You must provide either name or pinned"

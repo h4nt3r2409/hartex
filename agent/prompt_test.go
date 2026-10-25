@@ -104,3 +104,29 @@ func TestWrapupAlwaysAppendsDirective(t *testing.T) {
 		t.Fatalf("wrap-up must always append the English directive: %q", got)
 	}
 }
+
+// Every user-facing role's system prompt must end with the code-owned English
+// directive, so a DB-edited body can never drop it from that role.
+func TestEveryRoleAppendsDirective(t *testing.T) {
+	t.Cleanup(func() { PromptOverride = nil })
+	PromptOverride = nil
+
+	cases := []struct {
+		name string
+		got  string
+	}{
+		{"chatSystem", chatSystem("reporter", "/data", "/work")},
+		{"goalsSystem", goalsSystem("/data", true)},
+		{"mainAgentSystem", mainAgentSystem("goal", "/data", "/work")},
+		{"plannerSystem", plannerSystem("goal", "/data", "/work")},
+		{"workerSystem", workerSystem("127.0.0.1:8080", "/ca.pem", "/data", "/run")},
+		{"withWrapupLang", withWrapupLang("operator prompt")},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if !strings.HasSuffix(tc.got, textpolicy.EnglishOutputDirective) {
+				t.Fatalf("%s must append the English directive: %q", tc.name, tc.got)
+			}
+		})
+	}
+}

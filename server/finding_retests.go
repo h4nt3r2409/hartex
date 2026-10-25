@@ -21,7 +21,7 @@ import (
 // User-facing HTTP error response strings. The four strings below are returned only
 // by the startFindingRetest HTTP handler and never reach the agent tool path (the
 // roTool/wrTool descriptions, parameter descriptions, and actool.Errorf calls in
-// findingRetestTools), so they are localized for users. In contrast, the tool
+// findingRetestTools), so they are written in English for users. In contrast, the tool
 // descriptions (get_finding_retest_context · record_finding_retest_result), the
 // parameter descriptions, the actool.Errorf call (the unlinked-retest notice), and
 // the DB seed agent name (the Chinese "vulnerability retest" label), profile, and

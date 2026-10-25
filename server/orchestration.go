@@ -732,7 +732,7 @@ func (s *Server) upgradeReporterTriggerMessage() {
 // labels for the seeded reporter agent. The agent's brain (section [A] agent.ReporterDefaultPrompt) and trigger-injected
 // message (reporterToolCallMessage) are model inputs, so their original Chinese text is preserved; but this name and description
 // are rendered only through `agentDTO` in the system/agents UI (server_mgmt.go) and do not enter any prompt or agent selection,
-// so as pure UI labels they are localized. The trigger is
+// so as pure UI labels they are written in English. The trigger is
 // based on report_finding tool calls (OnToolCall, deterministic), so the reporter is referenced only by the key "reporter" and is not
 // selected by display name. Regression guard: reporter_seed_localized_test.go. [[F35]]
 const reporterAgentName = "Report Writer"

@@ -140,15 +140,15 @@ After applying an upstream change, run the checks below.
 ### 5.1 Source language
 
 `scripts/check-source-language.py` is the English-only source guard. It scans the tracked source
-tree (code, scripts, CI, and developer documentation) and fails on non-English text outside its
-current exemptions and the functional allowlist. Run it before merging:
+tree (code, scripts, CI, tests, and developer documentation) and fails on non-English text; only
+generated `graphify-out/` and change-process records under `docs/superpowers/` are skipped. Run it
+before merging:
 
 ```bash
 python3 -I scripts/check-source-language.py
 ```
 
-The guard is being tightened to scan tests and to stop exempting localized assets; once that lands,
-the functional allowlist in [CONTRIBUTING.md](CONTRIBUTING.md#functional-allowlist-design-7) is the
+The functional allowlist in [CONTRIBUTING.md](CONTRIBUTING.md#functional-allowlist-design-7) is the
 only content exception. Do not add broad exemptions to make a change pass.
 
 ### 5.2 Static export

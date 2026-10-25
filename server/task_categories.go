@@ -15,7 +15,7 @@ import (
 const maxTaskCategoryRequestBytes = 16 << 10
 
 // Error response messages that the task category API returns to the user. Command and field names
-// (task_ids, category_id, id) and enums are kept as-is, and only human-readable messages are localized.
+// (task_ids, category_id, id) and enums are kept as-is, and only human-readable messages are written in English.
 const (
 	errTaskCatRequestTooLarge = "The request body is too large"
 	errTaskCatNameEmpty       = "The category name cannot be empty"

@@ -14,7 +14,7 @@ import (
 	actool "github.com/Autumn-27/norma/tool"
 )
 
-// Localization note (hartex): tool descriptions, schema descriptions, and
+// Language note: tool descriptions, schema descriptions, and
 // actool.Errorf tool results in this file are English. They are read by the LLM or
 // fed back to it as tool results, so they are written directly in English.
 //

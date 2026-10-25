@@ -16,7 +16,7 @@ import (
 const maxChatMentions = 10
 
 // User-facing @mention (citation) error messages surfaced through the HTTP API,
-// localized to Korean (BRIEF localization policy). Terminology: citation
+// written in English (BRIEF policy). Terminology: citation
 // (aligned with the UI mentionTextarea namespace). There are no preservation targets
 // here: the wire token labels (chatMentionPattern·chatMentionKinds) and the agent
 // input snapshot header·truncation markers (inside composeChatMentionMessage) are

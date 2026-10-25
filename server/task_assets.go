@@ -11,7 +11,7 @@ import (
 const maxTaskAssetRequestBytes = 512 << 10
 
 // Error response messages that the task asset API returns to the user. The field names (scope, asset_ids)
-// are request body keys, so they are kept as-is, and only human-readable messages are localized.
+// are request body keys, so they are kept as-is, and only human-readable messages are written in English.
 const (
 	errTaskAssetRequestTooLarge = "The request body is too large"
 	errTaskAssetScopeConflict   = "scope and asset_ids cannot be submitted at the same time"

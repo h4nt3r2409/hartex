@@ -14,7 +14,7 @@ import (
 
 const maxBatchControlIDs = 100
 
-// Task and intent control error messages exposed to users (localization, F3b). Identifiers, enums
+// Task and intent control error messages exposed to users (English-only messages, F3b). Identifiers, enums
 // (such as paused), and %w wrapping are kept as-is. The messages of applyTaskControlWithCause are
 // mainly used for the single (controlTask) and batch (controlTasksBatch) control responses, and the
 // same messages are used when the orchestrator pause tool (orchestration.go) re-references err.Error().

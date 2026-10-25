@@ -45,7 +45,7 @@ repos:
         pass_filenames: false
         always_run: true
       - id: source-language
-        name: English-first source language check (no untranslated CJK)
+        name: English-only source language check (no untranslated CJK)
         entry: python3 -I scripts/check-source-language.py
         language: system
         pass_filenames: false

@@ -43,8 +43,8 @@ type goalSpec struct {
 // behave identically: create the task instantly, decompose goals in the background.
 // Display-only activity summaries (task-scoped, no node_id, exposed only in the
 // transcript, never touching the feedback path). They describe the initial goal
-// decomposition round and the concurrency queue state. Even when localized they
-// do not touch brain input (BRIEF boundary #1). Format arguments (%d) are
+// decomposition round and the concurrency queue state. Writing them in English
+// does not touch brain input (BRIEF boundary #1). Format arguments (%d) are
 // preserved verbatim. [[G132]]
 const (
 	goalBreakdownRound0Summary       = "Round-0 goal decomposition"

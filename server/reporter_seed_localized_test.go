@@ -8,8 +8,8 @@ import "testing"
 // system/agents UI, and are pure UI labels that enter neither any agent system prompt
 // (renderSystem assembles only key→section[A] agent.ReporterDefaultPrompt) nor model-based
 // agent selection (the reporter trigger is report_finding tool-call based OnToolCall and
-// deterministic). So keeping them in English does not touch BRIEF boundary #1 (no brain
-// translation). Conversely, the reporter's brain body (agent.ReporterDefaultPrompt) and the
+// deterministic). So keeping them in English does not touch BRIEF boundary #1 (no
+// translation of brain input). Conversely, the reporter's brain body (agent.ReporterDefaultPrompt) and the
 // trigger injection message (reporterToolCallMessage) are model input and preserve the
 // original Chinese text, so they are not the target of this test. The check reuses
 // assertNonEmpty (non-empty messages,

@@ -227,12 +227,13 @@ docker compose up -d     # start artex + postgres → http://localhost:8787
    the repository root's [`.pre-commit-config.yaml`](.pre-commit-config.yaml), so if you run
    `pre-commit install` it runs automatically on every commit (it uses only the Python standard
    library and no network, so it finishes without Docker). Because the repository is English-only,
-   also run `python3 -I scripts/check-source-language.py` when you touch source, scripts, CI, or
-   developer documentation: it fails on non-English text outside its current exemptions and the
-   functional allowlist below. CI and the `source-language` pre-commit hook enforce it. The guard is
-   being tightened to scan tests and to stop exempting localized assets; once that lands, the
-   functional allowlist is the only exception, so do not rely on the current test or asset
-   exemptions.
+   also run `python3 -I scripts/check-source-language.py` when you touch source, scripts, CI, tests,
+   or developer documentation: it scans the tracked source tree (including tests) and fails on
+   non-English text, skipping only generated `graphify-out/` and change-process records under
+   `docs/superpowers/`. The functional allowlist in the
+   [Functional allowlist (design §7)](#functional-allowlist-design-7) section above is the only
+   content exception — do not add broad exemptions to make a change pass. CI and the
+   `source-language` pre-commit hook enforce it.
 4. **Open a PR.** Follow the [PR template](.github/PULL_REQUEST_TEMPLATE.md) for the title and
    description, and write what you changed, why, and how you verified it. If you changed the UI,
    attach screenshots.

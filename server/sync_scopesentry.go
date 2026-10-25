@@ -32,7 +32,7 @@ const (
 
 // User-facing messages (writeErr responses + sync result warnings/errors JSON). Identifiers,
 // enums, MCP tool names, and JSON field names (dimension·targets etc.) are kept verbatim.
-// Match the wording with the UI (the sync namespace in web/messages/en.json) and "data source".
+// Match the wording with the UI (the assetSync namespace in web/messages/en.json) and "data source".
 const (
 	errSSDataSourceMissingFmt = "Data source %s does not exist. Please create it first"
 	errSSDataSourceNoURLFmt   = "No URL is set for data source %s. Please set it first"

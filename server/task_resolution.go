@@ -19,7 +19,7 @@ type taskLLMResolution struct {
 
 // User-exposed reason and source names (the GET /api/tasks/{id}/llm/resolution response). Because they are
 // rendered as-is in the task LLM settings chain and the system/llm screen, they match the notation in the
-// taskDetail.llm namespace of ko.json (settings, global, quota, settings chain). Source enum values and
+// taskDetail.llm namespace of web/messages/en.json (settings, global, quota, settings chain). Source enum values and
 // English error messages are not translation targets.
 const (
 	reasonLLMProfileMissing     = "LLM settings not found"

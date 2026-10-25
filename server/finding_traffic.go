@@ -22,7 +22,7 @@ import (
 // User-facing HTTP error response strings. The four strings below are returned
 // only by the HTTP handlers (findingTrafficAccess · bindFindingTraffic ·
 // editFindingTraffic) and never reach the agent tool path (toolGetFindingTraffic),
-// so they are localized for users. In contrast, the errors.New calls (offset/length
+// so they are written in English for users. In contrast, the errors.New calls (offset/length
 // validation) and the binary-body placeholder in readEvidencePreview, plus the
 // roTool("get_finding_traffic") tool description, are brain input read by the
 // agent, so their original text is preserved (see the comments at each site; F16

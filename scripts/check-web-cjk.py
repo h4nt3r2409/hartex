@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fail if Korean/Chinese/Japanese text leaks into the statically exported web UI (`web/out`).
 
-This fork is English-first: the screen a user sees contains no untranslated Korean,
+This fork is English-only: the screen a user sees contains no untranslated Korean,
 Chinese, or Japanese. Relying on manual inspection for that property means a
 contributor can hard-code a string or miss a translation and the regression stays
 silently broken until the next person happens to look. This script turns that
@@ -25,14 +25,14 @@ React state, so they live only in the runtime JS bundle, not in `out` HTML. A le
 on that path passes this gate (a public demo's `/system/logs` sample log once
 carried Chinese that way and was fixed in backlog item G114).
 
-That surface is guarded by source review instead. Chinese remaining in files that
-can render (`web/src` `.tsx` files and client data) must be one of: a code
-comment; an i18n fallback unreachable because `t.has(...)` guards it; a backend
-wire-format token (chat-mention kind labels, the `[模型]` decision-source
-sentinel); a branch literal shown only when the locale is `zh`; or a mirror of an
-agent-brain prompt that is intentionally kept for reference. Anything else that a
-user could actually see on screen is untranslated text and must be fixed. Backlog
-item G115 audited this classification exhaustively.
+That surface is guarded by source review instead. CJK remaining in files that can
+render (`web/src` `.tsx` files and client data) must be a code comment, a functional
+backend wire-format token (chat-mention kind labels, the `[模型]` decision-source
+sentinel), or a §7 functional allowlist entry (a detector range or detection
+fixture). The product has no runtime language selection, so there is no i18n
+fallback or `zh` branch to exempt. Anything else a user could actually see on
+screen is untranslated text and must be fixed. Backlog item G115 audited this
+classification exhaustively.
 
 Detection scope
 ---------------
@@ -119,9 +119,9 @@ def main() -> int:
             preview = kinds if len(kinds) <= 30 else kinds[:30] + "…"
             print(f"  out/{rel}: {count} CJK characters · kinds {preview}")
         print(
-            "\nTranslate them to the selected language, or — if the character is an "
-            "intentional native label that must match upstream — add it to ALLOWED_CJK "
-            "in scripts/check-web-cjk.py with a reason."
+            "\nRemove or translate them to English. If a character is a genuinely "
+            "functional token that must render (a §7 functional allowlist entry), add "
+            "only that character to ALLOWED_CJK in scripts/check-web-cjk.py with a reason."
         )
         return 1
     if checked == 0:

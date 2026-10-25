@@ -38,7 +38,7 @@ var BuildVersion = "dev"
 
 // User-facing writeErr response strings. Prompts, tool descriptions, payloads, and logs passed to the agent
 // preserve their source text, and only the final user responses emitted by HTTP handlers via writeErr/fmt.Errorf
-// are localized. (F3b; terminology matches completed files and web i18n.)
+// are written in English. (F3b; terminology matches completed files and web i18n.)
 const (
 	// Intent control and re-run (controlIntent / rerunIntent / rerunBlocked)
 	errTaskDeletingIntentControl = "The intent cannot be controlled because the task is being deleted"
@@ -4043,9 +4043,9 @@ func writeJSON(w http.ResponseWriter, code int, v any) {
 }
 
 func writeErr(w http.ResponseWriter, code int, msg string) {
-	// Translate the Korean source response string into the active output language (en/zh/es/ja). If it is not in the catalog, or
-	// the language is Korean, the source text is emitted as-is. Arbitrary err.Error() values propagated from lower layers are usually
-	// not among the keys and pass through unchanged.
+	// The product is English-only: the message is already written in English at its definition
+	// site and is emitted as-is. There is no runtime output-language catalog or per-language
+	// branch. Arbitrary err.Error() values propagated from lower layers pass through unchanged.
 	writeJSON(w, code, map[string]any{"error": msg})
 }
 

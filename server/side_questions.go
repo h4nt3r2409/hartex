@@ -24,7 +24,7 @@ import (
 )
 
 // User-facing side-question messages surfaced through the HTTP API and the exchange
-// status, localized to Korean (BRIEF localization policy). "Worker" and
+// status, written in English (BRIEF policy). "Worker" and
 // "main agent"/"main conversation" match the UI terms; "[btw]" log lines stay as-is.
 const (
 	sideErrCtxNotSaved        = "The side-question context has not been saved yet. Please try again."

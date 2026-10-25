@@ -53,8 +53,8 @@ jobs:
         run: npm run build:static
       - name: UI CJK leak guard (merge gate · zero Korean/Chinese/Japanese in out HTML)
         # The static English export must not contain untranslated Korean, Chinese, or
-        # Japanese text. This prevents regressions where contributors hardcode a string or
-        # omit a translation before merge. The script locates web/out at the git root
+        # Japanese text. This prevents regressions where contributors hardcode non-English
+        # text before merge. The script locates web/out at the git root
         # itself, so it is independent of the working directory.
         run: python3 -I ../scripts/check-web-cjk.py
       - name: biome check (merge gate · keep lint/format/a11y errors at 0)

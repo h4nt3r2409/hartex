@@ -2,7 +2,7 @@
 
 Date: 2026-09-10. Branch: `codex/btw-side-question`. Baseline commit: `8dae851b9b622f2ff2631f332fde9719d0b16fba`.
 
-An independent PostgreSQL test DB and data directory were used. Real model credentials were injected only into the isolated test environment and were not written into code or this record, and the product's default model was not changed either. Go 1.26.3, norma v0.3.6, Next.js 16.2.9. No API credentials were recorded.
+An independent PostgreSQL test DB and data directory were used. Real model credentials were injected only into the isolated test environment and were not written into code or this record, and the product's default model was not changed either. Go 1.26.3, norma v0.3.6, Next.js 16.2.9.
 
 ## Engineering checks
 

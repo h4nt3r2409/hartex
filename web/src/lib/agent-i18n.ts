@@ -7,8 +7,9 @@ import type { Agent } from "@/lib/types";
 
 // Built-in agent names, descriptions, and prompt-variable labels are DB seed data
 // (builtinAgents in db/db.go, the vulnerability-retest agent in server/finding_retests.go).
-// The seeds in this tree are English, but the seed uses ON CONFLICT DO NOTHING, so it is not
-// applied to databases installed by an older upstream build. The UI therefore looks up labels
+// The seeds in this tree are English. The seed upsert uses ON CONFLICT (key) DO UPDATE, so
+// startup refreshes those names and descriptions even on databases installed by an older
+// upstream build. The UI therefore looks up labels
 // by key in the builtinAgents namespace in web/messages/en.json (which keeps those legacy DB
 // names masked) and shows them when present, otherwise uses the DB value as-is. User-created
 // agents always use the DB value.

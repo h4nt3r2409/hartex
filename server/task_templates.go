@@ -15,7 +15,7 @@ import (
 const maxTaskTemplateRequestBytes = 512 << 10
 
 // Response messages that the task template API returns to the user. Identifiers, JSON field names, and
-// request body keys are kept as-is, and only human-readable messages are localized.
+// request body keys are kept as-is, and only human-readable messages are written in English.
 const (
 	errTaskTemplateRequestTooLarge = "The request body is too large"
 	errTaskTemplateNameConflict    = "This template name already exists"
