@@ -1,0 +1,8 @@
+# Non-shareable graphify tool state. Keep the curated graph outputs
+# (graph.json, graph.html, GRAPH_REPORT.md, manifest.json, cost.json and
+# the curated .graphify_labels.json/.sig) tracked.
+cache/
+20*/
+.graphify_python
+.graphify_root
+.graphify_labels.pending.json
