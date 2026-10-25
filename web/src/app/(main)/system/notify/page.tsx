@@ -146,6 +146,7 @@ export default function NotifyPage() {
       }
       if (d.kind === "list") {
         out[d.key] = String(raw ?? "")
+          // Allowlist §7 #12: the full-width comma "，" is a paste-tolerance input separator.
           .split(/[\s,，]+/)
           .map((s) => s.trim())
           .filter(Boolean);

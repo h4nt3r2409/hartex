@@ -2493,6 +2493,7 @@ function route(m: string, path: string, seg: string[], q: URLSearchParams, b: Re
     if (decisionSource && !["model", "rule", "unknown"].includes(decisionSource))
       throw new Error("Invalid decision source");
     const filtered = mockInterceptHistory.filter((row) => {
+      // Allowlist §7 #1: "[模型]" is the persisted model-decision sentinel (never translated).
       const source =
         row.decision_source || (row.rule_id ? "rule" : row.reason?.startsWith("[模型]") ? "model" : "unknown");
       return (

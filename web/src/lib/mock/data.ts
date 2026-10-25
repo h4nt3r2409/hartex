@@ -3556,6 +3556,8 @@ export const interceptPending: InterceptPending[] = [
   },
 ];
 
+// Allowlist §7 #1: the "[模型]" prefixes below are the persisted model-vs-rule decision
+// sentinel; keep them verbatim so historical rows still resolve to decision_source "model".
 export const interceptHistory: InterceptApprovalRow[] = [
   {
     id: 90,

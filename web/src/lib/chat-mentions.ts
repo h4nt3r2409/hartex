@@ -1,3 +1,5 @@
+// Allowlist §7 #2: these Chinese category labels are the persisted @[kind#id label]
+// conversation wire format shared with server/chat_mentions.go; keep them verbatim.
 export const mentionKinds = [
   { kind: "finding", label: "漏洞", alias: "finding" },
   { kind: "asset", label: "资产", alias: "asset" },
@@ -43,7 +45,7 @@ export function mentionSearch(query: string) {
 }
 
 export function mentionToken(item: ChatMention) {
-  const kind = mentionKinds.find((entry) => entry.kind === item.kind)?.label ?? "资产";
+  const kind = mentionKinds.find((entry) => entry.kind === item.kind)?.label ?? "资产"; // §7 #2 wire label fallback
   const label = item.label
     .replace(/[[\]]/g, (char) => (char === "[" ? "（" : "）"))
     .replace(/\s+/g, " ")
@@ -60,9 +62,9 @@ export interface SelectedMention {
 }
 
 // The token's category labels (the Chinese wire labels) are a backend wire format, so they
-// stay fixed verbatim (identical to chatMentionPattern in server/chat_mentions.go). Visible category
-// names are mapped back to the English kind here, and consuming components localize them
-// via mentionTextarea.kind.
+// stay fixed verbatim (Allowlist §7 #2; identical to chatMentionPattern in
+// server/chat_mentions.go). Visible category names are mapped back to the English kind here,
+// and consuming components localize them via mentionTextarea.kind.
 export function selectedMentions(value: string): SelectedMention[] {
   return [...value.matchAll(/@\[(漏洞|资产|企业|接口|IP|应用|域名|子域名|服务)#([0-9]+)(?: ([^\]\r\n]*))?\]/g)].map(
     (match) => ({

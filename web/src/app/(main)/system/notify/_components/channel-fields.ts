@@ -168,8 +168,9 @@ export function parseKV(text: string): Record<string, string> {
   }
   return out;
 }
-// parseIDs parses a comma/whitespace-separated id list. The full-width comma "，" is kept as a delimiter:
-// users may paste lists from elsewhere that contain full-width commas, and this is input-parsing logic, not display text.
+// parseIDs parses a comma/whitespace-separated id list. Allowlist §7 #12: the full-width
+// comma "，" is kept as a delimiter: users may paste lists from elsewhere that contain
+// full-width commas, and this is input-parsing logic, not display text.
 export function parseIDs(text: string): number[] {
   return text
     .split(/[\s,，]+/)
@@ -179,7 +180,7 @@ export function parseIDs(text: string): number[] {
     .filter((n) => Number.isFinite(n) && n > 0);
 }
 // parseKeywords parses a line/comma-separated keyword list (vulnerability class names may contain spaces, so split on lines or commas).
-// The full-width comma "，" is likewise kept as a delimiter (input parsing, not display).
+// Allowlist §7 #12: the full-width comma "，" is likewise kept as a delimiter (input parsing, not display).
 export function parseKeywords(text: string): string[] {
   return text
     .split(/[\n,，]+/)

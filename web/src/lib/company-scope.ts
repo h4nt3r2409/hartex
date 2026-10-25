@@ -205,6 +205,7 @@ export function classifyCompanyScopeLine(
     const error = companyScopeRuleError(rule);
     return error ? { line, error } : { line, rule };
   }
+  // Allowlist §7 #6: "备案" (ICP filing) is a functional target-data detection keyword, not display text.
   if (/icp|备案/i.test(value)) return { line, rule: { kind: "icp", value } };
   return { line, rule: { kind: "keyword", value } };
 }

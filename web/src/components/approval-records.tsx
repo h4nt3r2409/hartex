@@ -51,6 +51,8 @@ function fmtTime(value?: string) {
   });
 }
 
+// Allowlist §7 #1: "[模型]" is the persisted model-vs-rule decision sentinel. It is matched
+// and stripped verbatim throughout this file and must never be translated.
 function source(row: InterceptApprovalRow) {
   if (row.decision_source) return row.decision_source;
   if (row.rule_id) return "rule";

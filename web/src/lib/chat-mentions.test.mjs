@@ -1,3 +1,5 @@
+// Allowlist §7 #2: the Chinese labels below belong to the persisted @[kind#id label]
+// conversation wire format; these fixtures prove backward compatibility and must stay.
 import { activeMention, mentionSearch, mentionToken, selectedMentions } from "./chat-mentions.ts";
 import assert from "node:assert/strict";
 import test from "node:test";

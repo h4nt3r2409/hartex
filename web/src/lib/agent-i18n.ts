@@ -5,13 +5,13 @@ import { useTranslations } from "next-intl";
 import { api } from "@/lib/api";
 import type { Agent } from "@/lib/types";
 
-// Built-in agent names, descriptions, and prompt-variable labels are DB seed data and
-// exist only in Chinese (builtinAgents in db/db.go, the vulnerability-retest agent in
-// server/finding_retests.go). DB values cannot be stored per language, and the seed uses
-// ON CONFLICT DO NOTHING, so it is not even applied to already-installed instances. The UI
-// therefore looks up translations by key in the message files (the builtinAgents namespace
-// in web/messages/{ko,en,zh,es,ja}.json) and shows them when present, otherwise uses the DB
-// value as-is. User-created agents always use the DB value.
+// Built-in agent names, descriptions, and prompt-variable labels are DB seed data
+// (builtinAgents in db/db.go, the vulnerability-retest agent in server/finding_retests.go).
+// The seeds in this tree are English, but the seed uses ON CONFLICT DO NOTHING, so it is not
+// applied to databases installed by an older upstream build. The UI therefore looks up labels
+// by key in the builtinAgents namespace in web/messages/en.json (which keeps those legacy DB
+// names masked) and shows them when present, otherwise uses the DB value as-is. User-created
+// agents always use the DB value.
 
 // retester is seeded into the DB with builtin=false (server FindingRetestAgentKey), but it
 // is a fixed key planted by the system, so it is included in translation. Agents with
