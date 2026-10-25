@@ -51,6 +51,8 @@ func TestParseVerdictRejectsIncompleteOrAmbiguousReplies(t *testing.T) {
 		strings.Replace(valid, "; Matched rule: A5", "", 1),
 		// English prefix and Chinese separators (or vice versa) must not mix:
 		// the comment has to use one complete marker set.
+		// Allowlist §7 item 3: legacy Chinese verdict markers are still recognized, and
+		// mixing an English prefix with Chinese separators must be rejected.
 		strings.Replace(valid, "; Consequence if successful: ", "；成功后的后果：", 1),
 		strings.Replace(valid, "; Matched rule: A5", "；命中规则：A5", 1),
 		strings.Replace(valid, `"decision":"allow"`, `"decision":"deny","decision":"allow"`, 1),
@@ -98,7 +100,7 @@ func TestParseVerdictKeepsCompleteExplanation(t *testing.T) {
 	}
 }
 
-// TestParseVerdictLegacyChineseMarkers covers backward compatibility only:
+// Allowlist §7 item 3: TestParseVerdictLegacyChineseMarkers covers backward compatibility only:
 // verdicts persisted or emitted by prompts predating the English contract must
 // still parse. New output always uses the English markers.
 func TestParseVerdictLegacyChineseMarkers(t *testing.T) {

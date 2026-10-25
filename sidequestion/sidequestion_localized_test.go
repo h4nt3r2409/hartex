@@ -7,55 +7,51 @@ import (
 	"unicode"
 )
 
-// assertKorean fails if msg is empty, carries a CJK Han ideograph (= leftover
-// untranslated Chinese), or has no Hangul at all. ASCII field names and the
-// "1–4000"-style ranges are fine; only Han marks an unlocalized string.
-func assertKorean(t *testing.T, label, msg string) {
+// assertEnglish fails if msg is empty, carries a CJK Han or Hangul character
+// (= leftover untranslated text), or has no Latin letters at all. ASCII field names
+// and the "1–4000"-style ranges are fine.
+func assertEnglish(t *testing.T, label, msg string) {
 	t.Helper()
 	if msg == "" {
-		t.Fatalf("%s: 빈 메시지", label)
+		t.Fatalf("%s: empty message", label)
 	}
-	hangul := false
 	latin := false
 	for _, r := range msg {
-		if unicode.Is(unicode.Han, r) {
-			t.Fatalf("%s: Han characters remain: %q", label, msg)
-		}
-		if unicode.Is(unicode.Hangul, r) {
-			hangul = true
+		if unicode.Is(unicode.Han, r) || unicode.Is(unicode.Hangul, r) {
+			t.Fatalf("%s: non-English characters remain: %q", label, msg)
 		}
 		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
 			latin = true
 		}
 	}
-	if !hangul && !latin {
-		t.Fatalf("%s: message is neither Korean nor English: %q", label, msg)
+	if !latin {
+		t.Fatalf("%s: message is not English: %q", label, msg)
 	}
 }
 
 // TestSideQuestionOutputsLocalized guards F21: every user-facing side-question
-// (side-question) error and answer-text literal produced by this package must be Korean.
+// (side-question) error and answer-text literal produced by this package must be English.
 // These surface through /api/.../side-questions into the chat side-question panel, so a
 // revert to Chinese here is a user-visible regression and must fail the build.
 func TestSideQuestionOutputsLocalized(t *testing.T) {
-	assertKorean(t, "ErrContextBudget", ErrContextBudget.Error())
-	assertKorean(t, "errSideModelInterrupted", errSideModelInterrupted.Error())
-	assertKorean(t, "errSideNoAnswer", errSideNoAnswer.Error())
-	assertKorean(t, "msgSideToolUnavailable", msgSideToolUnavailable)
-	assertKorean(t, "errSideSummaryCallCap", errSideSummaryCallCap.Error())
-	assertKorean(t, "sideSummaryFailedPrefix", sideSummaryFailedPrefix)
-	assertKorean(t, "errSideSummaryIncomplete", errSideSummaryIncomplete.Error())
-	assertKorean(t, "errSideSummaryOverBudget", errSideSummaryOverBudget.Error())
-	assertKorean(t, "errSideHistoryCursor", errSideHistoryCursor.Error())
-	assertKorean(t, "errSideCompactionStalled", errSideCompactionStalled.Error())
+	assertEnglish(t, "ErrContextBudget", ErrContextBudget.Error())
+	assertEnglish(t, "errSideModelInterrupted", errSideModelInterrupted.Error())
+	assertEnglish(t, "errSideNoAnswer", errSideNoAnswer.Error())
+	assertEnglish(t, "msgSideToolUnavailable", msgSideToolUnavailable)
+	assertEnglish(t, "errSideSummaryCallCap", errSideSummaryCallCap.Error())
+	assertEnglish(t, "sideSummaryFailedPrefix", sideSummaryFailedPrefix)
+	assertEnglish(t, "errSideSummaryIncomplete", errSideSummaryIncomplete.Error())
+	assertEnglish(t, "errSideSummaryOverBudget", errSideSummaryOverBudget.Error())
+	assertEnglish(t, "errSideHistoryCursor", errSideHistoryCursor.Error())
+	assertEnglish(t, "errSideCompactionStalled", errSideCompactionStalled.Error())
 }
 
-// TestSideQuestionBudgetSentinelPreserved: localizing the message must not break
+// TestSideQuestionBudgetSentinelPreserved: producing English messages must not break
 // callers that branch on the ErrContextBudget sentinel with errors.Is (see
 // context_test.go, which relies on it after the recovery path gives up).
 func TestSideQuestionBudgetSentinelPreserved(t *testing.T) {
 	if !errors.Is(fmt.Errorf("prepare: %w", ErrContextBudget), ErrContextBudget) {
-		t.Fatal("ErrContextBudget 센티넬 식별(errors.Is)이 깨졌습니다")
+		t.Fatal("the ErrContextBudget sentinel identity (errors.Is) is broken")
 	}
 }
 

@@ -18,6 +18,8 @@ func (f roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 
 func TestIsQuotaExhaustedMessage(t *testing.T) {
 	t.Parallel()
+	// Allowlist §7 item 4: 余额不足 is literal upstream provider quota text used for
+	// quota detection; translating it would break failover.
 	positive := []string{
 		`{"error":{"code":"insufficient_quota"}}`,
 		`RESOURCE_EXHAUSTED`,
