@@ -5,21 +5,18 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 const MESSAGES_DIR = path.resolve(process.cwd(), "messages");
-const LOCALES = ["ko", "en", "zh", "es", "ja"] as const;
 
 function readKeys(locale: string): Set<string> {
   const tree = JSON.parse(readFileSync(path.join(MESSAGES_DIR, `${locale}.json`), "utf8")) as unknown;
   return flattenKeys(tree);
 }
 
-describe("i18n key parity guard", () => {
-  it("treats all five locale key sets as identical to the ko baseline", () => {
-    const baseline = readKeys("ko");
+describe("i18n key helpers", () => {
+  // The product has a single English catalog now; the five-locale parity guard this file
+  // used to exercise is removed with the other catalogs in Task 6.
+  it("reads the single English catalog", () => {
+    const baseline = readKeys("en");
     expect(baseline.size).toBeGreaterThan(0);
-    for (const locale of LOCALES) {
-      const diff = diffKeys(baseline, readKeys(locale));
-      expect(isInSync(diff), `${locale}.json differs: ${JSON.stringify(diff).slice(0, 400)}`).toBe(true);
-    }
   });
 
   it("detects missing and extra keys with the same helper the CLI uses", () => {
