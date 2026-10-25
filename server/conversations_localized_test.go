@@ -130,9 +130,12 @@ func TestTranscriptErrorSummaryLocalized(t *testing.T) {
 		if !strings.Contains(got, c.errm) {
 			t.Fatalf("%s: original error text was not preserved: %q", c.name, got)
 		}
-		// Verify that full-width parentheses and colons were replaced with ASCII (F1 · fluent-korean policy).
-		if strings.ContainsAny(got, "（）：") {
-			t.Fatalf("%s: full-width punctuation remains: %q", c.name, got)
+		// Verify that the wrapper is pure ASCII: no full-width or other non-ASCII punctuation
+		// may survive in the user-facing transcript summary.
+		for _, r := range got {
+			if r > 127 {
+				t.Fatalf("%s: non-ASCII punctuation remains: %q", c.name, got)
+			}
 		}
 		// The wrapper label must contain English text and non-empty English text (the err text is
 		// not part of the check and is fixed to ASCII). A chat turn with no label also includes

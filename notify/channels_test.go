@@ -39,7 +39,7 @@ func batchMsg(n int) Message {
 			Name:      "Vulnerability " + itoa(i+1),
 			VulnClass: "XSS",
 			Severity:  "medium",
-			Summary:   "reflected cross-site scripting",
+			Summary:   "отражённый межсайтовый скриптинг",
 			Assets:    []string{"target.example.com"},
 		})
 	}

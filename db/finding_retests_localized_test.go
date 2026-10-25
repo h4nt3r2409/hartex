@@ -6,7 +6,7 @@ import (
 )
 
 // assertRetestReasonEnglish pins a revalidation reason constant to its English text
-// and asserts that no Chinese Han characters remain (F9). FinishFindingRetest and
+// and asserts that no non-English characters remain (F9). FinishFindingRetest and
 // RecoverFindingRetests append the constants directly into SQL literal positions, so
 // pinning the constants also protects the user-facing text exposed in the panel.
 func assertRetestReasonEnglish(t *testing.T, name, got, want string) {
@@ -15,8 +15,8 @@ func assertRetestReasonEnglish(t *testing.T, name, got, want string) {
 		t.Fatalf("%s: empty string", name)
 	}
 	for _, r := range got {
-		if unicode.Is(unicode.Han, r) {
-			t.Fatalf("%s: Chinese Han characters remain: %q", name, got)
+		if unicode.Is(unicode.Han, r) || unicode.Is(unicode.Hangul, r) {
+			t.Fatalf("%s: non-English characters remain: %q", name, got)
 		}
 	}
 	if got != want {

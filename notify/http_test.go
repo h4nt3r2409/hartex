@@ -62,8 +62,8 @@ func TestDoJSONClassifiesHTTPStatus(t *testing.T) {
 					tc.status, tc.permanent, got, err)
 			}
 			// The status code must appear in the error; otherwise users cannot tell whether they misconfigured something or the other side is down.
-			// Assert the number rather than Go's English StatusText: this package's messages are Chinese
-			// (consistent with the rest of the project), so the number is the language-independent, stably assertable part.
+			// Assert the number rather than Go's English StatusText: the number is the
+			// language-independent, stably assertable part of the message.
 			if !strings.Contains(err.Error(), strconv.Itoa(tc.status)) {
 				t.Errorf("the error must include HTTP status %d, got %v", tc.status, err)
 			}

@@ -27,9 +27,10 @@ func hasHan(s string) bool {
 	return false
 }
 
-// assertKorean fails if s lacks Hangul or still carries Han ideographs. Reverting
-// any localized message back to Chinese trips hasHan, so the test is not vacuous.
-func assertKorean(t *testing.T, label, s string) {
+// assertEnglish fails if s lacks Latin letters or still carries Han ideographs or
+// Hangul. Reverting any message back to Chinese or Korean trips this check, so the
+// test is not vacuous.
+func assertEnglish(t *testing.T, label, s string) {
 	t.Helper()
 	hasLatin := false
 	for _, r := range s {
@@ -38,16 +39,16 @@ func assertKorean(t *testing.T, label, s string) {
 			break
 		}
 	}
-	if !hasHangul(s) && !hasLatin {
-		t.Errorf("%s: message is neither Korean nor English: %q", label, s)
+	if !hasLatin {
+		t.Errorf("%s: message is not English: %q", label, s)
 	}
-	if hasHan(s) {
-		t.Errorf("%s: Han characters remain: %q", label, s)
+	if hasHan(s) || hasHangul(s) {
+		t.Errorf("%s: non-English characters remain: %q", label, s)
 	}
 }
 
 // TestInterceptMessagesLocalized pins the user-facing judge/approval messages to
-// Korean. These surface in the approval record reason, the activity stream, and
+// English. These surface in the approval record reason, the activity stream, and
 // the 409 response for an already-decided request.
 func TestInterceptMessagesLocalized(t *testing.T) {
 	for _, c := range []struct{ name, s string }{
@@ -61,16 +62,16 @@ func TestInterceptMessagesLocalized(t *testing.T) {
 		{"reasonManualAllow", reasonManualAllow},
 		{"ErrAlreadyDecided", ErrAlreadyDecided.Error()},
 	} {
-		assertKorean(t, c.name, c.s)
+		assertEnglish(t, c.name, c.s)
 	}
 }
 
-// TestDefaultMessageLocalized checks the rule-derived deny/ask messages are Korean
+// TestDefaultMessageLocalized checks the rule-derived deny/ask messages are English
 // and still embed the rule name, while allow stays empty.
 func TestDefaultMessageLocalized(t *testing.T) {
 	for _, action := range []string{"deny", "ask"} {
 		msg := defaultMessage(action, "R1")
-		assertKorean(t, "defaultMessage("+action+")", msg)
+		assertEnglish(t, "defaultMessage("+action+")", msg)
 		if !strings.Contains(msg, "R1") {
 			t.Errorf("defaultMessage(%s) dropped rule name: %q", action, msg)
 		}
@@ -80,12 +81,12 @@ func TestDefaultMessageLocalized(t *testing.T) {
 	}
 }
 
-// TestToolApprovalSummaryLocalized checks the activity summary is Korean and stays
+// TestToolApprovalSummaryLocalized checks the activity summary is English and stays
 // parseable by transcript.tsx, which extracts the pending id via /\(#(\d+)\)/ and
 // the tool name via the English "Tool <name> approval" shape mirrored by transcript.tsx.
 func TestToolApprovalSummaryLocalized(t *testing.T) {
 	s := fmt.Sprintf(msgToolApprovalRequestFmt, "Bash", 42)
-	assertKorean(t, "msgToolApprovalRequestFmt", s)
+	assertEnglish(t, "msgToolApprovalRequestFmt", s)
 	if !strings.Contains(s, "(#42)") {
 		t.Errorf("summary lost the (#N) marker (transcript.tsx pending_id regex): %q", s)
 	}

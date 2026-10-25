@@ -34,8 +34,8 @@ func hasHanzi(s string) bool {
 	return false
 }
 
-// assertEnglishError asserts that an error exists, contains Hangul, and has no Chinese Han characters.
-// English from lower-level stdlib errors wrapped with %w is allowed (only Han characters are forbidden).
+// assertEnglishError asserts that an error exists, is English-only, and carries no Han or
+// Hangul characters. English from lower-level stdlib errors wrapped with %w is expected.
 func assertEnglishError(t *testing.T, label string, err error) {
 	t.Helper()
 	if err == nil {

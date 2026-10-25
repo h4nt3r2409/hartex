@@ -65,8 +65,8 @@ func TestParseAutoScopeLine(t *testing.T) {
 		// An ICP filing number contains no dots: descriptive text mixed with a domain/version number is classified as a keyword, otherwise it would be stored as a
 		// dead ICP rule that never matches.
 		{name: "icp with domain text", input: "备案 www.example.com", kind: "keyword", normalized: "备案 www.example.com"},
-		{name: "icp with version text", input: "某公司 ICP v1.0", kind: "keyword", normalized: "某公司 icp v1.0"},
-		{name: "icp fullwidth dot", input: "备案 例．com", kind: "keyword", normalized: "备案 例．com"},
+		{name: "icp with version text", input: "Acme Corp ICP v1.0", kind: "keyword", normalized: "acme corp icp v1.0"},
+		{name: "icp fullwidth dot", input: "备案 example．com", kind: "keyword", normalized: "备案 example．com"},
 		{name: "keyword", input: "  ACME   Security  ", kind: "keyword", normalized: "acme security"},
 		{name: "colon keyword", input: "ACME: Cloud: Security", kind: "keyword", normalized: "acme: cloud: security"},
 		{name: "empty", input: "  ", wantErr: true},
