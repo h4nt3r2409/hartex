@@ -87,7 +87,9 @@ function SidePanel({
         {side.snapshot ? (
           <>
             <p>{side.snapshot.model.model}</p>
-            <p>{t("contextUpdatedAt", { time: new Date(side.snapshot.captured_at).toLocaleString(getDateLocale()) })}</p>
+            <p>
+              {t("contextUpdatedAt", { time: new Date(side.snapshot.captured_at).toLocaleString(getDateLocale()) })}
+            </p>
           </>
         ) : (
           t("firstRunHint")

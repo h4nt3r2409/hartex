@@ -31,9 +31,8 @@ const (
 )
 
 // User-facing messages (writeErr responses + sync result warnings/errors JSON). Identifiers,
-// enums, MCP tool names, and JSON field names (dimension·targets etc.) are kept verbatim; only
-// the Chinese wording is translated to Korean (BRIEF F3 policy).
-// Match the wording with the UI (the sync namespace in web/messages/ko.json) and "data source".
+// enums, MCP tool names, and JSON field names (dimension·targets etc.) are kept verbatim.
+// Match the wording with the UI (the sync namespace in web/messages/en.json) and "data source".
 const (
 	errSSDataSourceMissingFmt = "Data source %s does not exist. Please create it first"
 	errSSDataSourceNoURLFmt   = "No URL is set for data source %s. Please set it first"

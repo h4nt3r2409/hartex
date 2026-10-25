@@ -448,7 +448,9 @@ export default function DashboardPage() {
       if (tokenTab !== "all" && (c.llm_profile_id ?? defaultProfileId) !== tokenTab) continue;
       fold(c.created_at.slice(0, 10), c.input_tokens, c.output_tokens, c.cache_read_tokens);
     }
-    return [...m.entries()].sort(([a], [b]) => a.localeCompare(b, "en")).map(([date, v]) => ({ date: date.slice(5), ...v }));
+    return [...m.entries()]
+      .sort(([a], [b]) => a.localeCompare(b, "en"))
+      .map(([date, v]) => ({ date: date.slice(5), ...v }));
   }, [tasks, convTokens, tokenDays, tokenTab, defaultProfileId]);
 
   // New version daily: actual daily consumption from llm_usage (ts is the actual call time).
@@ -467,7 +469,9 @@ export default function DashboardPage() {
         cacheRead: prev.cacheRead + d.cache_read_tokens,
       });
     }
-    return [...m.entries()].sort(([a], [b]) => a.localeCompare(b, "en")).map(([date, v]) => ({ date: date.slice(5), ...v }));
+    return [...m.entries()]
+      .sort(([a], [b]) => a.localeCompare(b, "en"))
+      .map(([date, v]) => ({ date: date.slice(5), ...v }));
   }, [usageStats, tokenDays, tokenTab, profileIdByName, defaultProfileId]);
 
   const dailyTokenData = tokenVersion === "new" ? dailyTokenDataNew : dailyTokenDataOld;

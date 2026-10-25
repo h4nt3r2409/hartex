@@ -31,8 +31,7 @@ test("tokens roundtrip labels and removing one reference preserves its neighbors
   assert.equal(selected[0].kind, "finding");
   assert.equal(selected[0].id, "12");
   // Brackets in a label are escaped to full-width parens (U+FF08/U+FF09) in the wire token.
-  const escapedParens =
-    "Title " + String.fromCharCode(0xff08) + "1" + String.fromCharCode(0xff09) + " Description";
+  const escapedParens = "Title " + String.fromCharCode(0xff08) + "1" + String.fromCharCode(0xff09) + " Description";
   assert.equal(selected[0].text, escapedParens);
   assert.equal(selected[1].kind, "ip");
   const next = value.slice(0, selected[0].start) + value.slice(selected[0].start + selected[0].token.length);
