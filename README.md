@@ -4,7 +4,7 @@
 
 **An autonomous penetration-testing system driven by LLM multi-agents** (Go backend + Next.js frontend)
 
-The UI and generated output default to English, and **can be switched to Korean, Chinese, Spanish or Japanese in Settings (System → Settings → Display language).** Changing the language also changes the language of agent-generated reports, summaries and chat replies.
+The UI and all agent-generated output are **English-only**. A fixed English directive keeps findings, summaries, reports, and chat replies in English.
 
 [![ci](https://github.com/h4nt3r2409/hartex/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/h4nt3r2409/hartex/actions/workflows/ci.yml) [![detections](https://github.com/h4nt3r2409/hartex/actions/workflows/detections.yml/badge.svg?branch=main)](https://github.com/h4nt3r2409/hartex/actions/workflows/detections.yml) [![web](https://github.com/h4nt3r2409/hartex/actions/workflows/web.yml/badge.svg?branch=main)](https://github.com/h4nt3r2409/hartex/actions/workflows/web.yml) [![license: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 
@@ -26,11 +26,11 @@ The UI and generated output default to English, and **can be switched to Korean,
 
 ---
 
-> **This repository is a localized edition of the Chinese open-source project [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX) (AGPL-3.0 · upstream repository currently unreachable, checked 2026-10), adapted so that users and teams worldwide can adopt it as-is.** The codebase, the agents' reasoning prompts, and the developer documentation are English-first, so the system can be read and audited in one language. The user-facing output (findings, summaries, reports, chat replies) is forced into the selected language (English by default). See ["Why a global edition"](#why-a-global-edition) below for the rationale.
+> **This repository is the English-only global edition of the Chinese open-source project [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX) (AGPL-3.0 · upstream repository currently unreachable, checked 2026-10), adapted so that users and teams worldwide can adopt it as-is.** The codebase, the agents' reasoning prompts, the developer documentation, and all user-facing output are English, so the system can be read and audited in one language. See ["Why an English-only edition"](#why-an-english-only-edition) below for the rationale.
 
 ARTEX is a system in which several LLM-driven agents autonomously run a penetration test: they **break goals down on their own, execute real tools, and accumulate discovered assets and vulnerabilities into a graph** as they go. A single Go binary ships with the Next.js frontend embedded, and all data is stored in PostgreSQL.
 
-> **Note on this edition's language.** This fork makes the product usable in five languages — **English (default), Korean, Chinese, Spanish, and Japanese** — selectable in Settings. The user-facing output is forced into the selected language; the agent prompts, source comments, and developer documentation are English-first. See [Configuration](#configuration) for how the output language is enforced by a small code-fixed directive.
+> **Note on this edition's language.** This edition is English-only: the UI, agent prompts, source comments, developer documentation, and all generated output are English. There is no display-language setting and no runtime language selection. See [Configuration](#configuration) for the fixed English output directive.
 
 ---
 
@@ -38,8 +38,8 @@ ARTEX is a system in which several LLM-driven agents autonomously run a penetrat
 
 ARTEX may be used **only against targets you own or for which you have explicit written authorization.** Any scanning, probing, or exploitation beyond the authorized scope may itself be illegal.
 
-- In the Republic of Korea, intruding into or disrupting another party's information and communications network without authorization violates the **Act on Promotion of Information and Communications Network Utilization and Information Protection** (정보통신망법).
-- Personal data collected or exposed during a penetration test is subject to the Korean **Personal Information Protection Act** (개인정보보호법). Even with authorization, handle the access, retention, and deletion of personal data with care.
+- In the Republic of Korea, intruding into or disrupting another party's information and communications network without authorization violates the **Act on Promotion of Information and Communications Network Utilization and Information Protection**.
+- Personal data collected or exposed during a penetration test is subject to the Korean **Personal Information Protection Act**. Even with authorization, handle the access, retention, and deletion of personal data with care.
 - Wherever you are, comply with your own jurisdiction's laws on network security, data protection, and computer crime.
 - Use this for **learning, research, and verification in locally isolated environments.** Before targeting any live external system, secure written authorization and an agreed scope and time window.
 
@@ -47,20 +47,22 @@ Full license terms, usage restrictions, and the disclaimer are in the [License a
 
 ---
 
-## Why a global edition
+## Why an English-only edition
 
-Upstream ARTEX has its prompts, UI, and documentation entirely in Chinese, which made it cumbersome for anyone who does not read Chinese to read the results and share them with a team. This edition aims to:
+Upstream ARTEX has its prompts, UI, and documentation entirely in Chinese, which made it cumbersome for anyone who does not read Chinese to read the results and share them with a team. This edition removes the five-language localization layer entirely, so the product, the source tree, the documentation, and the shipped assets use one language. It aims to:
 
-- **Localize the output** — the findings, fact summaries, final reports, and chat replies that agents surface to a human are forced into the selected language (English by default; Korean, Chinese, Spanish, and Japanese selectable). Commands, payloads, code, URLs, and raw logs are needed for analysis and are left in their original form.
+- **Keep one language in the product** — the UI, findings, fact summaries, final reports, and chat replies are English. A fixed English directive enforces this even when the target or source material is in another language. Commands, payloads, code, URLs, and raw logs are needed for analysis and are left in their original form.
 - **Translate the repository itself** — the agents' reasoning prompts, source comments, scripts, CI configuration, and developer documentation are in English. Behavior, constraints, tool names, and placeholders are preserved exactly; only the human-readable language changed.
 - **State the legal boundaries** — the "authorized scope only" warning is stated clearly, together with Korea-specific notices on network and privacy law (the maintainers are based in Korea); the law of wherever you operate applies as well.
 - **Support diverse LLM stacks** — the LLM provider can be swapped from a frontier model to any OpenAI-compatible endpoint (domestic or open models). See [Configuration](#configuration).
+
+Collapsing five UI catalogs, the output-language setting, and the translated documents to one language removes the translation-drift class of bug and makes every future change a one-language change.
 
 ---
 
 ## Screenshots
 
-The three screens below show the default English UI (switchable to Korean, Chinese, Spanish, and Japanese in Settings). The data comes from a local, isolated sandbox: every target is the fictional `acme.com` and private address ranges.
+The three screens below show the English UI. The data comes from a local, isolated sandbox: every target is the fictional `acme.com` and private address ranges.
 
 <p align="center">
   <img src="screenshots/en/dashboard.png" width="900" alt="Dashboard overview"><br>
@@ -70,7 +72,7 @@ The three screens below show the default English UI (switchable to Korean, Chine
 <p align="center">
   <img src="screenshots/en/findings.png" width="900" alt="Findings list"><br>
   <sub><b>Findings</b> — results aggregated by severity, status, asset, and owning task, exportable to CSV.</sub><br>
-  <sub>Finding <b>titles</b> are model-generated, so English technical terms can appear, mirroring the target app ([Model selection and output language](#model-selection-and-output-language)). The description under each title and the rest of the UI are in English (the default; switchable in Settings).</sub>
+  <sub>Finding <b>titles</b> are model-generated, so English technical terms can appear, mirroring the target app ([Model selection](#model-selection)). The description under each title and the rest of the UI are in English.</sub>
 </p>
 
 <p align="center">
@@ -209,7 +211,7 @@ CGO_ENABLED=0 go build -tags embedui -o artex ./cmd/artex
 
 **Remote MCP:** in system settings, choose `http` (Streamable HTTP) or `sse` (legacy SSE). A legacy SSE server usually opens the event stream with `GET /sse` and then receives JSON-RPC requests through the `/message?sessionId=...` returned by the server; when configuring it, enter `/sse` as the URL and fill in the header as `Authorization=Bearer <token>`.
 
-**Output language:** this edition forces user-facing output into the selected language (English by default) via a small, code-fixed directive appended to each role's system prompt. The reasoning body is English; the directive only selects the language of the surface the user reads. Switch languages in Settings, or adapt that directive in `agent/prompt.go` (`langDirective`).
+**English output:** every user-facing output — findings, fact summaries, final reports, and chat replies — is English. A fixed directive appended to each role's system prompt enforces this even when the target or source material is in another language; commands, payloads, code, URLs, and raw logs stay verbatim. The directive is code-owned in `agent/prompt.go` (`outputDirective`, backed by `textpolicy.EnglishOutputDirective`), so a database-edited prompt cannot remove it.
 
 **Concurrency:** the number of worker agents spawned per task is adjustable under "System settings" (default 3).
 
@@ -221,13 +223,13 @@ CGO_ENABLED=0 go build -tags embedui -o artex ./cmd/artex
 
 **Common flags:** `./start.sh -addr :8787 -proxy :8788` — `-addr` is the frontend and API, `-proxy` is the traffic-recording proxy port. `-addr` defaults to `127.0.0.1:8787` (local connections only); pass an explicit bind address such as `:8787` to serve other machines (see "First-run protection" below).
 
-### Model selection and output language
+### Model selection
 
-The output-language enforcement is **driven by a prompt directive (`langDirective()` in `agent/prompt.go`), not a hard-coded cap.** So how consistently the output stays in the selected language depends on the model's capability, the role, and the context. The validation figures below were measured with Korean output while Korean was the default; the same trend holds for the other languages.
+The fixed English output directive (`outputDirective()` in `agent/prompt.go`) is a prompt instruction, **not a hard-coded cap.** How consistently output stays English depends on the model's capability, the role, and the context.
 
-- **Use a capable frontier model.** In a short validation run that applied only the production directive against a local isolated sandbox, the default model `claude-opus-4-8` kept user-facing output in Korean across all four roles — planner, worker, reporter, and an authorized-sandbox planning request — with no refusals. `gpt-4o` also stayed in Korean on the same scenarios. A cheaper, smaller model (for example `gpt-4o-mini`), by contrast, let the report fall back to the original language. Output-language quality tracks model capability directly, so use a capable model wherever a human reads the report.
-- **Some role- and context-dependent drift remains.** Divergence shows up in role and output format more than in language itself. In particular, short outputs such as the worker's final one-sentence summary can expose the model's English chain-of-thought verbatim, and the structured fields of `report_finding` can lean toward English, mirroring the target app and its technical terms. In an earlier run, `gpt-4o`'s planner situation summary also reverted to the original language on some turns. Stating "write in the selected language" explicitly in the task instruction raises the fidelity.
-- **Give reasoning models a generous `max_tokens`.** A reasoning model that uses a separate thinking channel can spend a small response-token budget entirely on internal reasoning and leave the user-facing final answer empty. Here the answer itself disappears rather than the language, so set that LLM profile's `max_tokens` high enough.
+- **Use a capable frontier model.** A capable model follows the fixed directive reliably; a cheaper, smaller model may let a report fall back to the target's language. Use a capable model wherever a human reads the report.
+- **State the English requirement explicitly.** Short outputs such as the worker's final one-sentence summary can expose the model's reasoning verbatim, and structured fields can lean toward the target app's technical terms. Stating "write in English" explicitly in the task instruction raises fidelity.
+- **Give reasoning models a generous `max_tokens`.** A reasoning model that uses a separate thinking channel can spend a small response-token budget entirely on internal reasoning and leave the user-facing final answer empty. Set that LLM profile's `max_tokens` high enough.
 
 > **Token-cap pitfall on the OpenAI-compatible path.** OpenAI-family models such as `gpt-4o` cap response tokens at 16,384. OpenAI-compatible requests, however, carry a larger default output cap (32,768), so leaving it unchanged makes every call fail with `400 (max_tokens is too large)`. In that case, **set that profile's `max_tokens` to 16,384 or lower on the LLM settings page.** Anthropic-family models (including the default `claude-opus-4-8`) allow 32,768 and do not hit this pitfall.
 
@@ -501,7 +503,7 @@ Anyone is free to use, modify, and distribute it, but **derivative works must al
 - Use this tool to **read and study the source code**, and to **verify its technical principles in a locally isolated environment.**
 - Unless the target is one you own or for which you have **explicit written authorization**, do not scan, probe, exploit, or attack any website, online service, or connected system.
 - Using it for illegal intrusion, data theft, denial of service (DoS), or any other destructive or criminal activity is strictly prohibited.
-- You must comply with all laws on network security, data protection, and computer crime in your country and region (in Korea, the 정보통신망법, 개인정보보호법, and others).
+- You must comply with all laws on network security, data protection, and computer crime in your country and region (in Korea, the Act on Promotion of Information and Communications Network Utilization and Information Protection, the Personal Information Protection Act, and others).
 
 ### Disclaimer
 

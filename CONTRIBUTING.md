@@ -3,7 +3,7 @@
 Thank you for your interest in the global edition of ARTEX (`hartex`). This document
 gathers the scope, policies, and procedures you should know before you start contributing.
 Before you send a contribution, please read [Authorized use and legal responsibility](#authorized-use-and-legal-responsibility)
-and [Localization policy](#localization-policy) first.
+and [English-only policy](#english-only-policy) first.
 
 - To report a bug or suggest a feature → use the [issue templates](https://github.com/h4nt3r2409/hartex/issues/new/choose).
 - If you find a security vulnerability → **do not open a public issue**; follow the procedure in [SECURITY.md](SECURITY.md).
@@ -32,41 +32,70 @@ user who runs it. This repository is provided "AS IS."
 
 ---
 
-## Localization policy
+## English-only policy
 
-This repository exists to make [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX) (currently
-unreachable, checked 2026-10) usable for a global audience. It is **English-first** — the agent
-prompts, source comments, scripts, CI configuration, and developer documentation are in English —
-while the user-facing output can be switched between five languages (English, Korean, Chinese,
-Spanish, and Japanese).
+This repository is the **English-only global edition** of [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX)
+(currently unreachable, checked 2026-10). English is the only language in the product, the source
+tree, the documentation, and the shipped assets. There is no display-language setting, no runtime
+language selection, and no translated catalog or document.
 
 - **Keep the agent brain English.** The behavioral-instruction bodies live in
   `agent/promptcatalog.go` and the DB seed (`agent_prompts`). When an upstream change adds or edits
   Chinese prompt text, translate it into English as part of the sync; do not introduce new Chinese
-  into the agent brain, comments, or developer docs.
-- **Only user-facing output is forced into the selected language (English by default).** This covers
-  detection findings (`report_finding`), fact summaries (`record_fact`), the final report, and chat
-  responses. The enforcement is a code-fixed tail called `langDirective()` in `agent/prompt.go`,
-  appended to the end of each role's system prompt.
+  into the agent brain, comments, scripts, or developer docs.
+- **Keep one UI catalog.** `web/messages/en.json` is the only message catalog. When you add a UI
+  string, add it there; do not hard-code it in a component and do not add another catalog.
+- **Force user-facing output to English.** Detection findings (`report_finding`), fact summaries
+  (`record_fact`), the final report, chat replies, side-question answers, and intercept-judge
+  comments are English. The enforcement is a code-owned directive (`outputDirective()` in
+  `agent/prompt.go`, backed by `textpolicy.EnglishOutputDirective`) appended to each user-facing
+  role's system prompt and always to the wrap-up prompt, so a database-edited prompt cannot remove
+  it.
 - **Commands, payloads, code, URLs, identifiers, and log text are not translated.** They are the
   originals needed for analysis, so they are left byte-for-byte as-is. Wire and database enum values
   (statuses, kinds, sentinels, JSON keys) are also never translated.
-- **Localized product assets are preserved on purpose.** `README.{ko,zh,es,ja}.md`,
-  `web/messages/{ko,zh,es,ja}.json`, the `*-ko.md` / `*-zh.md` documents, and the non-English values
-  in message catalogs are intentional localization. Keep them in their own languages.
-- When you add a new UI string, do not hard-code it; add it as a key in all five message files.
-- **The output-language enforcement is a prompt nudge, not a hard cap.** `langDirective()`
-  **instructs** the model to write the user-facing surface in the selected language; it does not
-  force-lock the language. Fidelity therefore varies with the model's capability, the role, and the
-  context. Use a capable (frontier-class) model when you verify localization changes. Cheap or small
-  models can revert reports and summaries to the instruction language, so do not judge whether a
-  translation is applied correctly from a cheap model's output alone. The `max_tokens` pitfall when
-  using OpenAI-family models is covered in the
-  [README's "Model selection and output language" section](README.md#model-selection-and-output-language).
-- **The procedure for keeping up with upstream changes is in the maintainer document.** When
-  the original ARTEX is updated, the runbook for distinguishing English-first assets from verbatim assets,
-  reflecting them, and checking translation symmetry and drift is in
+- **Do not re-add translated documentation or assets.** The translated READMEs, changelogs, guides,
+  issue templates, and Chinese-UI screenshots were removed deliberately. Add new documentation in
+  English only.
+- **The English output directive is a prompt instruction, not a hard cap.** It **instructs** the
+  model to write the user-facing surface in English; fidelity varies with the model's capability,
+  the role, and the context. Use a capable (frontier-class) model when you verify output, and state
+  the English requirement explicitly in task instructions where fidelity matters. The `max_tokens`
+  pitfall when using OpenAI-family models is covered in the
+  [README's "Model selection" section](README.md#model-selection).
+- **The procedure for keeping up with upstream changes is in the maintainer document.** See
   [MAINTAINING.md](MAINTAINING.md).
+
+### Functional allowlist (design §7)
+
+A small set of non-English **machine values** stays because removing it would break persisted data,
+old conversations, provider error detection, DB upgrades, detection rules, or the guards themselves.
+This list is the only content exception to the English-only rule. Do not add to it without a
+functional reason, and comment each site in the source.
+
+| # | Token / mechanism | Paths | Why it stays |
+|---|-------------------|-------|--------------|
+| 1 | `[模型]` | `intercept/intercept.go`; `db/intercept.go`; `db/task_archives_restore.go`; `db/schema.sql`; web approval, mock, and types | Persisted model-vs-rule decision sentinel; matched by SQL `LIKE` and `strings.HasPrefix`; changing it breaks historical rows and `decision_source` backfills |
+| 2 | Chinese chat-mention labels | `server/chat_mentions.go`; `web/src/lib/chat-mentions.ts`; tests | Persisted `@[kind#id label]` conversation wire format, parsed by server and UI |
+| 3 | Legacy verdict markers | `intercept/prompt.go`; intercept tests | Accepted for verdicts produced by older prompts or already persisted |
+| 4 | Provider quota strings | `agent/provider.go`; provider and quota tests | Literal upstream LLM-provider API error text; translating it breaks quota detection and failover |
+| 5 | Chinese log-classification keywords | `server/logsink.go` | Classifies log lines emitted by upstream tools; not display text |
+| 6 | `备案` | `db/company_scope.go`; `web/src/lib/company-scope.ts`; tests | Functional ICP-filing detection in target and company data |
+| 7 | Legacy `traffic_search` description | `server/finding_workflow.go` | Byte-exact `WHERE description=$2` migration sentinel; changing it silently breaks upgrades |
+| 8 | Sigma legacy guard marker | `detections/sigma/artex_guard_audit_framing.yml`; `detections/tests/sigma_match/events/artex_guard_audit_framing.json` | Lets defenders match audit logs from older ARTEX builds |
+| 9 | GBK zip-filename decoding | `server/skill_zip.go`; `go.mod`; skill-upload tests | Encoding support for Windows-written Korean and Chinese archive entry names |
+| 10 | Chinese auth/login regex | `skills/api-recon/scripts/preload.js`; `skills/api-recon/reference.md` | Detection recipe for Chinese login and authorization pages on scan targets |
+| 11 | CJK detector ranges and functional patterns | `scripts/check-source-language.py`; `scripts/check-web-cjk.py` | The guards cannot work without these ranges; the allowlist patterns are the functional tokens above |
+| 12 | Full-width comma `，` | `web/src/app/(main)/system/notify/page.tsx`; `.../_components/channel-fields.ts`; tests | Input separator for pasted ID lists; paste tolerance, not display copy |
+
+**Not in the allowlist** (remove or translate): the non-English `intent`/`hint` aliases, native
+language names, the Korean statute parentheticals, the anchors that belonged to the removed Chinese
+README, and every other Chinese, Korean, Japanese, or Spanish prose or fixture.
+
+**Unicode capabilities that stay but are not non-English content:** IME composition handling, FTS5
+trigram tokenization for CJK target traffic, UTF-8-safe byte truncation, RFC 2047 email Subject
+encoding, UTF-8 BOM in CSV export, and acceptance of non-ASCII skill identifiers. Their comments and
+fixtures should be English or non-CJK where possible, but the mechanisms stay.
 
 ---
 
@@ -182,7 +211,7 @@ docker compose up -d     # start artex + postgres → http://localhost:8787
 1. **Open an issue first.** For large changes it is better to align on direction via an issue
    before you start. For small fixes (typos, links, obvious bugs) you can send a PR directly.
 2. **Fork** the repository and create a topic branch. Prefix the branch name with the nature of
-   the change, as in `feat/...`, `fix/...`, `docs/...`, `i18n/...`.
+   the change, as in `feat/...`, `fix/...`, `docs/...`.
 3. Write the change and **run the relevant verification yourself.** For a Go change, make the
    `build`/`vet`/`test` above pass. For a web change, make `npm run build:static` pass (it also
    performs the merge gate and the TypeScript type checking). `npm run check` (Biome) still has
@@ -197,32 +226,34 @@ docker compose up -d     # start artex + postgres → http://localhost:8787
    workflow enforces the same check as a merge gate). This check is also wired as the `docs` hook in
    the repository root's [`.pre-commit-config.yaml`](.pre-commit-config.yaml), so if you run
    `pre-commit install` it runs automatically on every commit (it uses only the Python standard
-   library and no network, so it finishes without Docker). Because the repository is English-first,
+   library and no network, so it finishes without Docker). Because the repository is English-only,
    also run `python3 -I scripts/check-source-language.py` when you touch source, scripts, CI, or
-   developer documentation: it fails on untranslated Korean/Chinese outside the intentional
-   wire-value and localized-asset allowlist. CI and the `source-language` pre-commit hook enforce
-   the same rule.
+   developer documentation: it fails on non-English text outside its current exemptions and the
+   functional allowlist below. CI and the `source-language` pre-commit hook enforce it. The guard is
+   being tightened to scan tests and to stop exempting localized assets; once that lands, the
+   functional allowlist is the only exception, so do not rely on the current test or asset
+   exemptions.
 4. **Open a PR.** Follow the [PR template](.github/PULL_REQUEST_TEMPLATE.md) for the title and
    description, and write what you changed, why, and how you verified it. If you changed the UI,
    attach screenshots.
-5. For a user-facing change (feature, localization, documentation, detection rule, and so on),
+5. For a user-facing change (feature, documentation, detection rule, and so on),
    add one line to the `[Unreleased]` section of the [changelog (CHANGELOG.md)](CHANGELOG.md).
    Internal refactoring or test-only changes may be omitted.
 
 ### Commit messages
 
 Follow the convention of the existing commit history. The format is `type(scope): description`,
-and the description is written in Korean.
+and the description is written in English.
 
-- `type`: `feat` · `fix` · `docs` · `chore` · `refactor` · `test` · `i18n`, and so on
+- `type`: `feat` · `fix` · `docs` · `chore` · `refactor` · `test`, and so on
 - `scope`: the changed area (`agent` · `web` · `server`, and so on); optional
 
 Examples.
 
 ```
-feat(agent): force user-facing output into the selected language (langDirective)
-docs: add the Korean README and preserve the original as README.zh.md
-i18n(web): translate dashboard navigation labels
+feat(agent): force user-facing output into English (outputDirective)
+docs: remove the translated documentation
+fix(web): pin date formatting to en-US
 ```
 
 ---

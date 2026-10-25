@@ -1,45 +1,48 @@
-# Upstream Sync and Preventing Translation Drift (Maintainer Guide)
+# Maintaining the English-only edition
 
-This document lays out the procedure a **maintainer** follows to keep up with changes in the
-upstream repository [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX) (currently unreachable, checked 2026-10) while maintaining the
-the global (multilingual) edition. Contribution scope, legal responsibility, and the localization policy live in
-[CONTRIBUTING.md](CONTRIBUTING.md); user-facing guidance lives in [README.md](README.md).
-This document therefore focuses solely on **how that policy is actually enforced**.
+This document is the maintainer runbook for the **English-only global edition** of ARTEX. It covers
+upstream tracking and the checks that keep the repository English-only. Contribution scope, legal
+responsibility, and the English-only policy live in [CONTRIBUTING.md](CONTRIBUTING.md); user-facing
+guidance lives in [README.md](README.md).
 
-The core goal of this edition can be summed up in one sentence: **keep the codebase, agent
-prompts, and developer documentation English-first, while forcing only the user-facing output into
-the selected language (English by default)**. That boundary is easy to blur every time upstream
-updates, so the procedures and checks below prevent translation drift.
-
----
-
-## 1. The localization structure at a glance
-
-This repository **forks** upstream ARTEX and stacks multilingual-localization commits on top of its
-history. Every commit on upstream `main` is contained in this repository's history, with the
-localization commits added above them. Bringing in an upstream change therefore becomes a matter of
-"inspecting the difference against upstream `main`, then separating what to preserve from what to
-translate and applying each accordingly."
-
-The deliverables fall into three groups.
-
-- **English-first assets** (section 2). The agent brain, comments, scripts, and developer docs are
-  English; translate newly synced upstream prompt text into English. Commands, payloads, identifiers,
-  wire values, and localized product assets stay verbatim.
-- **Output-language enforcement fixed in code.** `langDirective()` in `agent/prompt.go` appends to
-  the end of each role's system prompt the instruction "write user-facing output in the selected language."
-- **User-facing strings translated for each display language.** The UI strings live in `web/messages/{en,ko,zh,es}.json`;
-  the server's user-facing response strings live in named constants in each Go file.
+The goal of this edition can be summed up in one sentence: **one language in the product, the
+source tree, the documentation, and the shipped assets.** English is the only UI and output
+language, the agent prompts and developer documentation are English, and the translated documents
+and catalogs have been removed. The checks below keep it that way.
 
 ---
 
-## 2. English-first assets and verbatim assets
+## 1. The English-only structure at a glance
 
-This edition is English-first. The agents' reasoning prompts (the "brain" bodies in
-`agent/promptcatalog.go` and the DB seed `agent_prompts`), source comments, scripts, CI
-configuration, and developer documentation are in English. When an upstream change adds or edits
-Chinese prompt text, **translate it into English as part of the upstream sync**; do not reintroduce
-Chinese into the agent brain, comments, or developer docs.
+This repository **forks** upstream ARTEX and holds the English-only adaptation on top of its
+history. The historical base is preserved in this repository's history (see section 3).
+
+- **One UI catalog.** `web/messages/en.json` is the only message catalog; the Korean, Chinese,
+  Spanish, and Japanese catalogs, the language switcher, and the client-side locale store are gone.
+- **English backend literals.** The Go server has no output-language setting, catalog, resolver, or
+  API field. Backend messages are English literals.
+- **A fixed English output directive.** `outputDirective()` in `agent/prompt.go` (backed by
+  `textpolicy.EnglishOutputDirective`) is appended after the rendered body for the six user-facing
+  agent roles and always to the wrap-up prompt. It is code-owned, so a database-edited prompt cannot
+  remove it. The same English-only rule applies to side-question answers and the intercept judge's
+  comment.
+- **English documentation and assets.** The core documents, detection READMEs, guides, screenshots,
+  and release assets are English. The translated Markdown, non-English issue templates, and
+  Chinese-UI screenshots were deleted.
+- **A small functional allowlist.** A documented set of non-English machine values remains because
+  removing it would break persisted data, old conversations, provider error detection, DB upgrades,
+  detection rules, or the guards. The list is in
+  [CONTRIBUTING.md § Functional allowlist](CONTRIBUTING.md#functional-allowlist-design-7).
+
+---
+
+## 2. English assets and verbatim values
+
+The agents' reasoning prompts (the "brain" bodies in `agent/promptcatalog.go` and the DB seed
+`agent_prompts`), source comments, scripts, CI configuration, and developer documentation are in
+English. When an upstream change adds or edits Chinese prompt text, **translate it into English as
+part of the upstream sync**; do not reintroduce Chinese into the agent brain, comments, or developer
+docs.
 
 The following stay verbatim and must not be translated:
 
@@ -48,22 +51,19 @@ The following stay verbatim and must not be translated:
   JSON keys, placeholders such as `{{.Goal}}`, and `fmt` verbs.
 - **Wire, database, and protocol values.** Enum values, status strings, sentinel tokens, channel
   kinds, and API field names are machine values; leave them unchanged.
-- **Localized product assets.** `README.ko.md`, `README.zh.md`, `README.es.md`, `README.ja.md`,
-  `web/messages/{ko,zh,es,ja}.json`, the `*-ko.md` / `*-zh.md` documents, and the Korean/Chinese/
-  Spanish/Japanese translation values in message catalogs are intentional localization, not
-  translation debt. Keep them in their own languages; add new keys and values as the UI changes.
-- **Localization regression tests.** Tests under `*_localized_test.go` and the language tables in
-  `notify`, `intercept`, and the message catalogs deliberately exercise non-English output. Keep
-  their fixtures and expected values in the target language.
+- **The functional allowlist in [CONTRIBUTING.md](CONTRIBUTING.md#functional-allowlist-design-7).**
+  These are data, wire values, upstream API text, detection patterns, or encoding support, not
+  translation. Keep them as-is and keep their explanatory comments.
 
 ---
 
 ## 3. The upstream tracking base
 
 Upstream `Autumn-27/ARTEX` has been removed from GitHub (404, checked 2026-10-24), so it can no
-longer be fetched. The upstream history is preserved in this repository's own history. If you have
-a reachable mirror of upstream, add it under the `upstream` name; otherwise sections 4–7 apply only
-to the historical base below and there is nothing new to sync.
+longer be fetched. **There is nothing to sync until a reachable mirror appears.** The historical
+upstream base is preserved in this repository's own history and on the
+`backup/pre-squash-2026-10-24` branch. If you obtain a reachable mirror, add it under the `upstream`
+name; otherwise sections 4–7 apply only to the historical base below.
 
 ```bash
 # Optional: only if you have a reachable mirror of upstream.
@@ -71,7 +71,7 @@ git remote add upstream <mirror-url>
 git remote -v
 ```
 
-The upstream base commit that the localization has finished applying is:
+The upstream base commit at which the English-only adaptation started is:
 
 - **Base = `d003372`** (upstream `main`, 2026-10-03, merge of PR #189 `fix/sse-same-origin`).
 
@@ -80,7 +80,7 @@ Each time you apply a new upstream change, update this base using the method in 
 
 ---
 
-## 4. The procedure for bringing in upstream changes
+## 4. The procedure if a reachable mirror appears
 
 ### 4.1 Fetch upstream and inspect the difference
 
@@ -96,8 +96,8 @@ more to do.
 
 ### 4.2 Classify the changed files
 
-See which files the unapplied commits touched, and split them into the preserved assets of section 2
-and the translation targets.
+See which files the unapplied commits touched, and split them into English verbatim values, English
+translation targets, and detection indicators.
 
 ```bash
 git log --name-status --oneline d003372..upstream/main
@@ -105,124 +105,67 @@ git log --name-status --oneline d003372..upstream/main
 
 The classification criteria are as follows.
 
-- If `agent/promptcatalog.go` / the `agent_prompts` seed, or the display-and-input strings of
-  section 2, changed → **apply as is, without translating**.
-- If Go backend logic (`db/`, `llmrec/`, `server/`, and so on) changed → apply the logic as is, but
-  check for **newly introduced user-facing strings** (`writeErr`, and the like) and translate those
-  into Korean constants.
+- If `agent/promptcatalog.go` / the `agent_prompts` seed, or any other prompt or documentation file,
+  changed and contains Chinese prose → **translate the prose into English**. Commands, payloads,
+  identifiers, wire values, and the functional allowlist stay verbatim.
+- If Go backend logic (`db/`, `llmrec/`, `server/`, and so on) changed → apply the logic as is. Write
+  any new user-facing strings as English literals.
 - If the UI (`web/src/**`) changed and introduced **new screen strings** → do not hard-code them;
-  add them under the same key to `web/messages/zh.json` (original) and `web/messages/ko.json`
-  (translation).
+  add them under the same key to `web/messages/en.json`.
 - If **upstream indicators pinned by the detection rules** changed (the prober User-Agent in
   `enrich/enrich.go`, the self-update User-Agent in `selfupdate/`, the audit marker in
   `guard/guard.go`, the destructive-command deny list in `db/db.go`, the default listen and
   recording-proxy ports in `cmd/artex/main.go`) → bring the Sigma/Suricata rules and the ATT&CK layer
   in `detections/`, as well as the values in `detections/indicators/artex_indicators.csv`, in line
   with the new values. These indicators are not translation targets but the **basis of detection**,
-  so when upstream changes a value, the rules silently go stale. The indicator-match test in 5.4
-  catches that mismatch automatically.
+  so when upstream changes a value, the rules silently go stale. The indicator-match test in section
+  5.3 catches that mismatch automatically.
 
 ### 4.3 Apply
 
-Merge or cherry-pick feature by feature, then translate the new strings you separated out in 4.2 into
-Korean. During the merge it is easy for `ko.json` / `zh.json` keys to fall out of sync or for an
-original string to leak into a user-facing slot, so always run the checks in section 5 right after
+Merge or cherry-pick feature by feature, translate any upstream Chinese prompt text into English,
+and add new UI strings to `web/messages/en.json`. Always run the checks in section 5 right after
 applying.
 
-> **Example (unapplied commits as of 2026-10-05).** The `git fetch upstream` result shows upstream
-> `main` ahead at `b55ceb1`, with 2 commits (`86729b6`, the model-fallback approval-token metering
-> feature, plus the merge commit `b55ceb1`) unapplied relative to base `d003372`. These commits touch
-> Go logic such as `db/llm_usage.go`, `llmrec/llmrec.go`, `server/intercept.go`, and `server/server.go`,
-> and `web/src/app/(main)/system/intercept/page.tsx`, `web/src/lib/api.ts`, `web/src/lib/mock/handler.ts`,
-> and `web/src/lib/types.ts`. The maintainer therefore applies the Go logic as is and only extracts and
-> translates the new screen strings introduced on the intercept settings page into `ko.json` / `zh.json`
-> keys. (These two commits had not yet been applied at the time this document was written, so the base
-> stays at `d003372`.)
+> **There is no upstream data to sync today.** Upstream is unreachable, so this section is a
+> contingency procedure, not a routine task. The historical base and backup branch above are the
+> reference if a mirror appears.
 
 ---
 
-## 5. Translation-symmetry and drift checks
+## 5. English-only and drift checks
 
-After applying an upstream change or doing translation work, verify the following three things.
+After applying an upstream change, run the checks below.
 
-### 5.1 ko ↔ zh message symmetry and user-facing CJK
+### 5.1 Source language
 
-The keys of `ko.json` and `zh.json` must be exactly the same, and no Chinese characters may remain in
-the `ko.json` values. The script below prints three numbers.
-
-```bash
-python3 - <<'PY'
-import json, re
-ko = json.load(open('web/messages/ko.json'))
-zh = json.load(open('web/messages/zh.json'))
-def flatten(d, p=''):
-    out = {}
-    if isinstance(d, dict):
-        for k, v in d.items(): out.update(flatten(v, p + '/' + k))
-    elif isinstance(d, list):
-        for i, v in enumerate(d): out.update(flatten(v, p + '/' + str(i)))
-    else: out[p] = d
-    return out
-fk, fz = flatten(ko), flatten(zh)
-han = re.compile(r'[㐀-鿿]')
-print('ko leaf keys :', len(fk))
-print('zh leaf keys :', len(fz))
-print('key symdiff  :', len(set(fk) ^ set(fz)))        # must be 0
-print('ko vals w/CJK:', sum(1 for v in fk.values() if isinstance(v, str) and han.search(v)))  # must be 0
-PY
-```
-
-Baseline (2026-10-05): `ko leaf keys = 2950`, `zh leaf keys = 2950`, `key symdiff = 0`,
-`ko vals w/CJK = 0`. The key count can grow as upstream changes are applied, but ko and zh must always
-be equal, and `key symdiff` and `ko vals w/CJK` must always be 0.
-
-### 5.2 Confirm that the agent brain is English
-
-The agent brain (the prompt bodies in `agent/promptcatalog.go` and the `agent/*.go` prompt files)
-is English. Any Han or Hangul line in those files is a sign that an upstream sync reintroduced
-untranslated prompt text.
-
-```bash
-python3 - <<'PY'
-import re, glob
-cjk = re.compile(r'[㐀-鿿가-힣]')
-for p in sorted(glob.glob('agent/*.go')):
-    if p.endswith('_test.go'):
-        continue
-    n = sum(1 for line in open(p, encoding='utf-8') if cjk.search(line))
-    if n:
-        print(f'{p}: {n} CJK lines')
-PY
-```
-
-Baseline: no output (every agent prompt file is English). A non-zero count should be translated
-before merging.
-
-### 5.3 Make sure no original language leaks into the build output
-
-After exporting the UI statically, Korean/Chinese/Japanese appearing in the prerendered HTML
-means a missing translation.
-
-```bash
-cd web && npm ci && NEXT_EXPORT=1 npm run build   # generates out/
-# check that the visible text in out/**/*.html contains 0 CJK characters
-python3 -I ../scripts/check-web-cjk.py
-```
-
-CI enforces this with `scripts/check-web-cjk.py`, which detects Han, Hangul, and Kana. Separately,
-`scripts/check-source-language.py` scans the English-first source tree (code, scripts, CI, and
-developer docs) and fails on any untranslated CJK line outside its intentional wire-value and
-localized-asset allowlist. Run it before merging an upstream sync:
+`scripts/check-source-language.py` is the English-only source guard. It scans the tracked source
+tree (code, scripts, CI, and developer documentation) and fails on non-English text outside its
+current exemptions and the functional allowlist. Run it before merging:
 
 ```bash
 python3 -I scripts/check-source-language.py
 ```
 
-### 5.4 Make sure the detection indicators still match the upstream source
+The guard is being tightened to scan tests and to stop exempting localized assets; once that lands,
+the functional allowlist in [CONTRIBUTING.md](CONTRIBUTING.md#functional-allowlist-design-7) is the
+only content exception. Do not add broad exemptions to make a change pass.
+
+### 5.2 Static export
+
+After exporting the UI statically, any CJK in the prerendered HTML means non-English text leaked into
+the product. CI enforces this with `scripts/check-web-cjk.py`, which detects Han, Hangul, and Kana.
+
+```bash
+cd web && npm ci && NEXT_EXPORT=1 npm run build   # generates out/
+python3 -I ../scripts/check-web-cjk.py
+```
+
+### 5.3 Make sure the detection indicators still match the upstream source
 
 The rules in `detections/` are based on the strings that upstream actually emits (prober User-Agent,
 self-update User-Agent, audit marker, destructive-command deny list). When an upstream re-sync changes
-these values, the translation checks all pass while only the shipped rules silently stop matching. The
+these values, the English-only checks still pass while only the shipped rules silently stop matching. The
 test below verifies bidirectionally that each indicator is still present in both the upstream source
 and the rules, so run it after a re-sync.
 
@@ -244,7 +187,7 @@ indicator test checks this synchronization itself (its fifth check, "CI triggers
 pinned source changes"): if any non-`detections/` source the test reads is not listed in both `paths`
 blocks, the test fails, so source pinning and CI trigger conditions cannot be merged out of sync.
 
-### 5.5 When bumping the detection-test tool pins
+### 5.4 When bumping the detection-test tool pins
 
 The detection tests run `sigma-cli`, the SigmaHQ validator plugin (`pySigma-validators-sigmahq`), and
 the Suricata image at fixed versions (the defaults in each `run.sh`, overridable via environment
@@ -260,7 +203,7 @@ backend plugin changes its support, the `sigma_backends` test gives the same sig
 
 ## 6. Finishing with build and test verification
 
-After applying and translating, verify the backend and frontend per the
+After applying an upstream change, verify the backend and frontend per the
 [development environment procedure in CONTRIBUTING.md](CONTRIBUTING.md#development-environment).
 If you do not have Go locally, you can run the same thing under Docker.
 
@@ -269,12 +212,6 @@ docker run --rm -v "$PWD":/src -w /src \
   -v artexko-gomod:/go/pkg/mod -v artexko-gocache:/root/.cache/go-build \
   golang:1.26 sh -c 'go build ./... && go vet ./... && go test ./... -count=1'
 ```
-
-When you translate a user-facing string, add a regression test (`*_localized_test.go`) that asserts
-that string as well, so that if a later upstream change pulls Chinese back in, the test catches it.
-Always do translation verification with a capable (frontier-class) model. Low-cost, small models can
-revert their output to the original language, so you must not judge whether a translation applied from
-their output alone.
 
 ---
 
@@ -285,19 +222,19 @@ section 3 of this document to the new upstream commit** and include that change 
 a following one. Doing so lets the next maintainer confirm "how far things have been applied" in this
 one place.
 
-Commit messages follow the [commit-message rules in CONTRIBUTING.md](CONTRIBUTING.md#commit-messages).
-For example, an upstream-sync commit is written like this:
+Commit messages follow the [commit-message rules in CONTRIBUTING.md](CONTRIBUTING.md#commit-messages)
+and are written in English. For example, an upstream-sync commit is written like this:
 
 ```
-chore(upstream): sync upstream d003372..b55ceb1 (intercept token accounting) + translate new UI strings
+chore(upstream): sync upstream d003372..b55ceb1 (intercept token accounting) + translate new prompt text
 ```
 
 ---
 
 ## 8. Review and verification rules of thumb (common pitfalls)
 
-Here are two pitfalls maintainers repeatedly fall into when checking upstream applies, translations,
-and documentation improvements. Both are cases where "the checking method itself is wrong, so you
+Here are two pitfalls maintainers repeatedly fall into when checking upstream applies and
+documentation improvements. Both are cases where "the checking method itself is wrong, so you
 mistake something healthy for broken," so they are fixed here as rules of thumb to prevent unnecessary
 reverts.
 
@@ -367,8 +304,9 @@ blocked) · ALLOWED (a known upstream-inherited dead link we cannot fix, listed 
 External-link liveness is flaky, so it is **not a merge gate**. Instead the non-blocking
 [`external-links`](.github/workflows/external-links.yml) workflow runs `--strict` every Monday and on
 manual dispatch, turning red when a DOWN not on the allowlist newly appears. Dead links inherited by
-upstream-preserved files (for example a vanished contributor account credited in `CHANGELOG.zh.md`) are
-ones we cannot fix, so they go on the allowlist with a reason and are excluded from the strict check.
+upstream-preserved files (for example a vanished contributor account credited in the upstream release
+history, now kept only in git history) are ones we cannot fix, so they go on the allowlist with a
+reason and are excluded from the strict check.
 
 ---
 
