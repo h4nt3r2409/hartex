@@ -25,13 +25,13 @@ func TestShutdownContextPreservesNamedCause(t *testing.T) {
 
 // TestPrintBannerLocalized verifies that the startup banner printed to stdout is
 // English and carries no leftover CJK Han characters. This is the first thing a
-// user sees when running ARTEX, so it must not regress to a non-English banner.
+// user sees when running Hartex, so it must not regress to a non-English banner.
 // The "[config] ..." log lines in run() are intentionally out of scope — they are logs.
 func TestPrintBannerLocalized(t *testing.T) {
 	out := captureStdout(t, func() { printBanner(":8787") })
 	t.Logf("banner sample:\n%s", out)
 
-	for _, want := range []string{"AI Autonomous Penetration Testing System", "version", "listening on", ":8787"} {
+	for _, want := range []string{"Autonomous Penetration Testing Console", "version", "listening on", ":8787"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("banner is missing %q: %q", want, out)
 		}

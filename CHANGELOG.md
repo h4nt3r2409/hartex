@@ -1,10 +1,19 @@
 # Changelog
 
-This document records the changes that the ARTEX global edition (this fork) adds on top of the upstream repository. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+This document records the changes that the Hartex global edition (this fork) adds on top of the upstream repository. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 The upstream ARTEX project's per-version release history (0.3.x and earlier) and contributor list were preserved verbatim in Chinese in `CHANGELOG.zh.md`; that preserved Chinese document was removed in the English-only migration. The detailed content and rationale for each change can be found in the repository's commit history.
 
 ## [Unreleased]
+
+### Hartex rebrand, dark-neon UI, and performance pass
+
+- **Renamed the visible product to Hartex.** The sidebar, login and setup screens, browser title, metadata, social card, app icon, startup banner, notification test messages, CLI help, demo content, and user-facing docs now say Hartex. Internal identifiers (Go module path, `artex` binary/service, `ARTEX_*` environment variables, database and config names) and the built-in login subject are unchanged; the login screen labels that subject "Operator account". Upstream-ARTEX attribution and the detection material under `detections/` are preserved.
+- **Added the Hartex identity.** A geometric H monogram in a blue-to-violet gradient replaces the 1920×1920 raster logo; the app icon, Apple touch icon, favicon, PWA icons, and 1200×630 social card are generated from the same vector.
+- **Introduced a dark-first neon theme.** The default theme is now dark, with a light secondary mode; semantic tokens, status colours, chart series, reduced-motion handling, and the three legacy theme presets were brought onto the same token contract.
+- **Cut first-load transfer.** The embedded UI is now served with gzip and content-hash ETags; hashed `_next/static` assets get immutable caching, and HTML/non-hashed assets revalidate. The dashboard first-load transfer on a production build dropped from ~578 KB to ~429 KB gzip.
+- **Removed dead weight from the initial bundle.** The mock dataset loads only when `NEXT_PUBLIC_MOCK=1`, the Recharts token chart and the nine non-default task-detail tabs load on demand, and font preloads dropped from seven files to two.
+- **Improved the dashboard's first paint.** Skeleton placeholders replace the zeros shown before the first successful response, a failed first load shows an inline Retry instead of presenting empty data as current, the task table scrolls instead of clipping, and 9–10 px labels were raised to the 11 px floor across the four flagship screens.
 
 ### English-only migration
 

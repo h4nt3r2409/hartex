@@ -1,6 +1,6 @@
 # Maintaining the English-only edition
 
-This document is the maintainer runbook for the **English-only global edition** of ARTEX. It covers
+This document is the maintainer runbook for the **English-only global edition** of Hartex. It covers
 upstream tracking and the checks that keep the repository English-only. Contribution scope, legal
 responsibility, and the English-only policy live in [CONTRIBUTING.md](CONTRIBUTING.md); user-facing
 guidance lives in [README.md](README.md).

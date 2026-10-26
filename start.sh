@@ -1,5 +1,5 @@
 #!/bin/sh
-# ARTEX daemon start script (Linux / macOS / Docker ENTRYPOINT)
+# Hartex daemon start script (Linux / macOS / Docker ENTRYPOINT)
 #
 # Usage:
 #   ./start.sh                       Run in the foreground (Ctrl-C to stop)

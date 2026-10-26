@@ -829,6 +829,16 @@ WHERE exploration_id=$1 AND kind='intent' AND state='open'`, s.expID).Scan(&n)
 	return n, err
 }
 
+// CountByKindState counts this exploration's nodes of one kind in one state.
+// The dashboard's per-task counters use it so /api/stats does not materialize
+// the full intent and goal history on every poll.
+func (s *ExplorationStore) CountByKindState(kind, state string) (int, error) {
+	var n int
+	err := s.db.QueryRow(`SELECT COUNT(*) FROM exploration_nodes
+WHERE exploration_id=$1 AND kind=$2 AND state=$3`, s.expID, kind, state).Scan(&n)
+	return n, err
+}
+
 // GetNode returns one node of this exploration by id (nil, nil if not found).
 func (s *ExplorationStore) GetNode(id int64) (*Node, error) {
 	n, err := scanNode(s.db.QueryRow(`SELECT `+nodeCols+` FROM exploration_nodes WHERE id=$1 AND exploration_id=$2`, id, s.expID))

@@ -95,11 +95,12 @@ export function NavMain({ items }: NavMainProps) {
   const t = useTranslations("nav");
   const rawPath = usePathname();
   // Route segments may contain Chinese, and the pathname may be percent-encoded; decode it before comparing with nav urls so highlighting matches.
+  // Static export adds a trailing slash (`/dashboard/`), so normalize it before the exact comparison.
   const path = (() => {
     try {
-      return decodeURIComponent(rawPath);
+      return decodeURIComponent(rawPath).replace(/\/+$/, "") || "/";
     } catch {
-      return rawPath;
+      return rawPath.replace(/\/+$/, "") || "/";
     }
   })();
 

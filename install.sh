@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ARTEX install script: 1) all Docker  2) local compile and run
+# Hartex install script: 1) all Docker  2) local compile and run
 set -euo pipefail
 cd "$(cd "$(dirname "$0")" && pwd)"
 
@@ -117,7 +117,7 @@ JSON
 }
 
 echo "=============================="
-echo "  ARTEX Install"
+echo "  Hartex Install"
 echo "  1) Install all with Docker"
 echo "  2) Local run (go compile)"
 echo "=============================="

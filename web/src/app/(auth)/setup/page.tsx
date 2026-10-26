@@ -71,13 +71,16 @@ export default function SetupPage() {
   return (
     <div className="flex h-dvh">
       {/* Left panel */}
-      <div className="hidden flex-col items-center justify-center bg-primary p-12 text-center lg:flex lg:w-1/3">
-        <div className="relative flex items-center justify-center">
-          <div className="absolute size-80 rounded-full border border-primary-foreground/10" />
-          <div className="absolute size-60 rounded-full border border-primary-foreground/15" />
-          <div className="absolute size-40 rounded-full border border-primary-foreground/20" />
+      <div className="relative hidden flex-col items-center justify-center overflow-hidden border-r bg-[#0B0A12] p-12 text-center lg:flex lg:w-1/3">
+        <div className="pointer-events-none absolute -left-24 -top-24 size-80 rounded-full bg-indigo-600/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-16 size-80 rounded-full bg-fuchsia-600/15 blur-3xl" />
+        <div className="relative flex flex-col items-center gap-6">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="ARTEX" width={160} height={160} className="relative brightness-0 invert" />
+          <img src="/brand/hartex-mark-white.svg" alt="" width={120} height={120} className="size-28" />
+          <div>
+            <div className="font-semibold text-3xl tracking-[0.18em] text-white">HARTEX</div>
+            <p className="mx-auto mt-3 max-w-xs text-sm text-white/60">Autonomous penetration testing console</p>
+          </div>
         </div>
       </div>
 
