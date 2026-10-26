@@ -18,6 +18,8 @@ services:
     # Image published to GitHub Container Registry for each release tag (v*) by this
     # fork (.github/workflows/release.yml's docker job). Upstream autumn27/artex is gone
     # from Docker Hub.
+    # Production should pin ARTEX_TAG to a release tag (for example v0.4.0-global.1).
+    # ARTEX_TAG=edge follows the continuous main-branch image.
     image: ghcr.io/h4nt3r2409/hartex:${ARTEX_TAG:-latest}
     depends_on:
       postgres:

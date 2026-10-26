@@ -101,7 +101,7 @@ The screens below show the English UI in its dark theme. The data comes from a l
 
 > **Prerequisites:** Docker and Docker Compose. The database is **PostgreSQL**, brought up by compose. Exploration requires an **LLM** (`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`; can also be set in the UI).
 
-> **Image:** the `artex` service in `docker-compose.yml` pulls `ghcr.io/h4nt3r2409/hartex`, the global-edition image this repository publishes to GitHub Container Registry on every release tag (`v*`). The default tag is `latest` (the most recent release); set `ARTEX_TAG` in `.env` to pin a specific release. Upstream's original image `autumn27/artex` has been taken down from Docker Hub and is no longer used.
+> **Image:** the `artex` service in `docker-compose.yml` pulls `ghcr.io/h4nt3r2409/hartex`, the global-edition image this repository publishes to GitHub Container Registry on every release tag (`v*`). The default tag is `latest` (the most recent release); set `ARTEX_TAG` in `.env` to pin a specific release. For the newest main-branch build, set `ARTEX_TAG=edge`; production should pin a release tag such as `v0.4.0-global.1`. Upstream's original image `autumn27/artex` has been taken down from Docker Hub and is no longer used.
 
 ```bash
 git clone https://github.com/h4nt3r2409/hartex.git

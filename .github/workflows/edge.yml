@@ -1,0 +1,114 @@
+name: edge
+
+# Continuous main-branch image. Stable releases keep :latest; this workflow only
+# publishes :edge and :sha-<short>, so Compose users can opt into the newest main
+# build with ARTEX_TAG=edge without making production follow every merge.
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: edge-image-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Build the static frontend once; the binaries job reuses the artifact.
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+        working-directory: web
+      - run: npm run build:static
+        working-directory: web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edge-web-dist
+          path: web/out
+
+  # Only Linux is needed for the container image. No zips and no release assets.
+  binaries:
+    needs: frontend
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - { goarch: amd64 }
+          - { goarch: arm64 }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+          cache: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: edge-web-dist
+          path: server/webui/dist
+      - name: Build linux/${{ matrix.goarch }}
+        env:
+          ARTEX_TARGET_OS: linux
+          ARTEX_TARGET_ARCH: ${{ matrix.goarch }}
+          ARTEX_BUILD_VERSION: edge-${{ github.sha }}
+          ARTEX_SKIP_FRONTEND: "1"
+          ARTEX_SKIP_NPM_CI: "1"
+          ARTEX_COMPRESS: "0"
+          ARTEX_PACKAGE: "0"
+        run: ./build.sh --target "linux/${{ matrix.goarch }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edge-bin-linux-${{ matrix.goarch }}
+          path: dist/artex-linux-${{ matrix.goarch }}/artex
+
+  # Same runtime-only Dockerfile as the release job: it only wraps the prebuilt
+  # Linux binaries. :latest is intentionally absent from the tag list.
+  docker:
+    needs: [binaries]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE_NAMESPACE: ghcr.io/h4nt3r2409/hartex
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: edge-bin-linux-amd64
+          path: dist/amd64
+      - uses: actions/download-artifact@v4
+        with:
+          name: edge-bin-linux-arm64
+          path: dist/arm64
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{ env.IMAGE_NAMESPACE }}
+          tags: |
+            type=raw,value=edge
+            type=sha,format=short
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
