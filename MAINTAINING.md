@@ -313,11 +313,10 @@ reason and are excluded from the strict check.
 ## 9. The release pipeline
 
 Pushing a version tag (`v*`) makes [`.github/workflows/release.yml`](.github/workflows/release.yml)
-build binaries for five platforms and, when a condition is met, a multi-architecture Docker image.
-This fork has never cut a release tag, so this workflow has never run. This section therefore records
-what the pipeline assumes and produces, and whether those assumptions match the current repository
-structure. Because pushing a tag creates a GitHub Release on the public repository, cut a release only
-after the publishing decision is made.
+build binaries for five platforms and a multi-architecture Docker image. The tag publishes the
+versioned image and moves `latest`; a separate [`edge` workflow](.github/workflows/edge.yml)
+publishes every push to `main` under `:edge` and `:sha-<short>`. Because pushing a tag creates a
+GitHub Release on the public repository, cut a release only after the publishing decision is made.
 
 ### 9.1 How to cut a release
 
@@ -415,4 +414,22 @@ to shrink the binary further:
 ```bash
 ARTEX_TARGETS=linux/amd64,windows/amd64 ./build.sh --release
 ./build.sh --target linux/amd64 --upx
+```
+
+### 9.7 Continuous edge image
+
+[`.github/workflows/edge.yml`](.github/workflows/edge.yml) runs on every push to `main` (and can be
+started manually with `workflow_dispatch`). It builds the same frontend and Linux binaries as the
+release pipeline, then publishes only `ghcr.io/h4nt3r2409/hartex:edge` and `:sha-<short>`. It never
+updates `:latest`. A newer push to `main` cancels an older edge run, so the `edge` tag always points
+at the newest completed main build.
+
+Production should pin `ARTEX_TAG` to a release tag; staging can follow main:
+
+```bash
+# staging: newest main build
+ARTEX_TAG=edge docker compose pull && ARTEX_TAG=edge docker compose up -d
+
+# production: pinned release
+ARTEX_TAG=v0.4.0-global.1 docker compose pull && ARTEX_TAG=v0.4.0-global.1 docker compose up -d
 ```

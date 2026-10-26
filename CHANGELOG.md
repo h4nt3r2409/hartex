@@ -6,6 +6,8 @@ The upstream ARTEX project's per-version release history (0.3.x and earlier) and
 
 ## [Unreleased]
 
+## [0.4.0-global.1] · 2026-10-26
+
 ### Hartex rebrand, dark-neon UI, and performance pass
 
 - **Renamed the visible product to Hartex.** The sidebar, login and setup screens, browser title, metadata, social card, app icon, startup banner, notification test messages, CLI help, demo content, and user-facing docs now say Hartex. Internal identifiers (Go module path, `artex` binary/service, `ARTEX_*` environment variables, database and config names) and the built-in login subject are unchanged; the login screen labels that subject "Operator account". Upstream-ARTEX attribution and the detection material under `detections/` are preserved.
@@ -14,6 +16,10 @@ The upstream ARTEX project's per-version release history (0.3.x and earlier) and
 - **Cut first-load transfer.** The embedded UI is now served with gzip and content-hash ETags; hashed `_next/static` assets get immutable caching, and HTML/non-hashed assets revalidate. The dashboard first-load transfer on a production build dropped from ~578 KB to ~429 KB gzip.
 - **Removed dead weight from the initial bundle.** The mock dataset loads only when `NEXT_PUBLIC_MOCK=1`, the Recharts token chart and the nine non-default task-detail tabs load on demand, and font preloads dropped from seven files to two.
 - **Improved the dashboard's first paint.** Skeleton placeholders replace the zeros shown before the first successful response, a failed first load shows an inline Retry instead of presenting empty data as current, the task table scrolls instead of clipping, and 9–10 px labels were raised to the 11 px floor across the four flagship screens.
+
+### Distribution
+
+- **Added a continuous edge image.** Every push to `main` now publishes `ghcr.io/h4nt3r2409/hartex:edge` and `:sha-<short>`; `latest` remains release-tagged.
 
 ### English-only migration
 
