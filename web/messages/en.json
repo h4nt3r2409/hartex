@@ -11,13 +11,15 @@
       "submit": "Log in",
       "submitting": "Logging in…",
       "title": "Log in",
-      "username": "Username",
-      "welcome": "Welcome back. Enter your password to continue using ARTEX."
+      "account": "Account",
+      "accountValue": "Operator account",
+      "accountHint": "The built-in operator account. Your password is the only credential.",
+      "welcome": "Welcome back. Enter your password to continue using Hartex."
     },
     "setup": {
       "confirmPassword": "Confirm password",
       "confirmPlaceholder": "Re-enter your password",
-      "desc": "This is your first time using ARTEX. Set a login password for your account (at least 8 characters).",
+      "desc": "This is your first time using Hartex. Set a login password for your account (at least 8 characters).",
       "errorBackend": "Can't connect to the backend service",
       "errorInit": "Initialization failed",
       "errorMismatch": "The two passwords don't match",
@@ -36,7 +38,7 @@
       "retry": "Retry"
     },
     "terms": {
-      "a1Body": "This software (ARTEX) is an open-source program distributed under the GNU Affero General Public License v3.0 (AGPL-3.0). Under this license you are free to use, copy, modify, and distribute the software. However, all derivative works (including online services provided to third parties over a network) must likewise be released under AGPL-3.0, and you must make the corresponding complete source code available to users. The full terms of AGPL-3.0 are governed by the LICENSE file distributed with the software.",
+      "a1Body": "This software (Hartex) is an open-source program distributed under the GNU Affero General Public License v3.0 (AGPL-3.0). Under this license you are free to use, copy, modify, and distribute the software. However, all derivative works (including online services provided to third parties over a network) must likewise be released under AGPL-3.0, and you must make the corresponding complete source code available to users. The full terms of AGPL-3.0 are governed by the LICENSE file distributed with the software.",
       "a1Title": "Article 1 · Definitions and Open-Source License",
       "a2Body": "This software is provided solely for personal learning, code study, exploration of security-technology principles, and technical verification in a locally isolated environment that you have built yourself; it is suited to non-offensive, non-destructive purposes such as learning, academic research, and code review. Except as expressly permitted in this article, you must not use the software for any other purpose.",
       "a2Title": "Article 2 · Permitted Scope of Use",
@@ -60,10 +62,10 @@
       "agreeButton": "I have read and agree to all the terms",
       "footerNotRead": "Please scroll to the end of the terms before confirming",
       "footerRead": "You've reviewed all the terms",
-      "intro": "This \"Usage Notice and Disclaimer\" (the \"Notice\") is an agreement between you and the authors and contributors of the ARTEX project regarding your use of this software. Please read and fully understand each article carefully before use, paying particular attention to the disclaimer, limitation-of-liability, and prohibition clauses marked in bold or in colored blocks.",
+      "intro": "This \"Usage Notice and Disclaimer\" (the \"Notice\") is an agreement between you and the authors and contributors of the Hartex project regarding your use of this software. Please read and fully understand each article carefully before use, paying particular attention to the disclaimer, limitation-of-liability, and prohibition clauses marked in bold or in colored blocks.",
       "introEmphasis": "The moment you download, install, access, or in any way use this software, you are deemed to have read and understood all of this Notice and to agree to and be bound by all of it.",
       "meta": "Version v1.0 · Effective 2026-09-18 · Please read all the terms below to the end before logging in",
-      "title": "ARTEX Usage Notice and Disclaimer"
+      "title": "Hartex Usage Notice and Disclaimer"
     }
   },
   "dashboard": {
@@ -107,6 +109,9 @@
     "noActivity": "No activity",
     "noAssetData": "No asset data",
     "noData": "No data",
+    "loadFailed": "Could not load the dashboard",
+    "noUsageWindow": "No usage recorded in this window. Try a wider range or another model.",
+    "retry": "Retry",
     "noFindings": "No findings",
     "noPendingIntercepts": "No intercepts awaiting approval",
     "noTasks": "No tasks",
@@ -2131,7 +2136,7 @@
   },
   "changePasswordDialog": {
     "title": "Change password",
-    "description": "The username is fixed as <b>ARTEX</b>. You must first authenticate by entering your current password, and after changing the password, login Tokens already issued remain valid until they expire.",
+    "description": "The account is the built-in operator account. You must first authenticate by entering your current password, and after changing the password, login Tokens already issued remain valid until they expire.",
     "currentPassword": "Current password",
     "newPassword": "New password",
     "confirmPassword": "Confirm new password",
@@ -3206,7 +3211,7 @@
       "updateToVersion": "Update to {latest}",
       "updateNow": "Update now",
       "rollback": "Roll back to the previous version",
-      "footer": "One-click update relies on the daemon script restarting the program. Start ARTEX with <code>start.sh</code> (<code>start.bat</code> on Windows). If you run the artex binary directly, it won't restart automatically after the program exits.",
+      "footer": "One-click update relies on the daemon script restarting the program. Start Hartex with <code>start.sh</code> (<code>start.bat</code> on Windows). If you run the artex binary directly, it won't restart automatically after the program exits.",
       "toast": {
         "checkFailed": "Update check failed: {error}",
         "found": "Found new version {latest}",

@@ -43,7 +43,7 @@ const (
 const (
 	notifyTestName    = "Test message · channel configuration OK"
 	notifyTestClass   = "Connection test"
-	notifyTestSummary = "This is an ARTEX notification channel test message. If you received it, your channel configuration is working."
+	notifyTestSummary = "This is a Hartex notification channel test message. If you received it, your channel configuration is working."
 )
 
 // notifyChannelDTO is the external representation of a channel.
@@ -493,7 +493,7 @@ func notifyTestMessage(baseURL string) notify.Message {
 			VulnClass: notifyTestClass,
 			Severity:  "low",
 			Summary:   notifyTestSummary,
-			Assets:    []string{"artex.example.com"},
+			Assets:    []string{"hartex.example.com"},
 			DetailURL: baseURL,
 		}},
 		HomeURL: baseURL,

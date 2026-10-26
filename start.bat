@@ -1,7 +1,7 @@
 @echo off
 rem Switch the console to UTF-8; otherwise non-ASCII text in this file is garbled in a GBK terminal.
 chcp 65001 >nul 2>&1
-rem ARTEX daemon start script (Windows)
+rem Hartex daemon start script (Windows)
 rem
 rem Usage:
 rem   start.bat                  Run in the foreground (Ctrl-C to stop)

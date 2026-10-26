@@ -5,7 +5,6 @@
 
 import type { ChatMention } from "@/lib/chat-mentions";
 import { MOCK } from "@/lib/mock/enabled";
-import { mockHandle } from "@/lib/mock/handler";
 import type {
   ActiveFindingRetest,
   Activity,
@@ -124,7 +123,12 @@ function getToken(): string | null {
 }
 
 export async function http<T>(path: string, init?: RequestInit): Promise<T> {
-  if (MOCK) return mockHandle<T>(init?.method ?? "GET", path, init?.body ?? null);
+  if (MOCK) {
+    // Keep the mock dataset out of the production bundle: the demo path loads it
+    // only when it is actually enabled.
+    const { mockHandle } = await import("@/lib/mock/handler");
+    return mockHandle<T>(init?.method ?? "GET", path, init?.body ?? null);
+  }
   const token = getToken();
   const r = await fetch(`/api${path}`, {
     ...init,
@@ -177,7 +181,7 @@ export async function http<T>(path: string, init?: RequestInit): Promise<T> {
 // Token is appended as ?token= because SSE can't carry cookies cross-origin.
 // mockReport returns a canned Markdown report for the demo.
 function mockReport(_task?: string): string {
-  return `# ARTEX Penetration Test Report: Acme Corp
+  return `# Hartex Penetration Test Report: Acme Corp
 
 ## Overview
 - Scope: acme.com (including www / admin / api / shop / vpn subdomains)

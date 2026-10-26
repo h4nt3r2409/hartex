@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in the global edition of ARTEX (`hartex`). This document
+Thank you for your interest in the global edition of Hartex (`hartex`). This document
 gathers the scope, policies, and procedures you should know before you start contributing.
 Before you send a contribution, please read [Authorized use and legal responsibility](#authorized-use-and-legal-responsibility)
 and [English-only policy](#english-only-policy) first.
@@ -13,7 +13,7 @@ and [English-only policy](#english-only-policy) first.
 
 ## Authorized use and legal responsibility
 
-ARTEX is an offensive-security tool in which an LLM multi-agent system performs penetration
+Hartex is an offensive-security tool in which an LLM multi-agent system performs penetration
 testing **autonomously**. Contributors are bound by the same scope limits as users.
 
 - When you verify code, run the tool only against **a target you own or have explicit written
@@ -262,7 +262,7 @@ fix(web): pin date formatting to en-US
 ## Contributing detection rules and detection tests
 
 This repository also keeps, in [`detections/`](detections/), rules for **defending against and
-detecting** autonomous AI attacks like ARTEX. It consists of deployable [Sigma](https://sigmahq.io)
+detecting** autonomous AI attacks like the upstream ARTEX. It consists of deployable [Sigma](https://sigmahq.io)
 rules ([`detections/sigma/`](detections/sigma/)), network [Suricata](https://suricata.io) rules
 ([`detections/suricata/`](detections/suricata/)), a [MITRE ATT&CK](https://attack.mitre.org/)
 coverage layer ([`detections/attack/`](detections/attack/)), and tests that reproducibly prove

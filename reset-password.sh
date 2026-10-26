@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
-# ARTEX admin password reset script
+# Hartex admin password reset script
 #
-# The login username is fixed to ARTEX. The password is stored as a bcrypt hash in the database settings table
+# The internal login subject is ARTEX; the UI labels it "Operator account". The password is stored as a bcrypt hash in the database settings table
 # under the auth.password_hash key. This script connects to the database, generates a bcrypt hash inside the DB with pgcrypto,
 # and writes it back to that key. It is fully compatible with the backend's login verification (golang.org/x/crypto/bcrypt).
 #
@@ -124,7 +124,7 @@ info "Deployment mode: $MODE"
 
 # ---- Collect the new password -----------------------------------------------------------
 if [[ -z "$NEWPASS" ]]; then
-  read -r -s -p "Enter new password (username is fixed to ARTEX):" NEWPASS; echo >&2
+  read -r -s -p "Enter new password (internal subject: ARTEX):" NEWPASS; echo >&2
   [[ -n "$NEWPASS" ]] || die "Password cannot be empty"
   read -r -s -p "Re-enter to confirm:" NEWPASS2; echo >&2
   [[ "$NEWPASS" == "$NEWPASS2" ]] || die "The two entries do not match"
@@ -178,7 +178,7 @@ if [[ "$MODE" == "local" ]]; then
 
   info "Target database: $target"
   if [[ "$ASSUME_YES" -ne 1 ]]; then
-    read -r -p "Reset the ARTEX password on this database? [y/N]" ans
+    read -r -p "Reset the Hartex password on this database? [y/N]" ans
     [[ "$ans" == "y" || "$ans" == "Y" ]] || die "Cancelled"
   fi
 
@@ -212,7 +212,7 @@ else
 
   info "Target: psql -U $DUSER -d $DNAME inside container $CONTAINER (exec=$EXEC_KIND)"
   if [[ "$ASSUME_YES" -ne 1 ]]; then
-    read -r -p "Reset the ARTEX password on this container's database? [y/N]" ans
+    read -r -p "Reset the Hartex password on this container's database? [y/N]" ans
     [[ "$ans" == "y" || "$ans" == "Y" ]] || die "Cancelled"
   fi
 
@@ -232,5 +232,5 @@ else
 fi
 
 unset ARTEX_RESET_NEWPASS
-echo "✓ Reset the ARTEX admin password. Log in with username ARTEX and the new password (no service restart required)."
+echo "✓ Reset the Hartex admin password. Log in with the operator account (internal subject ARTEX) and the new password (no service restart required)."
 echo "  Existing login sessions (tokens) are invalidated within seconds. If this is recovery after the account was taken over or leaked, also review the custom tools, MCP, LLM, and notification settings."

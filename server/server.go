@@ -1066,22 +1066,13 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 
 	st, _ := t.Store.Stats()
 	out["exploration"] = st
+	goalsTotal := st[db.KindGoal]
 
 	// per-task running state + heartbeat (distinct from "LLM configured").
-	intents, _ := t.Store.ListByKind(db.KindIntent, 100000)
-	inFlight := 0
-	for _, in := range intents {
-		if in.State == "running" {
-			inFlight++
-		}
-	}
-	goals, _ := t.Store.ListByKind(db.KindGoal, 10000)
-	goalsMet := 0
-	for _, g := range goals {
-		if g.State == "met" {
-			goalsMet++
-		}
-	}
+	// Scalar counts keep this five-second poll off the node history: the old
+	// ListByKind calls materialized up to 100k intents and 10k goals.
+	inFlight, _ := t.Store.CountByKindState(db.KindIntent, "running")
+	goalsMet, _ := t.Store.CountByKindState(db.KindGoal, "met")
 	last := s.engine.LastActivity(t.ID)
 	paused := s.engine.IsPaused(t.ID)
 	activeCalls := s.engine.ActiveLLMCalls(t.ID)
@@ -1111,7 +1102,7 @@ func (s *Server) stats(w http.ResponseWriter, r *http.Request) {
 		"llm_in_flight": activeCalls,
 		"last_activity": last,
 		"stalled":       stalled,
-		"goals_total":   len(goals),
+		"goals_total":   goalsTotal,
 		"goals_met":     goalsMet,
 	}
 	writeJSON(w, 200, out)

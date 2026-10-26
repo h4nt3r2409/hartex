@@ -1,4 +1,4 @@
-// Command artex runs the ARTEX backend: the dual SQLite graph stores,
+// Command artex runs the Hartex backend: the dual SQLite graph stores,
 // the event-driven exploration engine, and the JSON HTTP API consumed by the
 // shadcn/ui frontend.
 package main
@@ -27,17 +27,17 @@ import (
 var version = "dev"
 
 const banner = `
-    _    ____ _____ _______  __
-   / \  |  _ \_   _| ____\ \/ /
-  / _ \ | |_) || | |  _|  \  /
- / ___ \|  _ < | | | |___ /  \
-/_/   \_\_| \_\|_| |_____/_/\_\
+ _   _    _    ____  _____ _____  __
+| | | |  / \  |  _ \|_   _| ____| \ \/ /
+| |_| | / _ \ | |_) | | | |  _|    \  /
+|  _  |/ ___ \|  _ <  | | | |___   /  \
+|_| |_/_/   \_\_| \_\ |_| |_____| /_/\_\
 `
 
 // printBanner writes the startup banner + version/runtime info to stdout.
 func printBanner(addr string) {
 	fmt.Print(banner)
-	fmt.Println("  AI Autonomous Penetration Testing System")
+	fmt.Println("  Autonomous Penetration Testing Console")
 	fmt.Printf("  version %s  ·  %s/%s  ·  %s  ·  listening on %s\n\n",
 		version, runtime.GOOS, runtime.GOARCH, runtime.Version(), addr)
 }
@@ -121,7 +121,7 @@ func run() int {
 	}
 
 	go func() {
-		log.Printf("ARTEX %s backend listening on %s (data=%s, workers=%d)", version, *addr, *dataDir, mgr.Workers())
+		log.Printf("Hartex %s backend listening on %s (data=%s, workers=%d)", version, *addr, *dataDir, mgr.Workers())
 		if err := httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("serve: %v", err)
 		}

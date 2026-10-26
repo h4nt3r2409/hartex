@@ -1,6 +1,6 @@
 # Security Policy
 
-This document explains how to report security vulnerabilities in the **ARTEX global edition (`hartex`) code itself**. ARTEX is an offensive-security tool that performs penetration testing, but what this document covers is not the results of attacking something with the tool; it is **vulnerabilities that arise when you operate or deploy this software**.
+This document explains how to report security vulnerabilities in the **Hartex global edition (`hartex`) code itself**. Hartex is an offensive-security tool that performs penetration testing, but what this document covers is not the results of attacking something with the tool; it is **vulnerabilities that arise when you operate or deploy this software**.
 
 For example:
 
@@ -36,8 +36,8 @@ This repository is the **English-only global edition of the original ARTEX**, ma
 
 The following are **not** covered by this security policy.
 
-- A vulnerability in **an external system** that you discovered by attacking it with ARTEX. That is something to report to the owner of that system.
+- A vulnerability in **an external system** that you discovered by attacking it with Hartex. That is something to report to the owner of that system.
 - Problems caused by running the tool against someone else's system without authorization. Such use itself violates the [usage scope](README.md#️-read-first--authorized-use-and-legal-notice) and domestic law.
-- The mere fact that ARTEX runs an offensive tool "by design." This tool is built to perform penetration testing within an authorized scope.
+- The mere fact that Hartex runs an offensive tool "by design." This tool is built to perform penetration testing within an authorized scope.
 
 If you witness **misuse** of this tool (use beyond the authorized scope), do not report it through GitHub. Use the lawful reporting channels appropriate to the conduct (the owner of the affected system or the relevant authorities).

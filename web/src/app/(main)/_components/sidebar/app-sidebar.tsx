@@ -20,7 +20,6 @@ import { usePreferencesStore } from "@/stores/preferences/preferences-provider";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { SidebarSupportCard } from "./sidebar-support-card";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currentUser = useCurrentUser();
@@ -43,8 +42,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton asChild>
               <Link prefetch={false} href="/function/tasks">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.png" alt="ARTEX" width={40} height={40} className="shrink-0" />
-                <span className="font-semibold text-base">{APP_CONFIG.name}</span>
+                <img src="/brand/hartex-mark.svg" alt="" width={32} height={32} className="size-8 shrink-0" />
+                <span className="font-semibold text-base tracking-[0.16em]">{APP_CONFIG.wordmark}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -3009,7 +3009,7 @@ export const trafficDetail: TrafficDetail = {
   req: `GET /v1/orders?id=1002 HTTP/1.1
 Host: api.acme.com
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
-User-Agent: ARTEX-worker/1.0
+User-Agent: Hartex-worker/1.0
 Accept: application/json
 
 `,
@@ -3271,13 +3271,13 @@ const promptVersions: PromptVersion[] = [
     version: 3,
     ts: T("2026-07-25T10:00:00Z"),
     note: "Strengthened guidance for authorization-bypass detection",
-    template_text: "You are ARTEX's planner...",
+    template_text: "You are Hartex's planner...",
   },
   {
     version: 2,
     ts: T("2026-07-20T10:00:00Z"),
     note: "Minor tuning of the initial version",
-    template_text: "You are ARTEX's planner (v2)...",
+    template_text: "You are Hartex's planner (v2)...",
   },
 ];
 
@@ -3285,7 +3285,7 @@ export function agentDetail(key: string): AgentDetail {
   const a = agents.find((x) => x.key === key) ?? agents[1];
   return {
     agent: a,
-    prompt: `You are ARTEX's "${a.name}".\nGoal: {{.Goal}}\nAsset overview: {{.AssetSummary}}\nRoute hint: {{.RouteHint}}\nUse the information above to advance exploration and write results back to the graph via tools.`,
+    prompt: `You are Hartex's "${a.name}".\nGoal: {{.Goal}}\nAsset overview: {{.AssetSummary}}\nRoute hint: {{.RouteHint}}\nUse the information above to advance exploration and write results back to the graph via tools.`,
     variables: promptVars,
     versions: promptVersions,
     visibility: { mcp: [1, 2], skill: ["api-recon", "playwright-cli"] },

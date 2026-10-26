@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="hartex-title hartex-desc">
+  <title id="hartex-title">Hartex</title>
+  <desc id="hartex-desc">The Hartex H monogram in white.</desc>
+  <path fill="#FFFFFF" d="M144 96H208V224H304V96H368L400 128V384L368 416H304V288H208V416H144L112 384V128Z"/>
+</svg>

@@ -34,6 +34,11 @@ value: brutalist
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0 0 0);
   --sidebar-ring: oklch(0.6489 0.237 26.9728);
+  --surface-2: oklch(0.9551 0 0);
+  --surface-3: oklch(0.968 0.211 109.7692);
+  --grid-line: oklch(0 0 0);
+  --glow-primary: none;
+  --glow-accent: none;
   --background: oklch(1 0 0);
   --foreground: oklch(0 0 0);
   --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 0% / 0.5);
@@ -78,6 +83,11 @@ value: brutalist
   --sidebar-accent-foreground: oklch(0 0 0);
   --sidebar-border: oklch(1 0 0);
   --sidebar-ring: oklch(0.7044 0.1872 23.1858);
+  --surface-2: oklch(0.3211 0 0);
+  --surface-3: oklch(0.3211 0 0);
+  --grid-line: oklch(1 0 0);
+  --glow-primary: none;
+  --glow-accent: none;
   --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 0% / 0.5);
   --shadow-xs: 4px 4px 0px 0px hsl(0 0% 0% / 0.5);
   --shadow-sm: 4px 4px 0px 0px hsl(0 0% 0% / 1), 4px 1px 2px -1px hsl(0 0% 0% / 1);

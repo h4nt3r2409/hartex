@@ -2,6 +2,8 @@
 
 > This document helps **defenders** understand how an **autonomous AI penetration agent** such as ARTEX operates, so that you can build the capability to **detect and block** such attacks. It is not a guide to carrying out attacks. Use everything here only to protect systems you own or have explicit written authorization to test. Probing or attacking someone else's information and communications network without authorization is itself a crime (see the [security and misuse warning in the top-level README](../README.md)).
 
+> **Edition note:** This edition ships as **Hartex**. The threat material below refers to the **upstream ARTEX** tool whose behavior this edition inherits; detection signatures and indicator filenames intentionally keep the ARTEX name.
+
 An autonomous AI attack tool turns a penetration test — once a manual process a single operator ran by hand — into a 24/7 automated process in which an LLM agent **breaks goals down on its own, executes real tools, and accumulates discoveries**. The adversary a defender faces shifts from "one skilled attacker" to "a swarm of agents that never tire and never rest." This guide sets out what that shift demands of detection and response.
 
 ---

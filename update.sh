@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ARTEX update script: 1) Docker update (pull the new image and recreate)  2) local build update (rebuild the binary)
+# Hartex update script: 1) Docker update (pull the new image and recreate)  2) local build update (rebuild the binary)
 # Pairs with install.sh. install handles the initial installation, update handles upgrading to a new version.
 # DB migrations do not need to be run manually. artex re-runs schema.sql idempotently on every startup (including ADD COLUMN/CREATE
 # INDEX IF NOT EXISTS), so "a restart is the migration". Data (pgdata volume, ./data, ./skills) is unaffected.
@@ -74,7 +74,7 @@ update_local(){
 }
 
 echo "=============================="
-echo "  ARTEX update"
+echo "  Hartex update"
 echo "  1) Docker update (pull the new image and recreate)"
 echo "  2) Local update (recompile with go)"
 echo "=============================="

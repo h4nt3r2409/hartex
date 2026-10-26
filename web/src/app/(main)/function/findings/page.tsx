@@ -759,11 +759,16 @@ export default function FindingsPage() {
 
   const statCards = [
     { label: t("stat.total"), value: stats.total, icon: BugIcon },
-    { label: t("stat.pending"), value: stats.pending, tone: "text-amber-500", icon: ClockIcon },
+    { label: t("stat.pending"), value: stats.pending, tone: "text-amber-600 dark:text-amber-400", icon: ClockIcon },
     { label: t("severity.critical"), value: stats.critical, tone: "text-rose-600", icon: ShieldAlertIcon },
-    { label: t("severity.high"), value: stats.high, tone: "text-red-500", icon: TriangleAlertIcon },
-    { label: t("severity.medium"), value: stats.medium, tone: "text-amber-500", icon: TriangleAlertIcon },
-    { label: t("severity.low"), value: stats.low, tone: "text-slate-500", icon: InfoIcon },
+    { label: t("severity.high"), value: stats.high, tone: "text-red-600 dark:text-red-400", icon: TriangleAlertIcon },
+    {
+      label: t("severity.medium"),
+      value: stats.medium,
+      tone: "text-amber-600 dark:text-amber-400",
+      icon: TriangleAlertIcon,
+    },
+    { label: t("severity.low"), value: stats.low, tone: "text-slate-600 dark:text-slate-400", icon: InfoIcon },
   ];
 
   // The count for "current filter" in the export dialog: both views share the same filters, only the

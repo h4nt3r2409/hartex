@@ -1,6 +1,6 @@
 <div align="center">
 
-# ARTEX — Global Edition
+# Hartex — Global Edition
 
 **An autonomous penetration-testing system driven by LLM multi-agents** (Go backend + Next.js frontend)
 
@@ -16,7 +16,7 @@ The UI and all agent-generated output are **English-only**. A fixed English dire
 >
 > **This repository is published for use only within authorized environments, and only to build defensive and detection capabilities.**
 >
-> ARTEX is an autonomous offensive tool powerful enough to carry an attack from reconnaissance through intrusion to data exfiltration with little human involvement, so the harm from misuse is correspondingly large. In October 2026, several Korean news outlets reported that investigators had found indications the upstream ARTEX was used in personal-data breaches targeting Korean financial institutions; the related investigation is ongoing. This global edition is not published to help attackers. Its purpose is to help defenders understand how such autonomous AI attacks work and build the capability to detect and block them.
+> Hartex is an autonomous offensive tool powerful enough to carry an attack from reconnaissance through intrusion to data exfiltration with little human involvement, so the harm from misuse is correspondingly large. In October 2026, several Korean news outlets reported that investigators had found indications the upstream ARTEX was used in personal-data breaches targeting Korean financial institutions; the related investigation is ongoing. This global edition is not published to help attackers. Its purpose is to help defenders understand how such autonomous AI attacks work and build the capability to detect and block them.
 >
 > - **Unauthorized use is a crime in itself.** Do not run any scanning, probing, or exploitation against systems you do not own or for which you lack explicit written authorization. In the Republic of Korea, unauthorized intrusion into an information and communications network violates the Network Act, and the Personal Information Protection Act also applies where personal data is involved.
 > - **Do not target live services or other parties' assets.** Verify only in learning, research, and locally isolated environments you own (deliberately vulnerable targets such as OWASP Juice Shop or DVWA).
@@ -28,7 +28,7 @@ The UI and all agent-generated output are **English-only**. A fixed English dire
 
 > **This repository is the English-only global edition of the Chinese open-source project [Autumn-27/ARTEX](https://github.com/Autumn-27/ARTEX) (AGPL-3.0 · upstream repository currently unreachable, checked 2026-10), adapted so that users and teams worldwide can adopt it as-is.** The codebase, the agents' reasoning prompts, the developer documentation, and all user-facing output are English, so the system can be read and audited in one language. See ["Why an English-only edition"](#why-an-english-only-edition) below for the rationale.
 
-ARTEX is a system in which several LLM-driven agents autonomously run a penetration test: they **break goals down on their own, execute real tools, and accumulate discovered assets and vulnerabilities into a graph** as they go. A single Go binary ships with the Next.js frontend embedded, and all data is stored in PostgreSQL.
+Hartex is a system in which several LLM-driven agents autonomously run a penetration test: they **break goals down on their own, execute real tools, and accumulate discovered assets and vulnerabilities into a graph** as they go. A single Go binary ships with the Next.js frontend embedded, and all data is stored in PostgreSQL.
 
 > **Note on this edition's language.** This edition is English-only: the UI, agent prompts, source comments, developer documentation, and all generated output are English. There is no display-language setting and no runtime language selection. See [Configuration](#configuration) for the fixed English output directive.
 
@@ -36,7 +36,7 @@ ARTEX is a system in which several LLM-driven agents autonomously run a penetrat
 
 ## ⚠️ Read first — authorized use and legal notice
 
-ARTEX may be used **only against targets you own or for which you have explicit written authorization.** Any scanning, probing, or exploitation beyond the authorized scope may itself be illegal.
+Hartex may be used **only against targets you own or for which you have explicit written authorization.** Any scanning, probing, or exploitation beyond the authorized scope may itself be illegal.
 
 - In the Republic of Korea, intruding into or disrupting another party's information and communications network without authorization violates the **Act on Promotion of Information and Communications Network Utilization and Information Protection**.
 - Personal data collected or exposed during a penetration test is subject to the Korean **Personal Information Protection Act**. Even with authorization, handle the access, retention, and deletion of personal data with care.
@@ -62,7 +62,7 @@ Collapsing five UI catalogs, the output-language setting, and the translated doc
 
 ## Screenshots
 
-The three screens below show the English UI. The data comes from a local, isolated sandbox: every target is the fictional `acme.com` and private address ranges.
+The screens below show the English UI in its dark theme. The data comes from a local, isolated sandbox: every target is the fictional `acme.com` and private address ranges.
 
 <p align="center">
   <img src="screenshots/en/dashboard.png" width="900" alt="Dashboard overview"><br>
@@ -78,6 +78,21 @@ The three screens below show the English UI. The data comes from a local, isolat
 <p align="center">
   <img src="screenshots/en/chat.png" width="900" alt="Human-in-the-loop chat"><br>
   <sub><b>Chat</b> — a human steps into the autonomous run to inject hints while the agent summarizes the attack chain in English.</sub>
+</p>
+
+<p align="center">
+  <img src="screenshots/en/tasks.png" width="900" alt="Tasks list"><br>
+  <sub><b>Tasks</b> — task state, goal progress, and finding counts, with the active run highlighted.</sub>
+</p>
+
+<p align="center">
+  <img src="screenshots/en/llm.png" width="900" alt="LLM profiles"><br>
+  <sub><b>LLM profiles</b> — model profiles, pooled rotation, health, and retry policy in one place.</sub>
+</p>
+
+<p align="center">
+  <img src="screenshots/en/login.png" width="900" alt="Hartex login"><br>
+  <sub><b>Login</b> — the Hartex identity on the dark auth panel; light mode remains available in Preferences.</sub>
 </p>
 
 ---
@@ -215,11 +230,11 @@ CGO_ENABLED=0 go build -tags embedui -o artex ./cmd/artex
 
 **Concurrency:** the number of worker agents spawned per task is adjustable under "System settings" (default 3).
 
-**Asset sync (ScopeSentry):** ARTEX can sync asset data directly from [ScopeSentry](https://github.com/Autumn-27/ScopeSentry), so you do not have to collect it twice:
+**Asset sync (ScopeSentry):** Hartex can sync asset data directly from [ScopeSentry](https://github.com/Autumn-27/ScopeSentry), so you do not have to collect it twice:
 
 - On the **Asset sync** page, enter ScopeSentry's address and API key to connect the data source.
 - Choose the targets and asset types to sync by **project** or **task** (domain / subdomain / IP / port / site / endpoint …).
-- Import them in one click; they are merged into the company's asset scope and go straight into ARTEX's asset graph for agents to explore.
+- Import them in one click; they are merged into the company's asset scope and go straight into Hartex's asset graph for agents to explore.
 
 **Common flags:** `./start.sh -addr :8787 -proxy :8788` — `-addr` is the frontend and API, `-proxy` is the traffic-recording proxy port. `-addr` defaults to `127.0.0.1:8787` (local connections only); pass an explicit bind address such as `:8787` to serve other machines (see "First-run protection" below).
 
@@ -235,7 +250,7 @@ The fixed English output directive (`outputDirective()` in `agent/prompt.go`) is
 
 ### First-run protection (setup token and bind address)
 
-There is a single admin account (`ARTEX`) whose password is created on the first visit at `/setup`. So that whoever reaches a not-yet-initialised instance first cannot claim it, the following protections apply.
+There is a single admin account (the internal subject `ARTEX`, shown as "Operator account" in the UI) whose password is created on the first visit at `/setup`. So that whoever reaches a not-yet-initialised instance first cannot claim it, the following protections apply.
 
 - **Setup token.** When the server starts without a password it prints one line `[auth] … Setup token: …` to the console (`docker compose logs artex` under Docker). `/setup` and `POST /api/auth/init` (`setup_token` field) only create the password when that value matches, and wrong attempts are rate-limited. For unattended deployments pin it with `ARTEX_SETUP_TOKEN`, or set the password directly with `ARTEX_ADMIN_PASSWORD` (8+ characters).
 - **Binds to 127.0.0.1 by default.** Both the `-addr` default of `artex` and the port publishing in `docker-compose.yml` open the loopback interface only. To reach it from other machines use `-addr :8787` or `ARTEX_BIND=0.0.0.0` in `.env`, but finish the initial setup first and prefer the reverse-proxy layout below. Starting without a password on a non-loopback address logs a warning.
@@ -275,7 +290,7 @@ server {
 
 ## System architecture
 
-ARTEX is an **autonomous penetration system driven by LLM multi-agents.** It uses a single Go backend (with the Next.js frontend embedded) over PostgreSQL, and the agent capabilities are provided by the [`norma`](https://github.com/Autumn-27/norma) (currently unreachable, checked 2026-10) SDK. At its core is a **dual-graph structure** and the two autonomy mechanisms around it: process-level information exchange between workers, and the planner's multi-round shared todolist.
+Hartex is an **autonomous penetration system driven by LLM multi-agents.** It uses a single Go backend (with the Next.js frontend embedded) over PostgreSQL, and the agent capabilities are provided by the [`norma`](https://github.com/Autumn-27/norma) (currently unreachable, checked 2026-10) SDK. At its core is a **dual-graph structure** and the two autonomy mechanisms around it: process-level information exchange between workers, and the planner's multi-round shared todolist.
 
 ### Overall layers
 
@@ -437,13 +452,13 @@ flowchart TB
   R3["round 3 (② yields fact) · dispatch intent ③"] --> T3
 ```
 
-This lets the attack chain progress reliably even in an "event-driven + stateless session" environment — without duplication and without going out of order. This is the core of how ARTEX completes multi-step attack chains autonomously.
+This lets the attack chain progress reliably even in an "event-driven + stateless session" environment — without duplication and without going out of order. This is the core of how Hartex completes multi-step attack chains autonomously.
 
 ---
 
 ## Defense and detection material
 
-This repository aims to help the **defending side** understand how autonomous AI attacks work and build the capability to detect and block them. It takes the ARTEX behavior seen in the architecture above and turns it around into a **defender's view**, laying out what to observe and where to tighten.
+This repository aims to help the **defending side** understand how autonomous AI attacks work and build the capability to detect and block them. It takes the upstream ARTEX behavior seen in the architecture above and turns it around into a **defender's view**, laying out what to observe and where to tighten.
 
 - **[Defense & Detection Guide (docs/defense-en.md)](docs/defense-en.md)**
   - How autonomous AI attacks differ from traditional scanners, why they are hard to detect, and how to detect them anyway
@@ -453,7 +468,7 @@ This repository aims to help the **defending side** understand how autonomous AI
   - Korean official channels for indicators of compromise and advisories (KISA, FSI, PIPC) and the reporting duties under Korean law
 - **[Deployable detection rules (detections/)](detections/)** — the guide's fingerprint detections shipped as ready-to-use rules: the host/log/SIEM layer as [Sigma](https://sigmahq.io) rules (atomic + correlation; use `sigma convert` for Splunk, Elasticsearch, and others), and the network layer as [Suricata](https://suricata.io) rules targeting the enrich prober and norma SDK WebFetch User-Agents.
   - **[ATT&CK coverage layer (detections/attack/)](detections/attack/)**: a [MITRE ATT&CK Navigator](https://mitre-attack.github.io/attack-navigator/) layer (JSON) that maps the rules above to the techniques they tag, so you can see at a glance which attack behavior each rule catches. Every technique comes only from a rule's `attack.*` tags, with nothing added by guesswork.
-  - **[Machine-readable indicator list (detections/indicators/)](detections/indicators/)**: the unique fingerprints ARTEX itself emits, gathered into a single CSV (`artex_indicators.csv`) and shipped as a ready-to-import MISP event (`artex_indicators.misp.json`) as well, so you can drop them straight into a SIEM lookup table or a threat-intelligence platform (MISP, or anything that ingests the MISP format) as indicators of compromise (IoCs). Every value is a string verified in the repository source, and each row carries its source file and detection rule.
+  - **[Machine-readable indicator list (detections/indicators/)](detections/indicators/)**: the unique fingerprints the upstream ARTEX tool emits, gathered into a single CSV (`artex_indicators.csv`) and shipped as a ready-to-import MISP event (`artex_indicators.misp.json`) as well, so you can drop them straight into a SIEM lookup table or a threat-intelligence platform (MISP, or anything that ingests the MISP format) as indicators of compromise (IoCs). Every value is a string verified in the repository source, and each row carries its source file and detection rule.
   - **[Host triage script (detections/triage/)](detections/triage/)**: a read-only script, [`artex_host_triage.py`](detections/triage/artex_host_triage.py), for the responder standing at a single suspected host's shell with no SIEM or network sensor. It checks the same fingerprints the rules above do, plus — on the box itself — the three host/DB indicators the indicator CSV deliberately carries without a Sigma rule because they are not log- or network-observable (the server listen port, the recording-proxy endpoint, the PostgreSQL exploration schema). It runs on the standard library alone with nothing to install, and every finding is a triage lead carrying the same caveat as its indicator row, never an attribution on its own.
   - The rules, the layer, the indicators above, and the host-triage script's self-test are all re-run and verified by the repository tests ([detections/tests/](detections/tests/)): a detection rule you cannot run is only a claim.
 

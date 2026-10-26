@@ -34,6 +34,11 @@ value: soft-pop
   --sidebar-accent-foreground: oklch(0 0 0);
   --sidebar-border: oklch(0 0 0);
   --sidebar-ring: oklch(0.7853 0.1041 274.7134);
+  --surface-2: oklch(0.9551 0 0);
+  --surface-3: oklch(0.9789 0.0082 121.6272);
+  --grid-line: oklch(0 0 0);
+  --glow-primary: none;
+  --glow-accent: none;
   --background: oklch(0.9789 0.0082 121.6272);
   --foreground: oklch(0 0 0);
   --shadow-2xs: 0px 0px 0px 0px hsl(0 0% 10.1961% / 0.03);
@@ -78,6 +83,11 @@ value: soft-pop
   --sidebar-accent-foreground: oklch(0 0 0);
   --sidebar-border: oklch(1 0 0);
   --sidebar-ring: oklch(0.6801 0.1583 276.9349);
+  --surface-2: oklch(0.3211 0 0);
+  --surface-3: oklch(0.2455 0.0217 257.2823);
+  --grid-line: oklch(1 0 0);
+  --glow-primary: none;
+  --glow-accent: none;
   --shadow-2xs: 0px 0px 0px 0px hsl(0 0% 10.1961% / 0.03);
   --shadow-xs: 0px 0px 0px 0px hsl(0 0% 10.1961% / 0.03);
   --shadow-sm: 0px 0px 0px 0px hsl(0 0% 10.1961% / 0.05), 0px 1px 2px -1px hsl(0 0% 10.1961% / 0.05);
