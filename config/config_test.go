@@ -6,6 +6,24 @@ import (
 	"testing"
 )
 
+func TestKeyDir(t *testing.T) {
+	// no env → next to the executable
+	t.Setenv("ARTEX_KEY_DIR", "")
+	if got := KeyDir(); got != BaseDir() {
+		t.Fatalf("default: got %q want %q", got, BaseDir())
+	}
+
+	// env wins and the directory is created
+	dir := filepath.Join(t.TempDir(), "keys")
+	t.Setenv("ARTEX_KEY_DIR", dir)
+	if got := KeyDir(); got != dir {
+		t.Fatalf("env: got %q want %q", got, dir)
+	}
+	if fi, err := os.Stat(dir); err != nil || !fi.IsDir() {
+		t.Fatalf("env key dir not created: %v", err)
+	}
+}
+
 func TestPostgresDSNPrecedence(t *testing.T) {
 	dir := t.TempDir()
 	cfgPath := filepath.Join(dir, "config.json")

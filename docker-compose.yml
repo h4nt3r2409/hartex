@@ -41,6 +41,9 @@ services:
       # Browser cross-origin allowlist (comma-separated). The embedded UI is same-origin,
       # so this is normally left empty.
       ARTEX_CORS_ORIGINS: ${ARTEX_CORS_ORIGINS:-}
+      # Directory for jwt.key. Deliberately outside the browsable /app/data workspace,
+      # so it needs its own mount to survive container recreation.
+      ARTEX_KEY_DIR: /app/keys
     ports:
       # By default the port is published only on the host's 127.0.0.1. To connect from
       # another machine, set ARTEX_BIND=0.0.0.0 in .env — but finish initial setup (admin
@@ -48,9 +51,13 @@ services:
       - "${ARTEX_BIND:-127.0.0.1}:8787:8787"
       - "127.0.0.1:8788:8788"
     volumes:
-      # Bind the data directory (jwt.key, SQLite, etc.) to ./data in the project root.
-      # It can be inspected and backed up from the host and survives container recreation.
+      # Bind the data directory (SQLite, task files, etc.) to ./data in the project
+      # root. It can be inspected and backed up from the host and survives container
+      # recreation.
       - ./data:/app/data
+      # JWT signing key: persists logins across container recreation, but stays
+      # outside /app/data so the file manager cannot expose it.
+      - ./keys:/app/keys
       # Mount the project-root skills/ into the container (overriding the image's
       # /app/skills). Editing a skill requires no image rebuild; the container reads the
       # host files directly.

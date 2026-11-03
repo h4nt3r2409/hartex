@@ -108,6 +108,19 @@ func Load() Config {
 	return c
 }
 
+// KeyDir returns the directory holding the JWT signing key (jwt.key). It is kept
+// outside dataDir (the browsable workspace) so the key can never be listed or
+// downloaded via the file manager. Precedence: env ARTEX_KEY_DIR > BaseDir().
+// The directory is created if it does not exist.
+func KeyDir() string {
+	d := BaseDir()
+	if v := strings.TrimSpace(os.Getenv("ARTEX_KEY_DIR")); v != "" {
+		d = v
+	}
+	_ = os.MkdirAll(d, 0o700)
+	return d
+}
+
 // SkillDir returns the skill root directory with precedence:
 //
 //	env ARTEX_SKILL_DIR  >  config file (skill_dir)  >  BaseDir()/skills
