@@ -1,4 +1,7 @@
 .git
+.env
+keys
+.secrets
 **/node_modules
 web/.next
 web/out

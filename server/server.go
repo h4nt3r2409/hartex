@@ -106,7 +106,7 @@ type Server struct {
 	ctx    context.Context
 
 	skillDir string // root directory for skill subdirectories
-	jwtKey   []byte // HS256 signing key loaded from / generated into dataDir/jwt.key
+	jwtKey   []byte // HS256 signing key loaded from / generated into keyDir/jwt.key
 
 	// authMu guards the first-run setup token, the cached password hash (tokens
 	// are signed with a key derived from it — see auth.go signingKey) and the

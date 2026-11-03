@@ -147,7 +147,7 @@ This repository also ships an install script, precompiled binaries, a single-bin
 
 ## Updating
 
-> Upgrading replaces only the program, not the data: the Postgres data volume `pgdata`, `./data` (jwt.key, SQLite, and so on), and `./skills` are all preserved. **Database migrations do not need to be run manually** — on every startup `artex` idempotently re-runs `schema.sql` (including `ADD COLUMN` / `CREATE INDEX IF NOT EXISTS`), so a restart is the migration. Before upgrading, backing up `./data` and the database is still recommended.
+> Upgrading replaces only the program, not the data: the Postgres data volume `pgdata`, `./data` (SQLite, task files, and so on), `./keys` (jwt.key), and `./skills` are all preserved. **Database migrations do not need to be run manually** — on every startup `artex` idempotently re-runs `schema.sql` (including `ADD COLUMN` / `CREATE INDEX IF NOT EXISTS`), so a restart is the migration. Before upgrading, backing up `./data`, `./keys`, and the database is still recommended.
 
 ### One-click update in the UI (recommended)
 
